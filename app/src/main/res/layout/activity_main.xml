@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:layout_marginLeft="15dp"
+    tools:context="com.example.munnasharma.socialmedia.MainActivity">
+
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/logo"
+        android:id="@+id/AppLogo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        />
+
+    <ImageView
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:id="@+id/GraduateImg"
+        android:src="@drawable/graduatephoto"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/AppLogo"/>
+    <ImageView
+            android:layout_height="35dp"
+            android:layout_width="35dp"
+        android:id="@+id/img1"
+        android:layout_marginTop="25dp"
+        android:layout_toLeftOf="@+id/dot1"
+            android:src="@drawable/college_symbol"
+        android:layout_below="@+id/AppLogo">
+
+    </ImageView>
+    <ImageView
+        android:layout_height="10dp"
+        android:layout_width="10dp"
+        android:id="@+id/dot1"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="5dp"
+        android:src="@drawable/dot"
+        android:layout_toLeftOf="@+id/dot2"
+        android:layout_below="@+id/AppLogo">
+
+    </ImageView>
+    <ImageView
+        android:layout_height="10dp"
+        android:layout_width="10dp"
+        android:id="@+id/dot2"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="3dp"
+        android:src="@drawable/dot"
+        android:layout_toLeftOf="@+id/img2"
+        android:layout_below="@+id/AppLogo">
+
+    </ImageView>
+    <ImageView
+        android:layout_height="35dp"
+        android:layout_width="35dp"
+        android:id="@+id/img2"
+        android:src="@drawable/college_symbol"
+        android:layout_below="@+id/AppLogo"
+        android:layout_marginTop="25dp"
+        android:layout_toLeftOf="@+id/dot3"
+        android:layout_marginLeft="5dp"
+        >
+
+    </ImageView>
+    <ImageView
+        android:layout_height="10dp"
+        android:layout_width="10dp"
+        android:id="@+id/dot3"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="5dp"
+        android:src="@drawable/dot"
+        android:layout_toLeftOf="@+id/dot4"
+        android:layout_below="@+id/AppLogo">
+
+    </ImageView>
+    <ImageView
+        android:layout_height="10dp"
+        android:layout_width="10dp"
+        android:id="@+id/dot4"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/dot"
+        android:layout_marginLeft="3dp"
+        android:layout_toLeftOf="@+id/GraduateImg"
+        android:layout_below="@+id/AppLogo">
+
+    </ImageView>
+    <ImageView
+        android:layout_height="10dp"
+        android:layout_width="10dp"
+        android:id="@+id/dot5"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/dot"
+        android:layout_toRightOf="@+id/GraduateImg"
+        android:layout_below="@+id/AppLogo">
+
+    </ImageView>
+    <ImageView
+        android:layout_height="10dp"
+        android:layout_width="10dp"
+        android:id="@+id/dot6"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="3dp"
+        android:src="@drawable/dot"
+        android:layout_toRightOf="@+id/dot5"
+        android:layout_below="@+id/AppLogo">
+
+    </ImageView>
+    <ImageView
+        android:layout_height="35dp"
+        android:layout_width="35dp"
+        android:id="@+id/img3"
+        android:src="@drawable/college_symbol"
+        android:layout_below="@+id/AppLogo"
+        android:layout_marginTop="25dp"
+        android:layout_toRightOf="@+id/dot6"
+        android:layout_marginLeft="5dp"
+        >
+
+    </ImageView>
+    <ImageView
+        android:layout_height="10dp"
+        android:layout_width="10dp"
+        android:id="@+id/dot7"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="5dp"
+        android:src="@drawable/dot"
+        android:layout_toRightOf="@+id/img3"
+        android:layout_below="@+id/AppLogo">
+
+    </ImageView>
+    <ImageView
+        android:layout_height="10dp"
+        android:layout_width="10dp"
+        android:id="@+id/dot8"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="3dp"
+        android:src="@drawable/dot"
+        android:layout_toRightOf="@+id/dot7"
+        android:layout_below="@+id/AppLogo">
+
+    </ImageView>
+    <ImageView
+        android:layout_height="35dp"
+        android:layout_width="35dp"
+        android:id="@+id/img4"
+        android:src="@drawable/college_symbol"
+        android:layout_below="@+id/AppLogo"
+        android:layout_marginTop="25dp"
+        android:layout_toRightOf="@+id/dot8"
+        android:layout_marginLeft="5dp"
+        >
+
+    </ImageView>
+<EditText
+    android:layout_width="250dp"
+    android:layout_height="40dp"
+    android:layout_centerHorizontal="true"
+    android:layout_below="@+id/GraduateImg"
+    android:layout_marginTop="10dp"
+    android:background="@drawable/edit_text_custom"
+    android:hint="Email"
+    android:gravity="center"
+    android:id="@+id/LoginEmail"/>
+
+
+ <EditText
+        android:layout_width="250dp"
+        android:layout_height="40dp"
+        android:background="@drawable/edit_text_custom"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/LoginEmail"
+        android:id="@+id/LoginPAassword"
+        android:hint="Password"
+     android:inputType="textPassword"
+        android:foregroundGravity="fill"
+        android:gravity="center"
+        android:layout_marginTop="10dp"/>
+   <Button
+       android:layout_width="200dp"
+       android:layout_height="40dp"
+       android:layout_below="@+id/LoginPAassword"
+       android:layout_centerHorizontal="true"
+       android:layout_marginTop="20dp"
+       android:id="@+id/LoginBtn"
+       android:textColor="#fff"
+       android:background="@drawable/btncustom"
+       android:text="Log In"/>
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="forgot Password?"
+    android:id="@+id/ForgotPassText"
+    android:layout_marginTop="10dp"
+    android:layout_below="@+id/LoginBtn"
+    android:layout_centerHorizontal="true"
+    android:textColor="#05f"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="100dp"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/NewUserText"
+        android:layout_marginBottom="30dp"
+        android:text="New User?"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/NewUserText"
+        android:text="Create Account"
+        android:textColor="#05f"
+        android:id="@+id/CreateAccount"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="30dp"
+        android:layout_alignParentBottom="true"
+        />
+
+
+</RelativeLayout>

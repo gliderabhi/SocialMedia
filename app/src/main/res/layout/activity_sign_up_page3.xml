@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_sign_up_page3"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.munnasharma.socialmedia.SignUpPage3">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hiii !"
+        android:textColor="#05f"
+        android:textSize="20dp"
+        android:fontFamily="serif"
+        android:id="@+id/HITextPage2"
+        android:layout_marginTop="140dp"
+        android:layout_marginLeft="120dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/HITextPage2"
+        android:text="Username"
+        android:id="@+id/UsernameTextPage2"
+        android:textSize="20dp"
+        android:textColor="#05f"
+        android:fontFamily="serif"
+        android:layout_marginTop="140dp"
+        android:layout_marginLeft="10dp"/>
+    <TextView
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="An Activation link has been sent to your email id.\n Please click on that link \n to verify your email id "
+        android:textSize="18dp"
+        android:textAlignment="center"
+        android:layout_centerHorizontal="true"
+        android:textColor="#05f"
+        android:id="@+id/TextVerification"
+        android:layout_below="@+id/UsernameTextPage2"
+        android:layout_marginTop="15dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/DidNotRecieveText"
+        android:textAlignment="center"
+        android:text="Did Not Recieve yet?"
+        android:layout_below="@+id/TextVerification"
+        android:textColor="#05f"
+        android:textSize="18dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginLeft="40dp"/>
+    <Button
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:text="Resend Link"
+        android:textColor="#fff"
+        android:layout_below="@+id/TextVerification"
+        android:layout_toRightOf="@+id/DidNotRecieveText"
+        android:background="@drawable/btncustom"
+        android:layout_marginTop="20dp"
+        android:id="@+id/ResendButton"
+        android:layout_marginLeft="20dp"/>
+</RelativeLayout>
