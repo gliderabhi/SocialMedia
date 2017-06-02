@@ -295,7 +295,7 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
                             i.putExtra("email", email);
                             startActivity(i);
 
-                            Toast.makeText(getApplicationContext(),"Created ",Toast.LENGTH_SHORT).show();
+                           // Toast.makeText(getApplicationContext(),"Created ",Toast.LENGTH_SHORT).show();
 
                         } else {
                             pr.dismiss();
