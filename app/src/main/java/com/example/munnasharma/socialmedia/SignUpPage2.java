@@ -173,7 +173,7 @@ public class SignUpPage2 extends Activity  implements  AdapterView.OnItemSelecte
                             Intent i = new Intent(getApplicationContext(), SignUpPage3.class);
                             startActivity(i);
 
-                            // Toast.makeText(getApplicationContext(),"Created ",Toast.LENGTH_SHORT).show();
+                          Toast.makeText(getApplicationContext(),"Created ",Toast.LENGTH_SHORT).show();
 
                         } else {
                             pr.dismiss();
