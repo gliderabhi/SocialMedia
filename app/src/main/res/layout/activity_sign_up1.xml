@@ -23,7 +23,6 @@
         android:layout_below="@+id/CreateAccountText"
         android:layout_marginTop="20dp"
         android:id="@+id/FirstNameTextField"
-        android:gravity="center"
         android:layout_centerHorizontal="true"
         android:background="@drawable/edit_text_custom"/>
     <EditText
@@ -34,7 +33,6 @@
         android:layout_below="@+id/FirstNameTextField"
         android:layout_marginTop="20dp"
         android:id="@+id/LastNameTextField"
-        android:gravity="center"
         android:layout_centerHorizontal="true"
         android:background="@drawable/edit_text_custom"/>
     <EditText
@@ -46,7 +44,6 @@
         android:layout_marginTop="20dp"
         android:id="@+id/CollegeTextField"
         android:layout_centerHorizontal="true"
-        android:gravity="center"
         android:background="@drawable/edit_text_custom"/>
     <Spinner
         android:layout_width="300dp"
@@ -54,14 +51,12 @@
         android:layout_below="@+id/CollegeTextField"
         android:layout_marginTop="20dp"
         android:id="@+id/BranchSpinner"
-        android:gravity="center"
         android:layout_centerHorizontal="true"
         android:background="@drawable/edit_text_custom"/>
     <EditText
         android:layout_width="300dp"
         android:layout_height="30dp"
         android:hint="Year"
-        android:gravity="center"
         android:inputType="number"
         android:layout_below="@+id/BranchSpinner"
         android:layout_marginTop="20dp"
@@ -76,7 +71,6 @@
         android:inputType="textEmailAddress"
         android:layout_below="@+id/YearTextField"
         android:layout_marginTop="20dp"
-        android:gravity="center"
         android:id="@+id/EmailTextField"
         android:layout_centerHorizontal="true"
         android:background="@drawable/edit_text_custom"/>
@@ -84,7 +78,6 @@
         android:layout_width="300dp"
         android:layout_height="30dp"
         android:hint="Mobile No"
-        android:gravity="center"
         android:inputType="phone"
         android:layout_below="@+id/EmailTextField"
         android:layout_marginTop="20dp"

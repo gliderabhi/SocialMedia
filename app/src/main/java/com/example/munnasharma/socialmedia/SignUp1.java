@@ -1,10 +1,17 @@
 package com.example.munnasharma.socialmedia;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Parcelable;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,6 +21,15 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+
 public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedListener{
 
     private Button NextPage;
@@ -22,7 +38,7 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
      private CheckBox MaleBox,FemaleBox;
     private String firstname,lastName,college,branch,email,mobileNo,sex,year;
     private EditText FirstName,LastName,College,Email,MobileNo,Year;
-
+     private ProgressDialog pr;
     private String [] Branches={
             "Chemistry(apc)",
             "Physicss(app)",
@@ -95,12 +111,13 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
                             college = College.getText().toString();
 
                                 if (!Email.getText().toString().matches("")) {
+                                    email = Email.getText().toString();
                                     //Validate Email Address to be of iitbhu
-                                    if( getEmailDomain().matches("itbhu.ac.in") || getEmailDomain().matches("iitbhu.ac.in")) {
-                                        email = Email.getText().toString();
+                                 /* if( getEmailDomain().matches("itbhu.ac.in") || getEmailDomain().matches("iitbhu.ac.in") ||  getEmailDomain().matches("itbhu.ac.in ") || getEmailDomain().matches("iitbhu.ac.in ")) {
+                                       email = Email.getText().toString();
                                     } else{
                                         Toast.makeText(getApplicationContext(),"Please Enter a valid institute email id ",Toast.LENGTH_SHORT).show();
-                                    }
+                                    }*/
                                         if (!MobileNo.getText().toString().matches("")) {
                                             mobileNo = MobileNo.getText().toString();
 
@@ -142,9 +159,10 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
                 //Create student object
                 studentDetails=new StudentDetails(firstname,lastName,college,branch,year,email,mobileNo,sex);
 
-                Intent i = new Intent(getApplicationContext(), SignUpPage2.class);
-                i.putExtra("StudentDetails", (Parcelable) studentDetails);
-                startActivity(i);
+                //Send to server add the add row to respective table
+                if(DataSend()) {
+
+                }
                 }
 
 
@@ -152,8 +170,9 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
 
 
     }
+
     //Method to check if only one box is checked
-   private void OneBoxOnly(int v){
+       private void OneBoxOnly(int v){
        if(v==R.id.MaleCheckBox){
            MaleBox.setChecked(true);
            FemaleBox.setChecked(false);
@@ -173,14 +192,16 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
         Email.setText("");
         Year.setText("");
     }
-    private void Setbranch(int position){
 
-
-    }
-    public String getEmailDomain()
-    {
+    public String getEmailDomain() {
         String b = email.substring(email.indexOf('@') + 1);
         return b;
+    }
+
+    //methods for spinner
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        Toast.makeText(getApplicationContext(),"Please Select Some branch",Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -207,8 +228,129 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
         }
     }
 
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-      Toast.makeText(getApplicationContext(),"Please Select Some branch",Toast.LENGTH_SHORT).show();
+    //Check Network Connection
+    private boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
     }
+
+    private boolean DataSend(){
+        boolean success=false;
+        //call network check
+        boolean network = haveNetworkConnection();
+        if (!network) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(SignUp1.this);
+            builder.setMessage("Please check your internet connection ")
+                    .setNegativeButton("Retry",null)
+                    .create()
+                    .show();
+        }
+
+        if (network) {
+            pr= ProgressDialog.show(SignUp1.this,"Create Account ","Registering on server please wait....",true);
+
+
+
+
+
+            Response.Listener<String> responseListener = new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+
+                    Log.i("success","message received ");
+                    response = response.replaceFirst("<font>.*?</font>", "");
+                    int jsonStart = response.indexOf("{");
+                    int jsonEnd = response.lastIndexOf("}");
+
+                    if (jsonStart >= 0 && jsonEnd >= 0 && jsonEnd > jsonStart) {
+                        response = response.substring(jsonStart, jsonEnd + 1);
+                    } else {
+
+                    }
+
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        boolean success = jsonResponse.getBoolean("success");
+
+
+                        if (success) {
+                            pr.dismiss();
+                           success=true;
+
+                            Intent i = new Intent(getApplicationContext(), SignUpPage2.class);
+                            i.putExtra("email", email);
+                            startActivity(i);
+
+                            Toast.makeText(getApplicationContext(),"Created ",Toast.LENGTH_SHORT).show();
+
+                        } else {
+                            pr.dismiss();
+                            AlertDialog.Builder builder = new AlertDialog.Builder(SignUp1.this);
+                            builder.setMessage("Email is already available or Please try again later ")
+                                    .setNegativeButton("Retry", null)
+                                    .create()
+                                    .show();
+                            success=false;
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            String LoginUrlDetails=getLoginUrl();
+            RegisterRequest registerRequest = new RegisterRequest(firstname,lastName,college,branch,year,email,mobileNo,sex,LoginUrlDetails,responseListener);
+            RequestQueue queue = Volley.newRequestQueue(SignUp1.this);
+            queue.add(registerRequest);
+
+        }
+        return  success;
+    }
+
+    @Override
+    public void onBackPressed() {
+        pr.dismiss();
+
+    }
+
+    //Check branch and accordingly set the register url
+    private String getLoginUrl() {
+       String url=null;
+        switch (branch) {
+            case "app": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/app.php";break;
+            case "apc": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/apc.php";break;
+            case "apm": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/apm.php";break;
+            case "hss": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/hss.php";break;
+            case "cer": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/cer.php";break;
+            case "che": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/che.php";break;
+            case "civ": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/civ.php";break;
+            case "cse": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/cse.php";break;
+            case "eee": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/eee.php";break;
+            case "ece": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/ece.php";break;
+            case "mec": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/mec.php";break;
+            case "met": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/met.php";break;
+            case "min": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/min.php";break;
+            case "mst": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/mst.php";break;
+            case "bme": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/bme.php";break;
+            case "bce": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/bce.php";break;
+            case "phe": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/phe.php";break;
+        }
+        return  url;
+    }
+
+
 }
