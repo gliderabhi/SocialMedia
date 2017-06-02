@@ -14,7 +14,7 @@
         android:textSize="20dp"
         android:id="@+id/CreateAccountText"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"/>
+        android:layout_marginTop="80dp"/>
     <EditText
         android:layout_width="300dp"
         android:layout_height="30dp"
@@ -48,23 +48,33 @@
         android:layout_centerHorizontal="true"
         android:gravity="center"
         android:background="@drawable/edit_text_custom"/>
-    <EditText
+    <Spinner
         android:layout_width="300dp"
         android:layout_height="30dp"
-        android:hint="Branch"
-        android:inputType="text"
         android:layout_below="@+id/CollegeTextField"
         android:layout_marginTop="20dp"
-        android:id="@+id/BranchTextField"
+        android:id="@+id/BranchSpinner"
         android:gravity="center"
         android:layout_centerHorizontal="true"
         android:background="@drawable/edit_text_custom"/>
     <EditText
         android:layout_width="300dp"
         android:layout_height="30dp"
+        android:hint="Year"
+        android:gravity="center"
+        android:inputType="number"
+        android:layout_below="@+id/BranchSpinner"
+        android:layout_marginTop="20dp"
+        android:id="@+id/YearTextField"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/edit_text_custom"/>
+
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="30dp"
         android:hint="Email"
         android:inputType="textEmailAddress"
-        android:layout_below="@+id/BranchTextField"
+        android:layout_below="@+id/YearTextField"
         android:layout_marginTop="20dp"
         android:gravity="center"
         android:id="@+id/EmailTextField"

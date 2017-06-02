@@ -12,11 +12,14 @@ public class SignUpPage2 extends Activity {
     private String pass1,pass2;
     private EditText Pass1,Pass2;
     private Button SignUpButton;
+    private  StudentDetails studentDetails;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
          setContentView(R.layout.activity_sign_up_page2);
 
+        studentDetails= (StudentDetails) getIntent().getSerializableExtra("StudentDetails");
+        Toast.makeText(getApplicationContext(),studentDetails.getBranch().toString(),Toast.LENGTH_SHORT).show();
          //initialize variable
         Pass1=(EditText)findViewById(R.id.pass1);
         Pass2=(EditText)findViewById(R.id.pass2);
