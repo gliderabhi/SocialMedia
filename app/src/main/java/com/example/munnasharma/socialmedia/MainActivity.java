@@ -38,7 +38,7 @@ public class MainActivity extends Activity {
         sessionManager=new SessionManager(getApplicationContext());
         if(sessionManager.isLoggedIn()){
             //Show Logged in , later open the profile straight away
-            Toast.makeText(getApplicationContext(),"Already Logged In ",Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(),"Already Logged In ",Toast.LENGTH_SHORT).show();
         }
         //Initialise the variables
         LoginBtn=(Button)findViewById(R.id.LoginBtn);
@@ -115,86 +115,87 @@ public class MainActivity extends Activity {
         }
 
         if (network) {
-            pr=ProgressDialog.show(MainActivity.this,"Log in ","Logging you in please wait.... ",true);
 
-             email = Email.getText().toString();
-             password = Password.getText().toString();
+            email = Email.getText().toString();
+            password = Password.getText().toString();
+            //Apply Encryption to password
+            password = PasswordEncrypt.CryptWithMD5(password);
+           // Toast.makeText(getApplicationContext(), password, Toast.LENGTH_SHORT).show();
 
             if (email.matches("") && password.matches("")) {
                 Toast.makeText(MainActivity.this, "Please fill both the email and password", Toast.LENGTH_SHORT).show();
                 return;
-            }
-            if (email.matches("")) {
+            } else if (email.matches("")) {
                 Toast.makeText(this, "You did not enter a email", Toast.LENGTH_SHORT).show();
                 return;
-            }
-            if (password.matches("")) {
+            } else if (password.matches("")) {
                 Toast.makeText(this, "Please fill the  password", Toast.LENGTH_SHORT).show();
                 return;
-            }
+            } else {
+                pr = ProgressDialog.show(MainActivity.this, "Log in ", "Logging you in please wait.... ", true);
 
 
+                Response.Listener<String> responseListener = new Response.Listener<String>() {
 
-            Response.Listener<String> responseListener = new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
 
-                @Override
-                public void onResponse(String response) {
+                        Log.i("error", "message recieved ");
+                        response = response.replaceFirst("<font>.*?</font>", "");
+                        int jsonStart = response.indexOf("{");
+                        int jsonEnd = response.lastIndexOf("}");
 
-                    Log.i("error","message recieved ");
-                    response = response.replaceFirst("<font>.*?</font>", "");
-                    int jsonStart = response.indexOf("{");
-                    int jsonEnd = response.lastIndexOf("}");
+                        if (jsonStart >= 0 && jsonEnd >= 0 && jsonEnd > jsonStart) {
+                            response = response.substring(jsonStart, jsonEnd + 1);
+                        } else {
 
-                    if (jsonStart >= 0 && jsonEnd >= 0 && jsonEnd > jsonStart) {
-                        response = response.substring(jsonStart, jsonEnd + 1);
-                    } else {
+                        }
 
-                    }
+                        try {
+                            JSONObject jsonResponse = new JSONObject(response);
+                            boolean success = jsonResponse.getBoolean("success");
 
-                    try {
-                        JSONObject jsonResponse = new JSONObject(response);
-                        boolean success = jsonResponse.getBoolean("success");
+                            if (success) {
+                                pr.dismiss();
+                                String Email = jsonResponse.getString("Email");
+                                String FirstName = jsonResponse.getString("FirstName");
+                                String LastName = jsonResponse.getString("LastName");
+                                String College = jsonResponse.getString("College");
+                                String Branch = jsonResponse.getString("Branch");
+                                String Year = jsonResponse.getString("Year");
+                                String MobileNo = jsonResponse.getString("MobileNo");
+                                String Sex = jsonResponse.getString("Sex");
 
-                        if (success) {
-                            pr.dismiss();
-                            String Email = jsonResponse.getString("Email");
-                            String FirstName = jsonResponse.getString("FirstName");
-                            String LastName = jsonResponse.getString("LastName");
-                            String College = jsonResponse.getString("College");
-                            String Branch = jsonResponse.getString("Branch");
-                            String Year = jsonResponse.getString("Year");
-                            String MobileNo = jsonResponse.getString("MobileNo");
-                            String Sex=jsonResponse.getString("Sex");
-
-                          //open profile
+                                //open profile
                             /*  Intent intent = new Intent(MainActivity.this, GetLocation.class);
                             startActivity(intent);
 
 */
-                        sessionManager.createLoginSession(FirstName,LastName,College,Branch,Year,Email,MobileNo,Sex);
-                        Toast.makeText(getApplicationContext(),"Received ",Toast.LENGTH_SHORT).show();
+                                sessionManager.createLoginSession(FirstName, LastName, College, Branch, Year, Email, MobileNo, Sex);
+                             //   Toast.makeText(getApplicationContext(), "Received ", Toast.LENGTH_SHORT).show();
 
-                        } else {
-                            pr.dismiss();
-                            String error=jsonResponse.getString("error");
-                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                            builder.setMessage(error)
-                                    .setNegativeButton("Retry", null)
-                                    .create()
-                                    .show();
+                            } else {
+                                pr.dismiss();
+                               // String error = jsonResponse.getString("error");
+                                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                                builder.setMessage("Login Fialed Please Try again later")
+                                        .setNegativeButton("Retry", null)
+                                        .create()
+                                        .show();
 
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
-                }
-            };
+                };
 
-            LoginRequest loginRequest = new LoginRequest(email, password, responseListener);
-            RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
-            queue.add(loginRequest);
+                LoginRequest loginRequest = new LoginRequest(email, password, responseListener);
+                RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
+                queue.add(loginRequest);
 
+            }
         }
     }
 
