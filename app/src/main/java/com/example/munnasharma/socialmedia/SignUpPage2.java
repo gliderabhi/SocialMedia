@@ -26,7 +26,7 @@ import org.json.JSONObject;
 
 public class SignUpPage2 extends Activity  implements  AdapterView.OnItemSelectedListener{
 
-    private String pass1,pass2;
+    private String pass1,pass2,Password;
     private EditText Pass1,Pass2,SecurityAnswer;
     private Button SignUpButton;
     private Spinner securityQuestion;
@@ -62,14 +62,22 @@ public class SignUpPage2 extends Activity  implements  AdapterView.OnItemSelecte
         SignUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+               //Get the security Answer
+                if(!SecurityAnswer.getText().toString().matches("")){
+                    securityAnswer=SecurityAnswer.getText().toString();
+                }else{
+                    Toast.makeText(getApplicationContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
 
-               // Check if fields are filled and are same
+                }
+
+                // Check if fields are filled and are same
                if(!Pass1.getText().toString().matches("")){
                    if(!Pass2.getText().toString().matches("")){
                        pass1=Pass1.getText().toString();
                        pass2=Pass2.getText().toString();
                        if(pass1.matches(pass2)){
-                           Toast.makeText(getApplicationContext(), "Matches", Toast.LENGTH_SHORT).show();
+                          // Toast.makeText(getApplicationContext(), "Matches", Toast.LENGTH_SHORT).show();
+                           DataSend();
                        }else{
                            Toast.makeText(getApplicationContext(), "Passwords Do not match. Re enter passwords ", Toast.LENGTH_SHORT).show();
                           Pass1.setText("");Pass2.setText("");
@@ -82,14 +90,8 @@ public class SignUpPage2 extends Activity  implements  AdapterView.OnItemSelecte
                    Toast.makeText(getApplicationContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
 
                }
-                if(!SecurityAnswer.getText().toString().matches("")){
-                    securityAnswer=SecurityAnswer.getText().toString();
-                }else{
-                    Toast.makeText(getApplicationContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
 
-                }
 
-              DataSend();
             }
         });
      }
@@ -190,7 +192,8 @@ public class SignUpPage2 extends Activity  implements  AdapterView.OnItemSelecte
                     }
                 }
             };
-            MasterRegisterReq masterRegisterReq = new MasterRegisterReq(email,pass1,branch,securityQstn,securityAnswer,responseListener);
+            Password=PasswordEncrypt.CryptWithMD5(pass1);
+            MasterRegisterReq masterRegisterReq = new MasterRegisterReq(email,Password,branch,securityQstn,securityAnswer,responseListener);
             RequestQueue queue = Volley.newRequestQueue(SignUpPage2.this);
             queue.add(masterRegisterReq);
 
