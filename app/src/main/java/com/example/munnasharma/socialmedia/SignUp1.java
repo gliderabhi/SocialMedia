@@ -293,6 +293,7 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
 
                             Intent i = new Intent(getApplicationContext(), SignUpPage2.class);
                             i.putExtra("email", email);
+                            i.putExtra("branch",branch);
                             startActivity(i);
 
                            // Toast.makeText(getApplicationContext(),"Created ",Toast.LENGTH_SHORT).show();

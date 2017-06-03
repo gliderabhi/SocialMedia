@@ -36,7 +36,7 @@ public class SignUpPage2 extends Activity  implements  AdapterView.OnItemSelecte
             "q3",
             "q4",
      };
-    private String email,securityAnswer,securityQstn;
+    private String email,securityAnswer,securityQstn,branch;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +55,7 @@ public class SignUpPage2 extends Activity  implements  AdapterView.OnItemSelecte
         securityQuestion.setOnItemSelectedListener(this);
         //get intent data
         email=getIntent().getStringExtra("email");
-
+         branch=getIntent().getStringExtra("branch");
         //Check data recieved or not
        // Toast.makeText(getApplicationContext(),email,Toast.LENGTH_SHORT).show();
 
@@ -190,7 +190,7 @@ public class SignUpPage2 extends Activity  implements  AdapterView.OnItemSelecte
                     }
                 }
             };
-            MasterRegisterReq masterRegisterReq = new MasterRegisterReq(email,pass1,securityQstn,securityAnswer,responseListener);
+            MasterRegisterReq masterRegisterReq = new MasterRegisterReq(email,pass1,branch,securityQstn,securityAnswer,responseListener);
             RequestQueue queue = Volley.newRequestQueue(SignUpPage2.this);
             queue.add(masterRegisterReq);
 

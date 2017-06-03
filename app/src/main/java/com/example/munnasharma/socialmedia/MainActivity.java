@@ -155,7 +155,6 @@ public class MainActivity extends Activity {
                         JSONObject jsonResponse = new JSONObject(response);
                         boolean success = jsonResponse.getBoolean("success");
 
-
                         if (success) {
                             pr.dismiss();
                             String Email = jsonResponse.getString("Email");
@@ -177,11 +176,13 @@ public class MainActivity extends Activity {
 
                         } else {
                             pr.dismiss();
+                            String error=jsonResponse.getString("error");
                             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                            builder.setMessage("Login Failed")
+                            builder.setMessage(error)
                                     .setNegativeButton("Retry", null)
                                     .create()
                                     .show();
+
                         }
 
                     } catch (JSONException e) {
