@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_next_page_forgot_pass"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.munnasharma.socialmedia.NextPageForgotPass">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/TextPassNew"
+        android:text="Enter a new password"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="30dp"
+        android:textSize="20dp"
+        android:textStyle="normal"/>
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/TextPassNew"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:hint="Enter new Password"
+        android:inputType="textPassword"
+        android:background="@drawable/edit_text_custom"
+        android:id="@+id/Pass1"
+        />
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/Pass1"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:hint="Re Enter password"
+        android:inputType="textPassword"
+        android:background="@drawable/edit_text_custom"
+        android:id="@+id/Pass2"
+        />
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Pass2"
+        android:text="Change password"
+        android:layout_centerHorizontal="true"
+        android:textColor="#fff"
+        android:id="@+id/ChangPassword"
+        android:background="@drawable/btncustom"
+        android:layout_marginTop="40dp"
+        />
+</RelativeLayout>

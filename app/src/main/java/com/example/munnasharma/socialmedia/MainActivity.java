@@ -63,12 +63,14 @@ public class MainActivity extends Activity {
             }
         });
 
-        //Forgot Pass Request For new Pss
+        //Forgot Pass Request For new Pass
         forgotPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(),"Bhai Bacha le ",Toast.LENGTH_LONG).show();
             //add method for password recovery
+                Intent i =new Intent(getApplicationContext(),ForgotPass.class);
+                startActivity(i);
             }
         });
         //Listener for new account creation
@@ -172,7 +174,7 @@ public class MainActivity extends Activity {
 
 */
                                 sessionManager.createLoginSession(FirstName, LastName, College, Branch, Year, Email, MobileNo, Sex);
-                             //   Toast.makeText(getApplicationContext(), "Received ", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "Received ", Toast.LENGTH_SHORT).show();
 
                             } else {
                                 pr.dismiss();

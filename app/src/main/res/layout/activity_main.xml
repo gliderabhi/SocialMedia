@@ -164,6 +164,7 @@
     android:layout_marginTop="10dp"
     android:background="@drawable/edit_text_custom"
     android:hint="Email"
+    android:inputType="textEmailAddress"
     android:gravity="center"
     android:id="@+id/LoginEmail"/>
 

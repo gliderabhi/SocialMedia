@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_forgot_pass"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.munnasharma.socialmedia.ForgotPass">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/Forgot_password_text"
+        android:text="Please select your security question "
+        android:textSize="20dp"
+        android:fontFamily="serif"
+        android:layout_marginTop="90dp"
+        android:layout_marginLeft="30dp"/>
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/Forgot_password_text"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:background="@drawable/edit_text_custom"
+        android:id="@+id/EmailAddress"
+        />
+    <Spinner
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/SecurityQuestionForgot"
+        android:layout_below="@+id/EmailAddress"
+        android:layout_marginTop="30dp"
+        />
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/SecurityQuestionForgot"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:hint="Security Answer"
+        android:background="@drawable/edit_text_custom"
+        android:id="@+id/SecurityAnswerForgot"
+        />
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/SecurityAnswerForgot"
+        android:layout_marginTop="20dp"
+        android:inputType="textPassword"
+        android:background="@drawable/edit_text_custom"
+        android:layout_centerHorizontal="true"
+        android:hint="Old Password"
+        android:id="@+id/OldPassword"
+
+        />
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btncustom"
+        android:text="Submit"
+        android:layout_below="@+id/OldPassword"
+        android:layout_centerHorizontal="true"
+        android:textColor="#fff"
+        android:id="@+id/ResetPassButton"
+        android:layout_marginTop="40dp"
+        />
+</RelativeLayout>

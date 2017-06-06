@@ -1,12 +1,13 @@
 package com.example.munnasharma.socialmedia;
 
+import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class SignUpPage3 extends AppCompatActivity {
+public class SignUpPage3 extends Activity {
 
     private Button resendLink;
     @Override
