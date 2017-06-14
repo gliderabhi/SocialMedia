@@ -38,7 +38,7 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
      private StudentDetails studentDetails;
     private Spinner Branchspinner;
      private CheckBox MaleBox,FemaleBox;
-    private String firstname,lastName,college,branch,email,mobileNo,sex,year;
+    private String firstname,lastName,college,branch,email,mobileNo,sex,year,mail,colege,mobile_no,f_name,l_name,sx;
     private EditText FirstName,LastName,College,Email,MobileNo,Year;
      private ProgressDialog pr;
     private String [] Branches={
@@ -65,7 +65,15 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up1);
 
-        //Variable initialixzation
+        //get intent data
+        mail=getIntent().getStringExtra("Email");
+        mobile_no=getIntent().getStringExtra("ContactNo");
+        colege=getIntent().getStringExtra("College");
+        sx=getIntent().getStringExtra("sex");
+        f_name=getIntent().getStringExtra("FirstName");
+        l_name=getIntent().getStringExtra("LastName");
+
+        //Variable initialization
         NextPage = (Button) findViewById(R.id.NextPage);
         FirstName = (EditText) findViewById(R.id.FirstNameTextField);
         LastName = (EditText) findViewById(R.id.LastNameTextField);
@@ -81,7 +89,7 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
        Branchspinner.setAdapter(adapter);
        Branchspinner.setOnItemSelectedListener(this);
         // set all fields to be empty
-        emptyfields();
+        fillFields();
         //Add Listenr for checkBoxes ,Only one is to be checked
         MaleBox.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,13 +194,20 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
        }
    }
     // set the fields to empty
-    private void emptyfields(){
-        FirstName.setText("");
-        LastName.setText("");
-        College.setText("");
-        MobileNo.setText("");
-        Email.setText("");
+    private void fillFields(){
+        FirstName.setText(f_name);
+        LastName.setText(l_name);
+        College.setText(colege);
+        MobileNo.setText(mobile_no);
+        Email.setText(mail);
         Year.setText("");
+        if((sx.matches("male")) ){
+           MaleBox.setChecked(true);
+            FemaleBox.setChecked(false);
+        }else if(sx.matches("female")){
+            FemaleBox.setChecked(true);
+            MaleBox.setChecked(false);
+        }
     }
 
     public String getEmailDomain() {

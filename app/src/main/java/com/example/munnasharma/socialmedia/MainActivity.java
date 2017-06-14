@@ -5,12 +5,9 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -24,9 +21,14 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.Volley;
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -40,17 +42,18 @@ import java.security.Signature;
 import java.util.Arrays;
 
 public class MainActivity extends Activity  {
-
+//declare variables
      private Intent i;
     private EditText Email,Password;
     private Button LoginBtn;
     private ImageView linkedInImg,gmailImg,twitterImg;
-    private String email,password;
+    private String email,password,sex,f_name,l_name,id;
     private TextView CreateAccount,forgotPass;
     private SessionManager sessionManager;
     private ProgressDialog pr;
     private LoginButton fbImg;
     private CallbackManager callbackManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,32 +75,81 @@ public class MainActivity extends Activity  {
         twitterImg=(ImageView)findViewById(R.id.TwitterImg);
         fbImg = (LoginButton) findViewById(R.id.FbImg);
         fbImg.setReadPermissions("email");
+
+        //for facebook
+        FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
 
+        //set progress dialog
+        pr=new ProgressDialog(MainActivity.this);
+        pr.setMessage("Logging you in ,please wait");
+        pr.setIndeterminate(false);
+        pr.setCancelable(false);
 
+//get data from profile
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        pr.show();
+                        Profile profile = Profile.getCurrentProfile();
+                        if (profile != null) {
+                            String id = profile.getId();
+                            f_name = profile.getFirstName();
+                            l_name = profile.getLastName();
+                        }
+                        //Toast.makeText(FacebookLogin.this,"Wait...",Toast.LENGTH_SHORT).show();
+                        GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(),
+                                new GraphRequest.GraphJSONObjectCallback() {
+                                    @Override
+                                    public void onCompleted(JSONObject object, GraphResponse response) {
+                                        try {
+                                            email = object.getString("email");
+                                            sex = object.getString("gender");
+                                            long fb_id = object.getLong("id"); //use this for logout
+                                            i = new Intent(getApplicationContext(), SignUp1.class);
+                                            i.putExtra("Email", email);
+                                            i.putExtra("sex", sex);
+                                            i.putExtra("FirstName", f_name);
+                                            i.putExtra("LastName", l_name);
+                                            i.putExtra("ContactNo", "");
+                                            i.putExtra("College", "");
+                                            pr.dismiss();
+                                            startActivity(i);
+                                            finish();
+                                        } catch (JSONException e) {
+                                            // TODO Auto-generated catch block
+                                            //  e.printStackTrace();
+                                        }
 
-      //  LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+                                    }
+
+                                });
+
+                        request.executeAsync();
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        Toast.makeText(MainActivity.this, "Login cancelled", Toast.LENGTH_SHORT).show();
+                        pr.dismiss();
+
+                    }
+
+                    @Override
+                    public void onError(FacebookException e) {
+                        Toast.makeText(MainActivity.this, "Login error please try again later", Toast.LENGTH_SHORT).show();
+                        pr.dismiss();
+
+                    }
+        });
+
+      //add click listener for fb button
+                    //  LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
 fbImg.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View v) {
+        LoginManager.getInstance().logInWithReadPermissions(MainActivity.this, Arrays.asList("public_profile", "user_friends", "email"));
 
-        fbImg.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                String name=loginResult.getAccessToken().getUserId();
-                String user=loginResult.getAccessToken().getToken();
-            }
-
-            @Override
-            public void onCancel() {
-
-            }
-
-            @Override
-            public void onError(FacebookException e) {
-
-            }
-        });
     }
 });
 
@@ -133,6 +185,12 @@ fbImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 i=new Intent(getApplicationContext(),SignUp1.class);
+                i.putExtra("Email","");
+                i.putExtra("sex","");
+                i.putExtra("FirstName","");
+                i.putExtra("LastName","");
+                i.putExtra("ContactNo","");
+                i.putExtra("College","");
                 startActivity(i);
             }
         });
