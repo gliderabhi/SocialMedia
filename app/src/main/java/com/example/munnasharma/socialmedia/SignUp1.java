@@ -21,8 +21,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
@@ -318,6 +320,11 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
             RequestQueue queue = Volley.newRequestQueue(SignUp1.this);
             queue.add(registerRequest);
 
+
+            int socketTimeout = 30000;//30 seconds - change to what you want
+            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+            registerRequest.setRetryPolicy(policy);
+            queue.add(registerRequest);
         }
         return  success;
     }

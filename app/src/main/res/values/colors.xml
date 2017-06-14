@@ -4,5 +4,11 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+        <color name="grey_light">#FFCCCCCC</color>
+        <color name="dark">#4b4b4b</color>
+        <color name="facebook">#3b5998</color>
+        <color name="twitter">#55ACEE</color>
+        <color name="linkedin">#287bbc</color>
+
     <color name="black_overlay">#66000000</color>
 </resources>

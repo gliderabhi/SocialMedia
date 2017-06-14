@@ -3,5 +3,8 @@
 
     <string name="title_activity_sign__in">Sign_In</string>
     <string name="dummy_button">Dummy Button</string>
+    <string name="facebook_app_id">
+            150598665484023
+        </string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

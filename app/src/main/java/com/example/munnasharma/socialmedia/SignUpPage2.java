@@ -17,8 +17,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
@@ -197,6 +199,11 @@ public class SignUpPage2 extends Activity  implements  AdapterView.OnItemSelecte
             RequestQueue queue = Volley.newRequestQueue(SignUpPage2.this);
             queue.add(masterRegisterReq);
 
+
+            int socketTimeout = 30000;//30 seconds timeout defined
+            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+            masterRegisterReq.setRetryPolicy(policy);
+            queue.add(masterRegisterReq);
         }
         return  success;
     }

@@ -13,10 +13,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
@@ -24,6 +27,7 @@ import org.json.JSONObject;
 
 public class NextPageForgotPass extends Activity {
 
+     private TextView txt;
     private EditText pass1,pass2;
     private  String Pass1,Pass2,email;
     private Button changePass;
@@ -35,7 +39,7 @@ public class NextPageForgotPass extends Activity {
         pass1=(EditText)findViewById(R.id.Pass1);
         pass2=(EditText)findViewById(R.id.Pass2);
         changePass=(Button)findViewById(R.id.ChangPassword);
-
+         txt=(TextView)findViewById(R.id.TextPassNew);
          //get intetn data
         email=getIntent().getStringExtra("Email");
         //button click listener
@@ -151,6 +155,11 @@ public class NextPageForgotPass extends Activity {
             RequestQueue queue = Volley.newRequestQueue(NextPageForgotPass.this);
             queue.add(forgotPass);
 
+
+            int socketTimeout = 30000;//30 seconds set timeout
+            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+            forgotPass.setRetryPolicy(policy);
+            queue.add(forgotPass);
         }
 
     }

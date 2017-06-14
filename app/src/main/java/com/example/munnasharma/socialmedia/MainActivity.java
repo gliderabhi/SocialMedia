@@ -5,36 +5,57 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.Volley;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MainActivity extends Activity {
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.Signature;
+import java.util.Arrays;
+
+public class MainActivity extends Activity  {
 
      private Intent i;
     private EditText Email,Password;
     private Button LoginBtn;
+    private ImageView linkedInImg,gmailImg,twitterImg;
     private String email,password;
     private TextView CreateAccount,forgotPass;
     private SessionManager sessionManager;
     private ProgressDialog pr;
+    private LoginButton fbImg;
+    private CallbackManager callbackManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Set up sesion manager to know if the user is already logged in
+ //Set up sesion manager to know if the user is already logged in
         sessionManager=new SessionManager(getApplicationContext());
         if(sessionManager.isLoggedIn()){
             //Show Logged in , later open the profile straight away
@@ -46,7 +67,39 @@ public class MainActivity extends Activity {
         Email=(EditText)findViewById(R.id.LoginEmail);
         forgotPass=(TextView)findViewById(R.id.ForgotPassText);
         Password=(EditText)findViewById(R.id.LoginPAassword);
+        linkedInImg=(ImageView)findViewById(R.id.LinedInImg);
+        gmailImg=(ImageView)findViewById(R.id.GmailImg);
+        twitterImg=(ImageView)findViewById(R.id.TwitterImg);
+        fbImg = (LoginButton) findViewById(R.id.FbImg);
+        fbImg.setReadPermissions("email");
+        callbackManager = CallbackManager.Factory.create();
 
+
+
+      //  LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+fbImg.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+
+        fbImg.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                String name=loginResult.getAccessToken().getUserId();
+                String user=loginResult.getAccessToken().getToken();
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException e) {
+
+            }
+        });
+    }
+});
 
         //Set EditText as empty
          Email.setText("");
@@ -59,7 +112,9 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                // Toast.makeText(getApplicationContext(),"Logged In",Toast.LENGTH_LONG).show();
                // Add Login function
+
                 ServerConnection();
+
             }
         });
 
@@ -83,7 +138,11 @@ public class MainActivity extends Activity {
         });
 
 
+
+
     }
+
+
 
     //Check for network connection
     private boolean haveNetworkConnection() {
@@ -197,10 +256,19 @@ public class MainActivity extends Activity {
                 RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
                 queue.add(loginRequest);
 
+                int socketTimeout = 30000;//30 seconds - change to what you want
+                RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+                loginRequest.setRetryPolicy(policy);
+                queue.add(loginRequest);
             }
         }
     }
 
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
 
     @Override
     public void onBackPressed() {

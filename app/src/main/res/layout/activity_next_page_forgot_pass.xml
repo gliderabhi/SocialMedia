@@ -5,8 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.munnasharma.socialmedia.NextPageForgotPass">
-
-    <TextView
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/TextPassNew"
@@ -44,8 +49,11 @@
         android:text="Change password"
         android:layout_centerHorizontal="true"
         android:textColor="#fff"
-        android:id="@+id/ChangPassword"
         android:background="@drawable/btncustom"
+        android:id="@+id/ChangPassword"
         android:layout_marginTop="40dp"
         />
+    </RelativeLayout>
+
+</ScrollView>
 </RelativeLayout>
