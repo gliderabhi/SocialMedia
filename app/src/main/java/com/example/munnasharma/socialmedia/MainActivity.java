@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -32,6 +34,13 @@ import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,7 +50,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
 import java.util.Arrays;
 
-public class MainActivity extends Activity  {
+public class MainActivity extends Activity {
 //declare variables
      private Intent i;
     private EditText Email,Password;
@@ -51,9 +60,11 @@ public class MainActivity extends Activity  {
     private TextView CreateAccount,forgotPass;
     private SessionManager sessionManager;
     private ProgressDialog pr;
+    private    SignInButton signInButton;
     private LoginButton fbImg;
+    private GoogleApiClient mGoogleApiClient;
     private CallbackManager callbackManager;
-
+    private  GoogleSignInOptions gso;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,10 +82,34 @@ public class MainActivity extends Activity  {
         forgotPass=(TextView)findViewById(R.id.ForgotPassText);
         Password=(EditText)findViewById(R.id.LoginPAassword);
         linkedInImg=(ImageView)findViewById(R.id.LinedInImg);
-        gmailImg=(ImageView)findViewById(R.id.GmailImg);
-        twitterImg=(ImageView)findViewById(R.id.TwitterImg);
+         twitterImg=(ImageView)findViewById(R.id.TwitterImg);
         fbImg = (LoginButton) findViewById(R.id.FbImg);
         fbImg.setReadPermissions("email");
+
+        signInButton = (SignInButton) findViewById(R.id.GmailImg);
+        signInButton.setSize(SignInButton.SIZE_STANDARD);
+
+        //Gmail Login
+        // Build a GoogleApiClient with access to the Google Sign-In API and the
+// options specified by gso.
+
+        signInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestEmail()
+                        .build();
+                mGoogleApiClient = new GoogleApiClient.Builder(MainActivity.this)
+                        .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                        .build();
+
+                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+                startActivityForResult(signInIntent, 0);
+
+            }
+        });
+
+
 
         //for facebook
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -119,6 +154,7 @@ public class MainActivity extends Activity  {
                                         } catch (JSONException e) {
                                             // TODO Auto-generated catch block
                                             //  e.printStackTrace();
+                                            pr.dismiss();
                                         }
 
                                     }
@@ -326,7 +362,36 @@ fbImg.setOnClickListener(new View.OnClickListener() {
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == 0) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
+        }
     }
+    private void handleSignInResult(GoogleSignInResult result) {
+        Log.d("Login result", "handleSignInResult:" + result.isSuccess());
+        if (result.isSuccess()) {
+            // Signed in successfully, show authenticated UI.
+            GoogleSignInAccount acct = result.getSignInAccount();
+            f_name=acct.getDisplayName();
+            email=acct.getEmail();
+            l_name=acct.getDisplayName();
+            i=new Intent(getApplicationContext(),SignUp1.class);
+            i.putExtra("Email",email);
+            i.putExtra("sex","");
+            i.putExtra("FirstName",f_name);
+            i.putExtra("LastName",l_name);
+            i.putExtra("ContactNo","");
+            i.putExtra("College","");
+            startActivity(i);
+            //updateUI(true);
+        } else {
+            // Signed out, show unauthenticated UI.
+        //    updateUI(false);
+        }
+    }
+
+
 
     @Override
     public void onBackPressed() {

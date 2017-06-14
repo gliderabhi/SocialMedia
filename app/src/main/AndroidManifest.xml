@@ -17,8 +17,8 @@
         android:theme="@style/Theme.NoTitle">
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"
-            />
+            android:value="@string/facebook_app_id" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +31,9 @@
         <activity android:name=".SignUpPage3" />
         <activity android:name=".ForgotPass" />
         <activity android:name=".ProfilePage" />
-        <activity android:name=".NextPageForgotPass"></activity>
+        <activity android:name=".NextPageForgotPass" />
+
+
     </application>
 
 </manifest>

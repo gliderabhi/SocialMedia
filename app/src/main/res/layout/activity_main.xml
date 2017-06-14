@@ -230,16 +230,16 @@
         android:layout_marginLeft="30dp"
         android:layout_marginTop="20dp"
         />
-    <ImageView
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/GmailImg"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:id="@+id/GmailImg"
-        android:src="@drawable/gmail"
         android:layout_toRightOf="@+id/LinedInImg"
         android:layout_below="@+id/LoginOptionText"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="20dp"
         />
+
     <ImageView
         android:layout_width="30dp"
         android:layout_height="30dp"
