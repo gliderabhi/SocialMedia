@@ -8,8 +8,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -38,20 +36,21 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.linkedin.platform.APIHelper;
+import com.linkedin.platform.LISessionManager;
+import com.linkedin.platform.errors.LIAuthError;
+import com.linkedin.platform.listeners.AuthListener;
+import com.linkedin.platform.utils.Scope;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.Signature;
 import java.util.Arrays;
 
 public class MainActivity extends Activity {
 //declare variables
+    private AccessToken accessToken;
      private Intent i;
     private EditText Email,Password;
     private Button LoginBtn;
@@ -109,9 +108,32 @@ public class MainActivity extends Activity {
             }
         });
 
+    linkedInImg.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            //Linkedin Session
+            //If logged in linkedin
+             AccessToken accessToken;
+            LISessionManager.getInstance(getApplicationContext()).init();
+
+            LISessionManager.getInstance(getApplicationContext()).init(this, buildScope(), new AuthListener() {
+                @Override
+                public void onAuthSuccess() {
+                    // Authentication was successful.  You can now do
+                    // other calls with the SDK.
+                }
+
+                @Override
+                public void onAuthError(LIAuthError error) {
+                    // Handle authentication errors
+                }
+            }, true);
 
 
-        //for facebook
+        }
+    });
+
+    //for facebook
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
 
@@ -137,18 +159,19 @@ public class MainActivity extends Activity {
                                 new GraphRequest.GraphJSONObjectCallback() {
                                     @Override
                                     public void onCompleted(JSONObject object, GraphResponse response) {
+
+                                        pr.dismiss();
+
                                         try {
                                             email = object.getString("email");
-                                            sex = object.getString("gender");
                                             long fb_id = object.getLong("id"); //use this for logout
                                             i = new Intent(getApplicationContext(), SignUp1.class);
                                             i.putExtra("Email", email);
-                                            i.putExtra("sex", sex);
+                                            i.putExtra("sex", "");
                                             i.putExtra("FirstName", f_name);
                                             i.putExtra("LastName", l_name);
                                             i.putExtra("ContactNo", "");
                                             i.putExtra("College", "");
-                                            pr.dismiss();
                                             startActivity(i);
                                             finish();
                                         } catch (JSONException e) {
@@ -361,12 +384,22 @@ fbImg.setOnClickListener(new View.OnClickListener() {
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        //Facebook ativity result
         callbackManager.onActivityResult(requestCode, resultCode, data);
+
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == 0) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         }
+
+       //Linked in activity result
+        if(requestCode==1) {
+            LISessionManager.getInstance(getApplicationContext()).onActivityResult(this, requestCode, resultCode, data);
+        }
+
+
     }
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d("Login result", "handleSignInResult:" + result.isSuccess());
@@ -396,9 +429,15 @@ fbImg.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onBackPressed() {
         pr.dismiss();
+       //if linkedin api running
+        APIHelper apiHelper = APIHelper.getInstance(getApplicationContext());
+        apiHelper.cancelCalls(this);
        Toast.makeText(getApplicationContext(),"Login Failed Please try again ",Toast.LENGTH_SHORT).show();
     }
-
+    // Build the list of member permissions our LinkedIn session requires
+    private static Scope buildScope() {
+        return Scope.build(Scope.R_BASICPROFILE, Scope.W_SHARE);
+    }
 
 
 }
