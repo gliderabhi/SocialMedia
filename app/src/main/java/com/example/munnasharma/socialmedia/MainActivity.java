@@ -183,20 +183,18 @@ public class MainActivity extends Activity {
 
                                         if (BuildConfig.DEBUG) {
                                             FacebookSdk.setIsDebugEnabled(true);
-                                            FacebookSdk
-                                                    .addLoggingBehavior(LoggingBehavior.INCLUDE_ACCESS_TOKENS);
+                                            FacebookSdk.addLoggingBehavior(LoggingBehavior.INCLUDE_ACCESS_TOKENS);
 
-                                            System.out
-                                                    .println("AccessToken.getCurrentAccessToken()"
-                                                            + AccessToken
-                                                            .getCurrentAccessToken()
-                                                            .toString());
                                             Profile.getCurrentProfile().getId();
                                             Profile.getCurrentProfile().getFirstName();
                                             Profile.getCurrentProfile().getLastName();
                                            f_name=Profile.getCurrentProfile().getFirstName().toString();
                                            l_name=Profile.getCurrentProfile().getLastName().toString();
                                             email=Profile.getCurrentProfile().getLinkUri().toString();
+                                            if(Checkusr(email)){
+                                                i=new Intent(getApplicationContext(),Profile.class);
+                                                startActivity(i);
+                                            }else{
                                               i=new Intent(MainActivity.this,SignUp1.class);
                                             i.putExtra("Email",email);
                                             i.putExtra("sex","");
@@ -206,7 +204,9 @@ public class MainActivity extends Activity {
                                             i.putExtra("College","");
                                             startActivity(i);
                                            }
+                                        }
                                     }
+
                                 });
                         request.executeAsync();
                     }
@@ -310,7 +310,8 @@ fbImg.setOnClickListener(new View.OnClickListener() {
         return haveConnectedWifi || haveConnectedMobile;
     }
 
-    private void ServerConnection(){
+    private void ServerConnection()
+    {
 
         //call network check
         boolean network = haveNetworkConnection();
@@ -441,6 +442,12 @@ fbImg.setOnClickListener(new View.OnClickListener() {
             String personFamilyName = acct.getFamilyName();
             String personEmail = acct.getEmail();
             String personId = acct.getId();
+
+            if(Checkusr(personEmail)){
+
+                i=new Intent(getApplicationContext(),ProfilePage.class);
+                startActivity(i);
+            }else{
             i=new Intent(getApplicationContext(),SignUp1.class);
             i.putExtra("Email",personEmail);
             i.putExtra("sex","");
@@ -449,6 +456,7 @@ fbImg.setOnClickListener(new View.OnClickListener() {
             i.putExtra("ContactNo","");
             i.putExtra("College","");
             startActivity(i);
+            }
             //updateUI(true);
         } else {
             // Signed out, show unauthenticated UI.
@@ -493,6 +501,75 @@ public void onResume() {
         super.onDestroy();
         accessTokenTracker.stopTracking();
         profTrack.stopTracking();
+    }
+
+    private boolean stmt;
+    //check if user exists on db
+    private boolean Checkusr(String mail){
+
+        //call network check
+        boolean network = haveNetworkConnection();
+        if (!network) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setMessage("Please check your internet connection ")
+                    .setNegativeButton("Retry",null)
+                    .create()
+                    .show();
+        }
+
+        if (network) {
+            pr.setMessage("Checking credentials , Please wait ");
+           pr.show();
+
+            Response.Listener<String> responseListener = new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+
+                    Log.i("error", "message recieved ");
+                    response = response.replaceFirst("<font>.*?</font>", "");
+                    int jsonStart = response.indexOf("{");
+                    int jsonEnd = response.lastIndexOf("}");
+
+                    if (jsonStart >= 0 && jsonEnd >= 0 && jsonEnd > jsonStart) {
+                        response = response.substring(jsonStart, jsonEnd + 1);
+                    } else {
+
+                    }
+
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        boolean success = jsonResponse.getBoolean("success");
+
+                        if (success) {
+                            pr.dismiss();
+                            stmt=true;
+
+
+                        } else {
+                            pr.dismiss();
+                           stmt=false;
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+
+            UserExistReq userExistReq = new UserExistReq(mail, responseListener);
+            RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
+            queue.add(userExistReq);
+
+            int socketTimeout = 30000;//30 seconds - change to what you want
+            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+            userExistReq.setRetryPolicy(policy);
+            queue.add(userExistReq);
+        }
+
+
+return stmt;
     }
 }
 
