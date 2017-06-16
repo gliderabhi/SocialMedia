@@ -12,7 +12,7 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/student"
-        android:label="Student Companion"
+        android:label="Cazime"
         android:supportsRtl="true"
         android:theme="@style/Theme.NoTitle">
         <meta-data

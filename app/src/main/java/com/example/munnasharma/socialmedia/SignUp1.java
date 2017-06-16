@@ -207,6 +207,10 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
         }else if(sx.matches("female")){
             FemaleBox.setChecked(true);
             MaleBox.setChecked(false);
+        }else{
+
+            FemaleBox.setChecked(false);
+            MaleBox.setChecked(false);
         }
     }
 

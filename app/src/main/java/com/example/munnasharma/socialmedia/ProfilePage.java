@@ -1,9 +1,10 @@
 package com.example.munnasharma.socialmedia;
 
+import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class ProfilePage extends AppCompatActivity {
+public class ProfilePage extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
