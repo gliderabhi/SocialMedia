@@ -5,6 +5,12 @@ package com.example.munnasharma.socialmedia;
  */
 
 public class Const {
+    public static final String [] questions={
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+    };
     public static final String [] Branches={
             "Chemistry(apc)",
             "Physicss(app)",
@@ -29,6 +35,7 @@ public class Const {
     public static final String LastName="LastName";
     public static final String MobileNo="ContactNo";
     public static final String Year="Year";
+    public static final String Password="Password";
     public static final String College="College";
     public static final String sex="sex";
     public  static final String fill_Mob= "Fill in Mobile No ";
@@ -45,6 +52,9 @@ public class Const {
     public static  final String FourthYear= "Fourth Year";
     public static  final String MTech= "M.Tech";
     public static final String Phd="P.H.D";
+    public static final String fill_pass="please fill in the password";
+    public static final String fill_securityQuestion="Please fill the security answer";
+    public static final String selectOption="Please Select one of the options";
     public static final String checkInternet="Please check your internet connection ";
     public static final String branch="Branch";
     public static final String Success="success";
@@ -65,6 +75,9 @@ public class Const {
     public static final String urlBce="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/bce.php";
     public static final String urlPhe="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/phe.php";
     public static final String urlChe="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/che.php";
+    public static final String Change_pass_REQUEST_URL = "http://cazimegliderabhi.000webhostapp.com/ChangePass.php";
+    public static final String FORGOT_PASS_REQUEST_URL = "http://cazimegliderabhi.000webhostapp.com/ForgotPassFile.php";
+    public static final String LOGIN_REQUEST_URL = "http://cazimegliderabhi.000webhostapp.com/MasterLoginFile.php";
 
 
 

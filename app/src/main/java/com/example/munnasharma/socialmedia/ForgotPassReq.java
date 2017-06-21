@@ -12,13 +12,12 @@ import java.util.Map;
  */
 
 public class ForgotPassReq extends StringRequest {
-    private static final String LOGIN_REQUEST_URL = "http://cazimegliderabhi.000webhostapp.com/ForgotPassFile.php";
     private Map<String, String> params;
     public ForgotPassReq(String email,String sq, String sa,String pass, Response.Listener<String> listener) {
-        super(Request.Method.POST, LOGIN_REQUEST_URL, listener, null);
+        super(Request.Method.POST, Const.FORGOT_PASS_REQUEST_URL, listener, null);
         params = new HashMap<>();
         params.put("SecurityQuestion", sq);
-        params.put("Email",email);
+        params.put(Const.Email,email);
         params.put("OldPass",pass);
         params.put("SecurityAnswer", sa);
     }

@@ -30,12 +30,7 @@ public class ForgotPass extends Activity implements  AdapterView.OnItemSelectedL
     private Spinner securityq;
     private EditText securitya,OldPass,Email;
    private  String SecurityQ,SecurityA,oldPAss,email;
-    String [] questions={
-            "q1",
-            "q2",
-            "q3",
-            "q4",
-    };
+
     private Button resetPass;
 
 
@@ -51,7 +46,7 @@ public class ForgotPass extends Activity implements  AdapterView.OnItemSelectedL
         OldPass=(EditText)findViewById(R.id.OldPassword);
         Email=(EditText)findViewById(R.id.EmailAddress);
         //Setup the spinner or dropdown menu
-        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,questions);
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,Const.questions);
         securityq.setAdapter(adapter);
         securityq.setOnItemSelectedListener(this);
 
@@ -68,19 +63,19 @@ public class ForgotPass extends Activity implements  AdapterView.OnItemSelectedL
                          if(!email.matches("")){
                              OpenCheck();
                          }else{
-                             Toast.makeText(getApplicationContext(),"Please fill the email",Toast.LENGTH_SHORT).show();
+                             Toast.makeText(getApplicationContext(),Const.fill_Email,Toast.LENGTH_SHORT).show();
 
                          }
                       }else{
-                          Toast.makeText(getApplicationContext(),"Please fill the password",Toast.LENGTH_SHORT).show();
+                          Toast.makeText(getApplicationContext(),Const.fill_pass,Toast.LENGTH_SHORT).show();
                       }
                    }else{
-                       Toast.makeText(getApplicationContext(),"Please fill the security answer ",Toast.LENGTH_SHORT).show();
+                       Toast.makeText(getApplicationContext(),Const.fill_securityQuestion,Toast.LENGTH_SHORT).show();
 
                    }
                 }
                 else{
-                        Toast.makeText(getApplicationContext(),"Please Select one of the options ",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),Const.selectOption,Toast.LENGTH_SHORT).show();
                     }
 
 
@@ -91,13 +86,13 @@ public class ForgotPass extends Activity implements  AdapterView.OnItemSelectedL
 //Get Data of the drop down menu
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        SecurityQ=questions[position];
+        SecurityQ=Const.questions[position];
 
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        Toast.makeText(getApplicationContext(),"Please Select one of the options ",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(),Const.selectOption,Toast.LENGTH_SHORT).show();
     }
 
     private ProgressDialog pr;
@@ -128,7 +123,7 @@ public class ForgotPass extends Activity implements  AdapterView.OnItemSelectedL
         if (!network) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(ForgotPass.this);
-            builder.setMessage("Please check your internet connection ")
+            builder.setMessage(Const.checkInternet)
                     .setNegativeButton("Retry",null)
                     .create()
                     .show();
@@ -162,7 +157,7 @@ public class ForgotPass extends Activity implements  AdapterView.OnItemSelectedL
                         if (success) {
                             pr.dismiss();
                             Intent i = new Intent(getApplicationContext(), NextPageForgotPass.class);
-                            i.putExtra("Email",email);
+                            i.putExtra(Const.Email,email);
                             startActivity(i);
                           //Check if data is receievd andsame as provided at time of signup
                             //Toast.makeText(getApplicationContext(), "recieved ", Toast.LENGTH_SHORT).show();
