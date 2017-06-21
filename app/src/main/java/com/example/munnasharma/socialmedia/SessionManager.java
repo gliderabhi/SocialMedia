@@ -14,14 +14,14 @@ public class SessionManager {
     int PRIVATE_MODE = 0;
     private static final String PREF_NAME = "StudentLoginDetails";
     private static final String IS_LOGIN = "IsLoggedIn";
-    public static final String KEY_NAME = "FirstName";
-    public static final String KEY_EMAIL = "Email";
-    public static final String KEY_LASTNAME="LastName";
-    public static final String KEY_CONTACT="MobileNo";
-    public  static final String KEY_BRANCH="Branch";
-    public  static final String KEY_COLLEGE="College";
-    public  static final String KEY_Year="Year";
-    public  static final String KEY_Sex="Sex";
+    public static final String KEY_NAME = Const.FirstName;
+    public static final String KEY_EMAIL =Const.Email;
+    public static final String KEY_LASTNAME=Const.LastName;
+    public static final String KEY_CONTACT=Const.MobileNo;
+    public  static final String KEY_BRANCH=Const.branch;
+    public  static final String KEY_COLLEGE=Const.College;
+    public  static final String KEY_Year=Const.Year;
+    public  static final String KEY_Sex=Const.sex;
 
 
     public SessionManager(Context context){

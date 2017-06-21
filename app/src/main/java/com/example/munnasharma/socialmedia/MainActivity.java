@@ -55,16 +55,17 @@ public class MainActivity extends Activity {
     private ImageView linkedInImg,gmailImg,twitterImg;
     private String email,password,sex,f_name,l_name,id,contact;
     private TextView CreateAccount,forgotPass;
-    private SessionManager sessionManager;
     private ProgressDialog pr;
     private    SignInButton signInButton;
     private LoginButton fbImg;
+    private StudentDetails studentDetails;
     private GoogleApiClient mGoogleApiClient;
     private CallbackManager callbackManager;
     private  GoogleSignInOptions gso;
     private AccessTokenTracker accessTokenTracker;
     private ProfileTracker profTrack;
     private FacebookCallback<LoginResult> mFacebookCallback;
+    private SessionManager sessionManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,7 +84,7 @@ public class MainActivity extends Activity {
         Password=(EditText)findViewById(R.id.LoginPAassword);
         linkedInImg=(ImageView)findViewById(R.id.LinedInImg);
         fbImg = (LoginButton) findViewById(R.id.FbImg);
-
+        studentDetails =new StudentDetails();
 
         signInButton = (SignInButton) findViewById(R.id.GmailImg);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
@@ -132,7 +133,8 @@ public class MainActivity extends Activity {
 
         }
     });
-*/
+    */
+
     //for facebook
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
@@ -196,13 +198,15 @@ public class MainActivity extends Activity {
                                                 startActivity(i);
                                             }else{
                                               i=new Intent(MainActivity.this,SignUp1.class);
-                                            i.putExtra("Email",email);
-                                            i.putExtra("sex","");
-                                            i.putExtra("FirstName",f_name);
-                                            i.putExtra("LastName",l_name);
-                                            i.putExtra("ContactNo","");
-                                            i.putExtra("College","");
-                                            startActivity(i);
+                                            i.putExtra(Const.Email,email);
+                                            i.putExtra(Const.sex,"");
+                                            i.putExtra(Const.FirstName,f_name);
+                                            i.putExtra(Const.LastName,l_name);
+                                            i.putExtra(Const.MobileNo,"");
+                                            i.putExtra(Const.College,"");
+                                             //save shared preferences
+                                                sessionManager.createLoginSession(f_name, l_name, "", "", "", email, "", "");
+                                                  startActivity(i);
                                            }
                                         }
                                     }
@@ -264,7 +268,7 @@ fbImg.setOnClickListener(new View.OnClickListener() {
         forgotPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"Bhai Bacha le ",Toast.LENGTH_LONG).show();
+             //   Toast.makeText(getApplicationContext(),,Toast.LENGTH_LONG).show();
             //add method for password recovery
                 Intent i =new Intent(getApplicationContext(),ForgotPass.class);
                 startActivity(i);
@@ -275,12 +279,12 @@ fbImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 i=new Intent(getApplicationContext(),SignUp1.class);
-                i.putExtra("Email","");
-                i.putExtra("sex","");
-                i.putExtra("FirstName","");
-                i.putExtra("LastName","");
-                i.putExtra("ContactNo","");
-                i.putExtra("College","");
+                i.putExtra(Const.Email,"");
+                i.putExtra(Const.sex,"");
+                i.putExtra(Const.FirstName,"");
+                i.putExtra(Const.LastName,"");
+                i.putExtra(Const.MobileNo,"");
+                i.putExtra(Const.College,"");
                 startActivity(i);
             }
         });
@@ -379,9 +383,7 @@ fbImg.setOnClickListener(new View.OnClickListener() {
                              Intent intent = new Intent(MainActivity.this, ProfilePage.class);
                             startActivity(intent);
 
-
                                 sessionManager.createLoginSession(FirstName, LastName, College, Branch, Year, Email, MobileNo, Sex);
-                                Toast.makeText(getApplicationContext(), "Received ", Toast.LENGTH_SHORT).show();
 
                             } else {
                                 pr.dismiss();
@@ -442,6 +444,8 @@ fbImg.setOnClickListener(new View.OnClickListener() {
             String personFamilyName = acct.getFamilyName();
             String personEmail = acct.getEmail();
             String personId = acct.getId();
+            sessionManager.createLoginSession(personGivenName,personFamilyName, "", "", "", personEmail, "", "");
+
 
             if(Checkusr(personEmail)){
 

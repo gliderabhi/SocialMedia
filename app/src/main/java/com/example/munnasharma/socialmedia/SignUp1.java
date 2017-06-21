@@ -36,29 +36,12 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
 
     private Button NextPage;
      private StudentDetails studentDetails;
-    private Spinner Branchspinner;
+    private Spinner Branchspinner,YearSpinner;
      private CheckBox MaleBox,FemaleBox;
     private String firstname,lastName,college,branch,email,mobileNo,sex,year,mail,colege,mobile_no,f_name,l_name,sx;
     private EditText FirstName,LastName,College,Email,MobileNo,Year;
      private ProgressDialog pr;
-    private String [] Branches={
-            "Chemistry(apc)",
-            "Physicss(app)",
-            "Mathematics(apm)",
-            "Humanistic Sciences(hss)",
-            "Ceramic(cer)",
-            "Chemical(che)",
-            "Civil(civ)",
-            "Computer(cse)",
-            "Electrical(eee)",
-            "Electronics(ece)",
-            "Mechanical(mec)",
-            "Metallurgy(met)",
-            "Mining(min)",
-            "Pharmaceutics(phe)",
-            "Bio_Chemical(bce)",
-            "Bio Medical(bme)",
-            "Material Science And Technology(mst)"};
+    private boolean yes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,12 +49,12 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
         setContentView(R.layout.activity_sign_up1);
 
         //get intent data
-        mail=getIntent().getStringExtra("Email");
-        mobile_no=getIntent().getStringExtra("ContactNo");
-        colege=getIntent().getStringExtra("College");
-        sx=getIntent().getStringExtra("sex");
-        f_name=getIntent().getStringExtra("FirstName");
-        l_name=getIntent().getStringExtra("LastName");
+        mail=getIntent().getStringExtra(Const.Email);
+        mobile_no=getIntent().getStringExtra(Const.MobileNo);
+        colege=getIntent().getStringExtra(Const.College);
+        sx=getIntent().getStringExtra(Const.sex);
+        f_name=getIntent().getStringExtra(Const.FirstName);
+        l_name=getIntent().getStringExtra(Const.LastName);
 
         //Variable initialization
         NextPage = (Button) findViewById(R.id.NextPage);
@@ -82,12 +65,16 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
         MobileNo = (EditText) findViewById(R.id.MobileNoTextField);
         MaleBox = (CheckBox) findViewById(R.id.MaleCheckBox);
         FemaleBox = (CheckBox) findViewById(R.id.FemaleCheckBox);
-         Year=(EditText)findViewById(R.id.YearTextField);
          Branchspinner=(Spinner)findViewById(R.id.BranchSpinner);
+         YearSpinner=(Spinner)findViewById(R.id.YearSpinner);
 
-        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,Branches);
-       Branchspinner.setAdapter(adapter);
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,Const.Branches);
+        Branchspinner.setAdapter(adapter);
        Branchspinner.setOnItemSelectedListener(this);
+
+        adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,Const.years);
+        YearSpinner.setAdapter(adapter);
+        YearSpinner.setOnItemSelectedListener(this);
         // set all fields to be empty
         fillFields();
         //Add Listenr for checkBoxes ,Only one is to be checked
@@ -111,8 +98,8 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
                 //store values from the fields as string
                 // check if any field is empty and ask for refilling
 
-               if (!FirstName.getText().toString().matches("")) {
-                   firstname = FirstName.getText().toString();
+                if (!FirstName.getText().toString().matches("")) {
+                    firstname = FirstName.getText().toString();
 
                     if (!LastName.getText().toString().matches("")) {
                         lastName = LastName.getText().toString();
@@ -120,61 +107,64 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
                         if (!College.getText().toString().matches("")) {
                             college = College.getText().toString();
 
-                                if (!Email.getText().toString().matches("")) {
-                                    email = Email.getText().toString();
-                                    //Validate Email Address to be of iitbhu
+                            if (!Email.getText().toString().matches("")) {
+                                email = Email.getText().toString();
+                                //Validate Email Address to be of iitbhu
                                  /* if( getEmailDomain().matches("itbhu.ac.in") || getEmailDomain().matches("iitbhu.ac.in") ||  getEmailDomain().matches("itbhu.ac.in ") || getEmailDomain().matches("iitbhu.ac.in ")) {
                                        email = Email.getText().toString();
                                     } else{
                                         Toast.makeText(getApplicationContext(),"Please Enter a valid institute email id ",Toast.LENGTH_SHORT).show();
                                     }*/
-                                        if (!MobileNo.getText().toString().matches("")) {
-                                            mobileNo = MobileNo.getText().toString();
+                                if (!MobileNo.getText().toString().matches("")) {
+                                    mobileNo = MobileNo.getText().toString();
 
-                                            if(!Year.getText().toString().matches("")){
-                                                year=Year.getText().toString();
-                                            }else{
-
-                                                Toast.makeText(getApplicationContext(), "Fill in Year of college  ", Toast.LENGTH_SHORT).show();
-                                            }
-                                    } else {
-                                        Toast.makeText(getApplicationContext(), "Fill in Mobile No ", Toast.LENGTH_SHORT).show();
-                                    }
-
+                                    yes = true;
                                 } else {
-                                    Toast.makeText(getApplicationContext(), "Fill in Email ", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), Const.fill_Mob, Toast.LENGTH_SHORT).show();
+                                    yes = false;
                                 }
+
+                            } else {
+                                Toast.makeText(getApplicationContext(), Const.fill_Email, Toast.LENGTH_SHORT).show();
+                                yes = false;
+                            }
 
 
                         } else {
-                            Toast.makeText(getApplicationContext(), "Fill in College ", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), Const.fill_College, Toast.LENGTH_SHORT).show();
+                            yes = false;
                         }
 
                     } else {
-                        Toast.makeText(getApplicationContext(), "Fill in Last Name ", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), Const.fill_LastName, Toast.LENGTH_SHORT).show();
+                        yes = false;
                     }
 
                 } else {
-                    Toast.makeText(getApplicationContext(), "Fill in First Name ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), Const.fill_FirstName, Toast.LENGTH_SHORT).show();
+                    yes = false;
                 }
 
 
                 if (MaleBox.isChecked()) {
-                    sex = "Male";
+                    sex = Const.Male;
                 }
                 if (FemaleBox.isChecked()) {
-                    sex = "Female";
+                    sex = Const.Female;
                 }
                 // what to do next with the values
                 //Create student object
-                studentDetails=new StudentDetails(firstname,lastName,college,branch,year,email,mobileNo,sex);
+                studentDetails = new StudentDetails(firstname, lastName, college, branch, year, email, mobileNo, sex);
 
                 //Send to server add the add row to respective table
-                if(DataSend()) {
 
-                }
-                }
+               //if all fields set then only send data
+                if (yes) {
+                    if (DataSend()) {
 
+                    }
+                }
+            }
 
         });
 
@@ -200,7 +190,6 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
         College.setText(colege);
         MobileNo.setText(mobile_no);
         Email.setText(mail);
-        Year.setText("");
         if((sx.matches("male")) ){
            MaleBox.setChecked(true);
             FemaleBox.setChecked(false);
@@ -222,32 +211,94 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
     //methods for spinner
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        Toast.makeText(getApplicationContext(),"Please Select Some branch",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(),Const.fill_Branch_year,Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        switch(position){
-            case 0: branch="apc";break;
-            case 1: branch="app";break;
-            case 2: branch="apm";break;
-            case 3: branch="hss";break;
-            case 4: branch="cer";break;
-            case 5: branch="che";break;
-            case 6: branch="civ";break;
-            case 7: branch="cse";break;
-            case 8: branch="eee";break;
-            case 9: branch="ece";break;
-            case 10: branch="mec";break;
-            case 11: branch="met";break;
-            case 12: branch="min";break;
-            case 13: branch="phe";break;
-            case 14: branch="bce";break;
-            case 15: branch="bme";break;
-            case 16: branch="mst";break;
+       // find which spinner is used and get the data selected
+        switch(parent.getId()){
+        //for branches
+            case R.id.BranchSpinner:  switch (position) {
+                case 0:
+                    branch = "apc";
+                    break;
+                case 1:
+                    branch = "app";
+                    break;
+                case 2:
+                    branch = "apm";
+                    break;
+                case 3:
+                    branch = "hss";
+                    break;
+                case 4:
+                    branch = "cer";
+                    break;
+                case 5:
+                    branch = "che";
+                    break;
+                case 6:
+                    branch = "civ";
+                    break;
+                case 7:
+                    branch = "cse";
+                    break;
+                case 8:
+                    branch = "eee";
+                    break;
+                case 9:
+                    branch = "ece";
+                    break;
+                case 10:
+                    branch = "mec";
+                    break;
+                case 11:
+                    branch = "met";
+                    break;
+                case 12:
+                    branch = "min";
+                    break;
+                case 13:
+                    branch = "phe";
+                    break;
+                case 14:
+                    branch = "bce";
+                    break;
+                case 15:
+                    branch = "bme";
+                    break;
+                case 16:
+                    branch = "mst";
+                    break;
 
+            }
+                break;
+         //for year
+            case R.id.YearSpinner: switch (position) {
+                case 0:
+                    year =Const.FirstYear;
+                    break;
+                case 1:
+                    year = Const.SecondYear;
+                    break;
+                case 2:
+                    year =Const.ThirdYear;
+                    break;
+                case 3:
+                    branch =Const.FourthYear;
+                    break;
+                case 4:
+                    year =Const.MTech;
+                    break;
+                case 5:
+                    year = Const.Phd;
+                    break;
+
+            }
+                 break;
         }
-    }
+       }
 
     //Check Network Connection
     private boolean haveNetworkConnection() {
@@ -274,7 +325,7 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
         if (!network) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(SignUp1.this);
-            builder.setMessage("Please check your internet connection ")
+            builder.setMessage(Const.checkInternet)
                     .setNegativeButton("Retry",null)
                     .create()
                     .show();
@@ -305,7 +356,7 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
 
                     try {
                         JSONObject jsonResponse = new JSONObject(response);
-                        boolean success = jsonResponse.getBoolean("success");
+                        boolean success = jsonResponse.getBoolean(Const.Success);
 
 
                         if (success) {
@@ -313,8 +364,8 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
                            success=true;
 
                             Intent i = new Intent(getApplicationContext(), SignUpPage2.class);
-                            i.putExtra("email", email);
-                            i.putExtra("branch",branch);
+                            i.putExtra(Const.Email, email);
+                            i.putExtra(Const.branch,branch);
                             startActivity(i);
 
                            // Toast.makeText(getApplicationContext(),"Created ",Toast.LENGTH_SHORT).show();
@@ -358,23 +409,23 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
     private String getLoginUrl() {
        String url=null;
         switch (branch) {
-            case "app": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/app.php";break;
-            case "apc": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/apc.php";break;
-            case "apm": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/apm.php";break;
-            case "hss": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/hss.php";break;
-            case "cer": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/cer.php";break;
-            case "che": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/che.php";break;
-            case "civ": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/civ.php";break;
-            case "cse": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/cse.php";break;
-            case "eee": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/eee.php";break;
-            case "ece": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/ece.php";break;
-            case "mec": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/mec.php";break;
-            case "met": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/met.php";break;
-            case "min": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/min.php";break;
-            case "mst": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/mst.php";break;
-            case "bme": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/bme.php";break;
-            case "bce": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/bce.php";break;
-            case "phe": url="http://cazimegliderabhi.000webhostapp.com/RegisterFiles/phe.php";break;
+            case "app": url=Const.urlApp;break;
+            case "apc": url=Const.urlApc;break;
+            case "apm": url=Const.urlApm;break;
+            case "hss": url=Const.urlHss;break;
+            case "cer": url=Const.urlCer;break;
+            case "che": url=Const.urlChe;break;
+            case "civ": url=Const.urlCiv;break;
+            case "cse": url=Const.urlCse;break;
+            case "eee": url=Const.urlEee;break;
+            case "ece": url=Const.urlEce;break;
+            case "mec": url=Const.urlMec;break;
+            case "met": url=Const.urlMet;break;
+            case "min": url=Const.urlMin;break;
+            case "mst": url=Const.urlMst;break;
+            case "bme": url=Const.urlBme;break;
+            case "bce": url=Const.urlBce;break;
+            case "phe": url=Const.urlPhe;break;
         }
         return  url;
     }

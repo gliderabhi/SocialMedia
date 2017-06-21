@@ -8,4 +8,16 @@
         </string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_maps">Map</string>
+    <string name="FirstName">FirstName</string>
+    <string name="LastName">LastName</string>
+    <string name="College">College</string>
+    <string name="Sex">Sex</string>
+    <string name="Branch">Branch</string>
+    <string name="Year">Year</string>
+    <string name="Email">Email</string>
+    <string name="Password">Password</string>
+    <string name="MobileNo">MobileNo</string>
+    <string name="Logging_you_in_please_wait">LogIn</string>
+    <string name="Login_cancelled">loginCancel</string>
+    <string name="Please_check_your_internet_connection">NetworkError</string>
 </resources>

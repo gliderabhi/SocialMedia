@@ -51,25 +51,21 @@
         android:layout_below="@+id/CollegeTextField"
         android:layout_marginTop="20dp"
         android:id="@+id/BranchSpinner"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/edit_text_custom"/>
-    <EditText
+        android:layout_centerHorizontal="true"/>
+    <Spinner
         android:layout_width="300dp"
         android:layout_height="30dp"
-        android:hint="Year"
-        android:inputType="number"
         android:layout_below="@+id/BranchSpinner"
         android:layout_marginTop="20dp"
-        android:id="@+id/YearTextField"
+        android:id="@+id/YearSpinner"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/edit_text_custom"/>
-
+    />
     <EditText
         android:layout_width="300dp"
         android:layout_height="30dp"
         android:hint="Email"
         android:inputType="textEmailAddress"
-        android:layout_below="@+id/YearTextField"
+        android:layout_below="@+id/YearSpinner"
         android:layout_marginTop="20dp"
         android:id="@+id/EmailTextField"
         android:layout_centerHorizontal="true"
