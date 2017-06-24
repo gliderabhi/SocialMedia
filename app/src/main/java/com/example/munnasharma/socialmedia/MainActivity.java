@@ -259,8 +259,10 @@ fbImg.setOnClickListener(new View.OnClickListener() {
                // Toast.makeText(getApplicationContext(),"Logged In",Toast.LENGTH_LONG).show();
                // Add Login function
 
-                ServerConnection();
+               //Re Start after everthing done { ServerConnection()};
 
+                i=new Intent(getApplicationContext(),SearchFields.class);
+                startActivity(i);
             }
         });
 

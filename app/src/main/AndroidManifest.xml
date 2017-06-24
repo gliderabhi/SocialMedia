@@ -13,32 +13,51 @@
         android:allowBackup="true"
         android:icon="@drawable/student"
         android:label="Cazime"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+       >
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
-        <activity android:name=".MainActivity"
-            android:theme="@style/Theme.NoTitle">
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/Theme.NoTitle"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SignUp1"
-            android:theme="@style/Theme.NoTitle" />
-        <activity android:name=".SignUpPage2"
-            android:theme="@style/Theme.NoTitle"/>
-        <activity android:name=".SignUpPage3"
-            android:theme="@style/Theme.NoTitle"/>
-        <activity android:name=".ForgotPass"
-            android:theme="@style/Theme.NoTitle" />
-        <activity android:name=".ProfilePage" />
-        <activity android:name=".NextPageForgotPass"
-            android:theme="@style/Theme.NoTitle" />
+        <activity
+            android:name=".SignUp1"
+            android:theme="@style/Theme.NoTitle"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".SignUpPage2"
+            android:theme="@style/Theme.NoTitle"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SignUpPage3"
+            android:theme="@style/Theme.NoTitle"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ForgotPass"
+            android:theme="@style/Theme.NoTitle"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ProfilePage"
+            android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".NextPageForgotPass"
+            android:theme="@style/Theme.NoTitle"
+            android:screenOrientation="portrait"/>
 
+        <activity android:name=".SearchFields"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".ListOfResults"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
