@@ -371,6 +371,7 @@ fbImg.setOnClickListener(new View.OnClickListener() {
 
                             if (success) {
                                 pr.dismiss();
+
                                 String Email = jsonResponse.getString("Email");
                                 String FirstName = jsonResponse.getString("FirstName");
                                 String LastName = jsonResponse.getString("LastName");
@@ -379,11 +380,12 @@ fbImg.setOnClickListener(new View.OnClickListener() {
                                 String Year = jsonResponse.getString("Year");
                                 String MobileNo = jsonResponse.getString("MobileNo");
                                 String Sex = jsonResponse.getString("Sex");
+                                sessionManager.createLoginSession(FirstName, LastName, College, Branch, Year, Email, MobileNo, Sex);
+
                                 //open profile
                              Intent intent = new Intent(MainActivity.this, ProfilePage.class);
                             startActivity(intent);
 
-                                sessionManager.createLoginSession(FirstName, LastName, College, Branch, Year, Email, MobileNo, Sex);
 
                             } else {
                                 pr.dismiss();
@@ -516,7 +518,7 @@ public void onResume() {
         if (!network) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setMessage("Please check your internet connection ")
+            builder.setMessage(Const.checkInternet)
                     .setNegativeButton("Retry",null)
                     .create()
                     .show();

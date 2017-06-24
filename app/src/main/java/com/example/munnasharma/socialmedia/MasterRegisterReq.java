@@ -12,17 +12,16 @@ import java.util.Map;
  */
 
 public class MasterRegisterReq  extends StringRequest {
-    private static final String LOGIN_REQUEST_URL = "http://cazimegliderabhi.000webhostapp.com/MasterRegisterFile.php";
     private Map<String, String> params;
 
     public MasterRegisterReq(String email, String password,String branch,String sq,String sa, Response.Listener<String> listener) {
-        super(Request.Method.POST, LOGIN_REQUEST_URL, listener, null);
+        super(Request.Method.POST, Const.Register_REQUEST_URL, listener, null);
         params = new HashMap<>();
-        params.put("Email", email);
-        params.put("Branch",branch);
-        params.put("Password", password);
-        params.put("SecurityQuestion",sq);
-        params.put("SecurityAnswer",sa);
+        params.put(Const.Email, email);
+        params.put(Const.branch,branch);
+        params.put(Const.Password, password);
+        params.put(Const.sq,sq);
+        params.put(Const.sa,sa);
     }
 
     @Override

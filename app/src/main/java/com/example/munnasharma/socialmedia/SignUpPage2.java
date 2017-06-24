@@ -32,12 +32,7 @@ public class SignUpPage2 extends Activity  implements  AdapterView.OnItemSelecte
     private EditText Pass1,Pass2,SecurityAnswer;
     private Button SignUpButton;
     private Spinner securityQuestion;
-    private String[] questions={
-            "q1",
-            "q2",
-            "q3",
-            "q4",
-     };
+
     private String email,securityAnswer,securityQstn,branch;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +47,12 @@ public class SignUpPage2 extends Activity  implements  AdapterView.OnItemSelecte
         securityQuestion=(Spinner)findViewById(R.id.SecurityQuestion);
 
         //Setup the spinner or dropdown menu
-        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,questions);
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,Const.questions);
         securityQuestion.setAdapter(adapter);
         securityQuestion.setOnItemSelectedListener(this);
         //get intent data
-        email=getIntent().getStringExtra("email");
-         branch=getIntent().getStringExtra("branch");
+        email=getIntent().getStringExtra(Const.Email);
+         branch=getIntent().getStringExtra(Const.branch);
         //Check data recieved or not
        // Toast.makeText(getApplicationContext(),email,Toast.LENGTH_SHORT).show();
 
@@ -100,7 +95,7 @@ public class SignUpPage2 extends Activity  implements  AdapterView.OnItemSelecte
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        securityQstn=questions[position];
+        securityQstn=Const.questions[position];
 
     }
 
@@ -136,7 +131,7 @@ public class SignUpPage2 extends Activity  implements  AdapterView.OnItemSelecte
         if (!network) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(SignUpPage2.this);
-            builder.setMessage("Please check your internet connection ")
+            builder.setMessage(Const.checkInternet)
                     .setNegativeButton("Retry",null)
                     .create()
                     .show();
@@ -154,7 +149,7 @@ public class SignUpPage2 extends Activity  implements  AdapterView.OnItemSelecte
                 @Override
                 public void onResponse(String response) {
 
-                    Log.i("success","message received ");
+                    Log.i(Const.Success,"message received ");
                     response = response.replaceFirst("<font>.*?</font>", "");
                     int jsonStart = response.indexOf("{");
                     int jsonEnd = response.lastIndexOf("}");
@@ -167,7 +162,7 @@ public class SignUpPage2 extends Activity  implements  AdapterView.OnItemSelecte
 
                     try {
                         JSONObject jsonResponse = new JSONObject(response);
-                        boolean success = jsonResponse.getBoolean("success");
+                        boolean success = jsonResponse.getBoolean(Const.Success);
 
 
                         if (success) {

@@ -37,7 +37,7 @@ public class Const {
     public static final String Year="Year";
     public static final String Password="Password";
     public static final String College="College";
-    public static final String sex="sex";
+    public static final String sex="Sex";
     public  static final String fill_Mob= "Fill in Mobile No ";
     public static  final String fill_Email= "Fill in Email ";
     public static  final String fill_College="Fill in College ";
@@ -78,7 +78,10 @@ public class Const {
     public static final String Change_pass_REQUEST_URL = "http://cazimegliderabhi.000webhostapp.com/ChangePass.php";
     public static final String FORGOT_PASS_REQUEST_URL = "http://cazimegliderabhi.000webhostapp.com/ForgotPassFile.php";
     public static final String LOGIN_REQUEST_URL = "http://cazimegliderabhi.000webhostapp.com/MasterLoginFile.php";
-
+    public static final String USER_EXIST_REQUEST_URL = "http://cazimegliderabhi.000webhostapp.com/checkUserExistence.php";
+    public static final String Register_REQUEST_URL = "http://cazimegliderabhi.000webhostapp.com/MasterRegisterFile.php";
+    public static final String sq="SecurityQuestion";
+    public static final String sa="SecurityAnswer";
 
 
 

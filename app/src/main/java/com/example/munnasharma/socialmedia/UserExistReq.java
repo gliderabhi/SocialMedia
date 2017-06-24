@@ -12,12 +12,11 @@ import java.util.Map;
  */
 
 public class UserExistReq extends StringRequest {
-    private static final String LOGIN_REQUEST_URL = "http://cazimegliderabhi.000webhostapp.com/checkUserExistence.php";
     private Map<String, String> params;
     public UserExistReq(String Email,Response.Listener<String> listener) {
-        super(Request.Method.POST, LOGIN_REQUEST_URL, listener, null);
+        super(Request.Method.POST,Const.USER_EXIST_REQUEST_URL, listener, null);
         params = new HashMap<>();
-        params.put("Email",Email);
+        params.put(Const.Email,Email);
     }
 
     @Override

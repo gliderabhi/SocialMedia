@@ -18,14 +18,14 @@ public class RegisterRequest extends StringRequest {
     public RegisterRequest(String firstName,String LastName,String College,String Branch,String year,String email,String MobileNo,String sex,String LOGIN_REQUEST_URL, Response.Listener<String> listener) {
         super(Request.Method.POST, LOGIN_REQUEST_URL, listener, null);
         params = new HashMap<>();
-        params.put("FirstName", firstName);
-        params.put("LastName", LastName);
-        params.put("College", College);
-        params.put("Branch", Branch);
-        params.put("Email", email);
-        params.put("Year", year);
+        params.put(Const.FirstName, firstName);
+        params.put(Const.LastName, LastName);
+        params.put(Const.College, College);
+        params.put(Const.branch, Branch);
+        params.put(Const.Email, email);
+        params.put(Const.Year, year);
         params.put("MobileNo", MobileNo);
-        params.put("Sex", sex);
+        params.put(Const.sex, sex);
 
     }
 

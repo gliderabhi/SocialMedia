@@ -41,7 +41,7 @@ public class NextPageForgotPass extends Activity {
         changePass=(Button)findViewById(R.id.ChangPassword);
          txt=(TextView)findViewById(R.id.TextPassNew);
          //get intetn data
-        email=getIntent().getStringExtra("Email");
+        email=getIntent().getStringExtra(Const.Email);
         //button click listener
         changePass.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,7 +98,7 @@ public class NextPageForgotPass extends Activity {
         if (!network) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(NextPageForgotPass.this);
-            builder.setMessage("Please check your internet connection ")
+            builder.setMessage(Const.checkInternet)
                     .setNegativeButton("Retry",null)
                     .create()
                     .show();
@@ -113,7 +113,7 @@ public class NextPageForgotPass extends Activity {
                 @Override
                 public void onResponse(String response) {
 
-                    Log.i("success", "message received ");
+                    Log.i(Const.Success, "message received ");
                     response = response.replaceFirst("<font>.*?</font>", "");
                     int jsonStart = response.indexOf("{");
                     int jsonEnd = response.lastIndexOf("}");
@@ -126,7 +126,7 @@ public class NextPageForgotPass extends Activity {
 
                     try {
                         JSONObject jsonResponse = new JSONObject(response);
-                        boolean success = jsonResponse.getBoolean("success");
+                        boolean success = jsonResponse.getBoolean(Const.Success);
 
 
                         if (success) {
