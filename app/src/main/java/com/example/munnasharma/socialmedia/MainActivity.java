@@ -52,7 +52,6 @@ public class MainActivity extends Activity {
      private Intent i;
     private EditText Email,Password;
     private Button LoginBtn;
-    private ImageView linkedInImg,gmailImg,twitterImg;
     private String email,password,sex,f_name,l_name,id,contact;
     private TextView CreateAccount,forgotPass;
     private ProgressDialog pr;
@@ -82,7 +81,6 @@ public class MainActivity extends Activity {
         Email=(EditText)findViewById(R.id.LoginEmail);
         forgotPass=(TextView)findViewById(R.id.ForgotPassText);
         Password=(EditText)findViewById(R.id.LoginPAassword);
-        linkedInImg=(ImageView)findViewById(R.id.LinedInImg);
         fbImg = (LoginButton) findViewById(R.id.FbImg);
         studentDetails =new StudentDetails();
 
@@ -143,8 +141,7 @@ public class MainActivity extends Activity {
         pr=new ProgressDialog(MainActivity.this);
         pr.setMessage("Logging you in ,please wait");
         pr.setIndeterminate(false);
-        pr.setCancelable(false);
-
+        pr.setCancelable(true);
         //set permission for facebook profile data
         fbImg.setReadPermissions("email");
         fbImg.setReadPermissions(Arrays.asList("user_status"));
@@ -259,9 +256,12 @@ fbImg.setOnClickListener(new View.OnClickListener() {
                // Toast.makeText(getApplicationContext(),"Logged In",Toast.LENGTH_LONG).show();
                // Add Login function
 
-               //Re Start after everthing done { ServerConnection()};
-
-                i=new Intent(getApplicationContext(),SearchFields.class);
+               //Re Start after everthing done {
+              /*  ServerConnection();
+                Email.setText("");
+                Password.setText("");
+*/
+              i=new Intent(getApplicationContext(),ChatActivity.class);
                 startActivity(i);
             }
         });
@@ -340,13 +340,13 @@ fbImg.setOnClickListener(new View.OnClickListener() {
 
             if (email.matches("") && password.matches("")) {
                 Toast.makeText(MainActivity.this, "Please fill both the email and password", Toast.LENGTH_SHORT).show();
-                return;
+
             } else if (email.matches("")) {
                 Toast.makeText(this, "You did not enter a email", Toast.LENGTH_SHORT).show();
-                return;
+
             } else if (password.matches("")) {
                 Toast.makeText(this, "Please fill the  password", Toast.LENGTH_SHORT).show();
-                return;
+
             } else {
                 pr = ProgressDialog.show(MainActivity.this, "Log in ", "Logging you in please wait.... ", true);
 
@@ -410,10 +410,11 @@ fbImg.setOnClickListener(new View.OnClickListener() {
                 RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
                 queue.add(loginRequest);
 
-                int socketTimeout = 30000;//30 seconds - change to what you want
-                RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-                loginRequest.setRetryPolicy(policy);
-                queue.add(loginRequest);
+
+                loginRequest.setRetryPolicy(new DefaultRetryPolicy(
+                        30000,
+                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             }
         }
     }
@@ -457,12 +458,12 @@ fbImg.setOnClickListener(new View.OnClickListener() {
                 startActivity(i);
             }else{
             i=new Intent(getApplicationContext(),SignUp1.class);
-            i.putExtra("Email",personEmail);
-            i.putExtra("sex","");
-            i.putExtra("FirstName",personGivenName);
-            i.putExtra("LastName",personFamilyName);
-            i.putExtra("ContactNo","");
-            i.putExtra("College","");
+            i.putExtra(Const.Email,personEmail);
+            i.putExtra(Const.sex,"");
+            i.putExtra(Const.FirstName,personGivenName);
+            i.putExtra(Const.LastName,personFamilyName);
+            i.putExtra(Const.MobileNo,"");
+            i.putExtra(Const.College,"");
             startActivity(i);
             }
             //updateUI(true);
@@ -570,10 +571,11 @@ public void onResume() {
             RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
             queue.add(userExistReq);
 
-            int socketTimeout = 30000;//30 seconds - change to what you want
-            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-            userExistReq.setRetryPolicy(policy);
-            queue.add(userExistReq);
+
+            userExistReq.setRetryPolicy(new DefaultRetryPolicy(
+                    30000,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         }
 
 

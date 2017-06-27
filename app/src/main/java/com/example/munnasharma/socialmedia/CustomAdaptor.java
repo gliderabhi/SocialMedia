@@ -22,16 +22,17 @@ public class CustomAdaptor  extends BaseAdapter   implements View.OnClickListene
     /*********** Declare Used Variables *********/
     private Activity activity;
     private Context ctx;
-    private String[] name,college;
+    private String[] firstName,college,LatName;
     private static LayoutInflater inflater=null;
     int i=0;
 
     /*************  CustomAdapter Constructor *****************/
-    public CustomAdaptor(Activity a,Context ctx, String [] name,String [] College) {
+    public CustomAdaptor(Activity a,Context ctx, String [] name,String[] lastName,String [] College) {
 
         /********** Take passed values **********/
         activity = a;
-       this.name=name;
+       this.firstName=name;
+        this.LatName=lastName;
         this.college=College;
 
         /***********  Layout inflator to call external xml layout () ***********/
@@ -43,9 +44,9 @@ public class CustomAdaptor  extends BaseAdapter   implements View.OnClickListene
     /******** What is the size of Passed Arraylist Size ************/
     public int getCount() {
 
-        if(name.length<=0)
+        if(firstName.length<=0)
             return 1;
-        return name.length;
+        return firstName.length;
     }
 
     public Object getItem(int position) {
@@ -59,7 +60,7 @@ public class CustomAdaptor  extends BaseAdapter   implements View.OnClickListene
     /********* Create a holder Class to contain inflated xml file elements *********/
     public static class ViewHolder{
 
-        public TextView UserName,colege;
+        public TextView FirstName,LastName,colege;
 
     }
 
@@ -77,7 +78,8 @@ public class CustomAdaptor  extends BaseAdapter   implements View.OnClickListene
             /****** View Holder Object to contain tabitem.xml file elements ******/
 
             holder = new ViewHolder();
-            holder.UserName = (TextView) vi.findViewById(R.id.NameUser);
+            holder.FirstName = (TextView) vi.findViewById(R.id.NameUser);
+            holder.LastName=(TextView)vi.findViewById(R.id.LastNAmeUser);
             holder.colege=(TextView)vi.findViewById(R.id.CollegeName);
 
             /************  Set holder with LayoutInflater ************/
@@ -86,16 +88,18 @@ public class CustomAdaptor  extends BaseAdapter   implements View.OnClickListene
         else
             holder=(ViewHolder)vi.getTag();
 
-        if(name.length<=0)
+        if(firstName.length<=0)
         {
-            holder.UserName.setText("No Data");
+            holder.FirstName.setText("No Data");
             holder.colege.setText("");
+            holder.LastName.setText("");
 
         }
         else
         {
-            holder.UserName.setText( name[position]);
+            holder.FirstName.setText( firstName[position]);
             holder.colege.setText(college[position] );
+            holder.LastName.setText(LatName[position]);
 
         }
         return vi;

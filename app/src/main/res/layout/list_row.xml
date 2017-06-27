@@ -26,11 +26,22 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/thumbnail"
             android:layout_toRightOf="@+id/thumbnail"
-            android:text="Rihanna Love the way lie"
+            android:text="Rihanna "
             android:textColor="#040404"
             android:typeface="sans"
             android:textSize="15dip"
             android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/LastNAmeUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/thumbnail"
+        android:layout_toRightOf="@+id/NameUser"
+        android:text="LastName"
+        android:textColor="#040404"
+        android:typeface="sans"
+        android:textSize="15dip"
+        android:textStyle="bold"/>
 
         <!-- Artist Name -->
         <TextView
@@ -40,6 +51,7 @@
             android:layout_below="@id/NameUser"
             android:textColor="#343434"
             android:textSize="10dip"
+            android:layout_marginLeft="20dp"
             android:layout_marginTop="1dip"
             android:layout_toRightOf="@+id/thumbnail"
             android:text="Just gona stand there and ..." />

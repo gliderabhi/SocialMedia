@@ -83,7 +83,8 @@ public class Const {
     public static final String Register_REQUEST_URL = "http://cazimegliderabhi.000webhostapp.com/MasterRegisterFile.php";
     public static final String sq="SecurityQuestion";
     public static final String sa="SecurityAnswer";
-
+    public static final String GettingSearchResults="Getting Search results please wait ";
+    public static final String Check_College_REQUEST_URL="http://cazimegliderabhi.000webhostapp.com/CollegeSearchAll.php";
 
 
 }

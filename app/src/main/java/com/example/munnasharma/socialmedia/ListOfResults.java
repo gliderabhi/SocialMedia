@@ -13,26 +13,31 @@ import java.util.ArrayList;
 public class ListOfResults extends Activity {
 
     private ListView searchList;
-   // private ArrayList<String > college,name;
-    private String [] name={};
-    private String [] college={};
+    private String[] firstName;
+    private String [] college;
+    private String [] lastName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_of_results);
       searchList=(ListView)findViewById(R.id.SearchList);
-    //   name=getIntent().getStringArrayListExtra("name");
-     //   college=getIntent().getStringArrayListExtra("College");
 
-        CustomAdaptor adaptor=new CustomAdaptor(this,getApplicationContext(),name,college);
+        firstName=getIntent().getStringArrayExtra(Const.FirstName);
+        college=getIntent().getStringArrayExtra(Const.College);
+        lastName=getIntent().getStringArrayExtra(Const.LastName);
+
+
+        //  Toast.makeText(getApplicationContext(), firstName.toString(), Toast.LENGTH_SHORT).show();
+        CustomAdaptor adaptor=new CustomAdaptor(this,getApplicationContext(),firstName,lastName,college);
         searchList.setAdapter(adaptor);
 
         searchList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(),name[position],Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),firstName[position],Toast.LENGTH_SHORT).show();
             }
         });
 
     }
+
 }
