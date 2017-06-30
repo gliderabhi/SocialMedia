@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -26,6 +27,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,20 +45,22 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
     private EditText FirstName,LastName,College,Email,MobileNo,Year;
      private ProgressDialog pr;
     private boolean yes;
+    private ImageView profileImg;
+    private FirebaseAuth mFirebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up1);
+    //set up firebase auth user
+        mFirebaseAuth = FirebaseAuth.getInstance();
 
-        //get intent data
-        mail=getIntent().getStringExtra(Const.Email);
-        mobile_no=getIntent().getStringExtra(Const.MobileNo);
-        colege=getIntent().getStringExtra(Const.College);
-        sx=getIntent().getStringExtra(Const.sex);
-        f_name=getIntent().getStringExtra(Const.FirstName);
-        l_name=getIntent().getStringExtra(Const.LastName);
-
+     mail="";
+        mobile_no="";
+        colege="";
+        sx="";
+        f_name="";
+        l_name="";
         //Variable initialization
         NextPage = (Button) findViewById(R.id.NextPage);
         FirstName = (EditText) findViewById(R.id.FirstNameTextField);
@@ -67,6 +72,7 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
         FemaleBox = (CheckBox) findViewById(R.id.FemaleCheckBox);
          Branchspinner=(Spinner)findViewById(R.id.BranchSpinner);
          YearSpinner=(Spinner)findViewById(R.id.YearSpinner);
+         profileImg=(ImageView)findViewById(R.id.ProfileImg);
 
         ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,Const.Branches);
         Branchspinner.setAdapter(adapter);
@@ -183,13 +189,16 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
            FemaleBox.setChecked(true);
        }
    }
+
+   private FirebaseUser user;
     // set the fields to empty
     private void fillFields(){
-        FirstName.setText(f_name);
+        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        FirstName.setText(user.getDisplayName());
         LastName.setText(l_name);
         College.setText(colege);
         MobileNo.setText(mobile_no);
-        Email.setText(mail);
+        Email.setText(user.getEmail());
         if((sx.matches("male")) ){
            MaleBox.setChecked(true);
             FemaleBox.setChecked(false);

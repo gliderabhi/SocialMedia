@@ -1,14 +1,5 @@
 package com.example.munnasharma.socialmedia;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
  * Created by MunnaSharma on 5/31/2017.
  */
@@ -89,4 +80,6 @@ public class StudentDetails {
     public void setYear(String year) {
         Year = year;
     }
+
+
 }

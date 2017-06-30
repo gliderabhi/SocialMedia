@@ -1,6 +1,5 @@
 package com.example.munnasharma.socialmedia;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;

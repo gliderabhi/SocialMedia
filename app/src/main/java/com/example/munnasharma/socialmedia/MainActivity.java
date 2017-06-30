@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -70,6 +71,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
  //Set up sesion manager to know if the user is already logged in
+
         sessionManager=new SessionManager(getApplicationContext());
         if(sessionManager.isLoggedIn()){
             //Show Logged in , later open the profile straight away
@@ -86,6 +88,30 @@ public class MainActivity extends Activity {
 
         signInButton = (SignInButton) findViewById(R.id.GmailImg);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
+
+
+        //set progress dialog
+        pr=new ProgressDialog(MainActivity.this);
+        pr.setMessage("Logging you in ,please wait");
+        pr.setIndeterminate(false);
+        pr.setCancelable(true);
+
+
+        //Login Button Listener
+        LoginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //Re Start after everthing done {
+              /*  ServerConnection();
+                Email.setText("");
+                Password.setText("");
+*/
+                //This is to be removed , just for testing overcoming the
+                i=new Intent(getApplicationContext(),ChatActivity.class);
+                startActivity(i);
+            }
+        });
 
         //Gmail Login
         // Build a GoogleApiClient with access to the Google Sign-In API and the
@@ -107,53 +133,32 @@ public class MainActivity extends Activity {
             }
         });
 
-    /*linkedInImg.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            //Linkedin Session
-            //If logged in linkedin
-             AccessToken accessToken;
-            LISessionManager.getInstance(getApplicationContext()).init();
 
-            LISessionManager.getInstance(getApplicationContext()).init(this, buildScope(), new AuthListener() {
-                @Override
-                public void onAuthSuccess() {
-                    // Authentication was successful.  You can now do
-                    // other calls with the SDK.
-                }
+        //add click listener for fb button
+        //  LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+        fbImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-                @Override
-                public void onAuthError(LIAuthError error) {
-                    // Handle authentication errors
-                }
-            }, true);
+                LoginManager.getInstance().logInWithReadPermissions((Activity) v.getContext(),Arrays.asList("public_profile", "user_friends"));
 
-
-        }
-    });
-    */
+            }
+        });
 
     //for facebook
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
 
-        //set progress dialog
-        pr=new ProgressDialog(MainActivity.this);
-        pr.setMessage("Logging you in ,please wait");
-        pr.setIndeterminate(false);
-        pr.setCancelable(true);
         //set permission for facebook profile data
         fbImg.setReadPermissions("email");
         fbImg.setReadPermissions(Arrays.asList("user_status"));
+
         accessTokenTracker = new AccessTokenTracker() {
             @Override
-            protected void onCurrentAccessTokenChanged(
-                    AccessToken oldAccessToken,
-                    AccessToken currentAccessToken) {
-                // App code
+            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken,AccessToken currentAccessToken) {
+
                 Log.d("current token", "" + currentAccessToken);
 
-                //}
             }
         };
         profTrack = new ProfileTracker() {
@@ -166,19 +171,15 @@ public class MainActivity extends Activity {
                 }
         };
 //get data from profile
-        fbImg.registerCallback(callbackManager,
-                new FacebookCallback<LoginResult>() {
+        fbImg.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
                         // App code
 
                         // login ok get access token
-                        GraphRequest request = GraphRequest.newMeRequest(
-                                AccessToken.getCurrentAccessToken(),
-                                new GraphRequest.GraphJSONObjectCallback() {
+                        GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(),new GraphRequest.GraphJSONObjectCallback() {
                                     @Override
-                                    public void onCompleted(JSONObject object,
-                                                            GraphResponse response) {
+                                    public void onCompleted(JSONObject object,GraphResponse response) {
 
                                         if (BuildConfig.DEBUG) {
                                             FacebookSdk.setIsDebugEnabled(true);
@@ -190,6 +191,7 @@ public class MainActivity extends Activity {
                                            f_name=Profile.getCurrentProfile().getFirstName().toString();
                                            l_name=Profile.getCurrentProfile().getLastName().toString();
                                             email=Profile.getCurrentProfile().getLinkUri().toString();
+                                            Log.d("FbResult",f_name);
                                             if(Checkusr(email)){
                                                 i=new Intent(getApplicationContext(),Profile.class);
                                                 startActivity(i);
@@ -233,45 +235,17 @@ public class MainActivity extends Activity {
         accessTokenTracker.startTracking();
         profTrack.startTracking();
 
-      //add click listener for fb button
-                    //  LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
-fbImg.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-
-        LoginManager.getInstance().logInWithReadPermissions((Activity) v.getContext(),Arrays.asList("public_profile", "user_friends"));
-
-    }
-});
 
         //Set EditText as empty
          Email.setText("");
          Password.setText("");
 
 
-        //Login Button Listener
-        LoginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               // Toast.makeText(getApplicationContext(),"Logged In",Toast.LENGTH_LONG).show();
-               // Add Login function
-
-               //Re Start after everthing done {
-              /*  ServerConnection();
-                Email.setText("");
-                Password.setText("");
-*/
-              i=new Intent(getApplicationContext(),ChatActivity.class);
-                startActivity(i);
-            }
-        });
 
         //Forgot Pass Request For new Pass
         forgotPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-             //   Toast.makeText(getApplicationContext(),,Toast.LENGTH_LONG).show();
-            //add method for password recovery
                 Intent i =new Intent(getApplicationContext(),ForgotPass.class);
                 startActivity(i);
             }
@@ -324,7 +298,7 @@ fbImg.setOnClickListener(new View.OnClickListener() {
         if (!network) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setMessage("Please check your internet connection ")
+            builder.setMessage(Const.checkInternet)
                     .setNegativeButton("Retry",null)
                     .create()
                     .show();
@@ -339,13 +313,13 @@ fbImg.setOnClickListener(new View.OnClickListener() {
            // Toast.makeText(getApplicationContext(), password, Toast.LENGTH_SHORT).show();
 
             if (email.matches("") && password.matches("")) {
-                Toast.makeText(MainActivity.this, "Please fill both the email and password", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, Const.fill_Email+" " +Const.fill_pass, Toast.LENGTH_SHORT).show();
 
             } else if (email.matches("")) {
-                Toast.makeText(this, "You did not enter a email", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,Const.fill_Email, Toast.LENGTH_SHORT).show();
 
             } else if (password.matches("")) {
-                Toast.makeText(this, "Please fill the  password", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,Const.fill_pass, Toast.LENGTH_SHORT).show();
 
             } else {
                 pr = ProgressDialog.show(MainActivity.this, "Log in ", "Logging you in please wait.... ", true);
@@ -374,14 +348,14 @@ fbImg.setOnClickListener(new View.OnClickListener() {
                             if (success) {
                                 pr.dismiss();
 
-                                String Email = jsonResponse.getString("Email");
-                                String FirstName = jsonResponse.getString("FirstName");
-                                String LastName = jsonResponse.getString("LastName");
-                                String College = jsonResponse.getString("College");
-                                String Branch = jsonResponse.getString("Branch");
-                                String Year = jsonResponse.getString("Year");
+                                String Email = jsonResponse.getString(Const.Email);
+                                String FirstName = jsonResponse.getString(Const.FirstName);
+                                String LastName = jsonResponse.getString(Const.LastName);
+                                String College = jsonResponse.getString(Const.College);
+                                String Branch = jsonResponse.getString(Const.branch);
+                                String Year = jsonResponse.getString(Const.Year);
                                 String MobileNo = jsonResponse.getString("MobileNo");
-                                String Sex = jsonResponse.getString("Sex");
+                                String Sex = jsonResponse.getString(Const.sex);
                                 sessionManager.createLoginSession(FirstName, LastName, College, Branch, Year, Email, MobileNo, Sex);
 
                                 //open profile
@@ -432,11 +406,6 @@ fbImg.setOnClickListener(new View.OnClickListener() {
             handleSignInResult(result);
         }
 
-       //Linked in activity result
-    /*    if(requestCode==1) {
-            LISessionManager.getInstance(getApplicationContext()).onActivityResult(this, requestCode, resultCode, data);
-        }
-*/
 
     }
     private void handleSignInResult(GoogleSignInResult result) {
@@ -468,8 +437,22 @@ fbImg.setOnClickListener(new View.OnClickListener() {
             }
             //updateUI(true);
         } else {
-            // Signed out, show unauthenticated UI.
-        //    updateUI(false);
+            AlertDialog.Builder builder=new AlertDialog.Builder(MainActivity.this);
+            builder.setMessage("Login Failed")
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .setNegativeButton("Retry", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .create().show();
+
         }
     }
 
