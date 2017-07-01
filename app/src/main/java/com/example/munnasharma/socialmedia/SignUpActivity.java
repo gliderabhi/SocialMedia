@@ -1,6 +1,7 @@
 package com.example.munnasharma.socialmedia;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -36,6 +37,8 @@ import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 import java.util.Arrays;
+
+import retrofit2.http.Url;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -92,32 +95,12 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
-        //github authentication
-        String token = "<GITHUB-ACCESS-TOKEN>";
-        AuthCredential credential = GithubAuthProvider.getCredential(token);
-        mFirebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-                        i=new Intent(getApplicationContext(), SignUp1.class);
-                        startActivity(i);
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(SignUpActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
+      // githubAuthentication();
 
-                        // ...
-                    }
-                });
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = (LoginButton) findViewById(R.id.button_facebook_login);
-        loginButton.setReadPermissions("email", "public_profile");
+        loginButton.setReadPermissions("public_profile", "email", "user_friends", "user_education_history", "user_hometown", "user_likes", "user_work_history");
         loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -138,58 +121,38 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
-        //Anonymous signUp
-        mFirebaseAuth.signInAnonymously()
+
+
+    }
+
+    private void githubAuthentication() {
+        //github authentication
+        String token = "<GITHUB-ACCESS-TOKEN>";
+        AuthCredential credential = GithubAuthProvider.getCredential(token);
+        mFirebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInAnonymously:success");
-                            FirebaseUser user = mFirebaseAuth.getCurrentUser();
-                            i=new Intent(getApplicationContext(),SignUp1.class);
-                            startActivity(i);
-                              } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInAnonymously:failure", task.getException());
+                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+                        String name=task.getResult().getUser().getDisplayName();
+                        String email=task.getResult().getUser().getEmail();
+                        User user=new User(name,email);
+                        i=new Intent(getApplicationContext(), SignUp1.class);
+                        startActivity(i);
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "signInWithCredential", task.getException());
                             Toast.makeText(SignUpActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                              }
+                        }
 
                         // ...
                     }
                 });
-
-    }
-    @Override
-    public void onStart(){
-        super.onStart();
-
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mFirebaseAuth.getCurrentUser();
-        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
-    }
-
-    @Override
-    public void onStop(){
-        super.onStop();
-        if(mAuthStateListener!=null){
-            mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
-        }
-    }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mAuthStateListener != null) {
-            mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
-        }
-    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -201,14 +164,23 @@ public class SignUpActivity extends AppCompatActivity {
 
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == RESULT_OK) {
+                FirebaseUser user=mFirebaseAuth.getCurrentUser();
+                Log.i("USer ",data.toString());
+
+                String name=user.getDisplayName();
+                String email=user.getEmail();
+                User usr=new User(name,email);
+
                 i=new Intent(getApplicationContext(), SignUp1.class);
                 startActivity(i);
+
             } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
                 finish();
             }
-        } else if (resultCode == RESULT_OK) {
-
+        } else if (resultCode == RESULT_CANCELED) {
+            Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
     private void handleFacebookAccessToken(AccessToken token) {
@@ -224,6 +196,10 @@ public class SignUpActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mFirebaseAuth.getCurrentUser();
+                            String name=user.getDisplayName();
+                            String email=user.getEmail();
+
+                            User usr=new User(name,email);
                             i=new Intent(getApplicationContext(), SignUp1.class);
                             startActivity(i);
                         } if(!task.isSuccessful()) {
@@ -261,6 +237,10 @@ public class SignUpActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mFirebaseAuth.getCurrentUser();
+                            String name=user.getDisplayName();
+                            String email=user.getEmail();
+                            User usr=new User(name,email);
+
                             i=new Intent(getApplicationContext(),SignUp1.class);
                             startActivity(i);
                         } else {
@@ -273,6 +253,35 @@ public class SignUpActivity extends AppCompatActivity {
                         // ...
                     }
                 });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mFirebaseAuth.getCurrentUser();
+        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+    }
+    @Override
+    public void onStop(){
+        super.onStop();
+        if(mAuthStateListener!=null){
+            mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
+        }
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mAuthStateListener != null) {
+            mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
+        }
     }
 }
 

@@ -4,13 +4,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Parcelable;
-import android.provider.ContactsContract;
-import android.support.v7.app.AppCompatActivity;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -27,18 +30,33 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
+import java.util.UUID;
+
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
+
 
 public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedListener{
 
     private Button NextPage;
-     private StudentDetails studentDetails;
     private Spinner Branchspinner,YearSpinner;
      private CheckBox MaleBox,FemaleBox;
     private String firstname,lastName,college,branch,email,mobileNo,sex,year,mail,colege,mobile_no,f_name,l_name,sx;
@@ -47,6 +65,10 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
     private boolean yes;
     private ImageView profileImg;
     private FirebaseAuth mFirebaseAuth;
+    private StudentDetails studentDetails;
+    private FirebaseUser user;
+    private DatabaseReference mCurrentUserDatabaseReference;
+    private Context mView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +95,17 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
          Branchspinner=(Spinner)findViewById(R.id.BranchSpinner);
          YearSpinner=(Spinner)findViewById(R.id.YearSpinner);
          profileImg=(ImageView)findViewById(R.id.ProfileImg);
+
+        user=mFirebaseAuth.getCurrentUser();
+
+        //select image
+        profileImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openImageSelector();
+            }
+        });
+        //initialize user
 
         ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,Const.Branches);
         Branchspinner.setAdapter(adapter);
@@ -162,20 +195,40 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
                 //Create student object
                 studentDetails = new StudentDetails(firstname, lastName, college, branch, year, email, mobileNo, sex);
 
+
+                if(profileImg==null){
+                    AlertDialog builder=new AlertDialog.Builder(SignUp1.this)
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    openImageSelector();
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Toast.makeText(getApplicationContext(), "Please Select an image ", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .setMessage("Select an image").create();
+                    builder.show();
+
+                }
                 //Send to server add the add row to respective table
 
                //if all fields set then only send data
                 if (yes) {
-                    if (DataSend()) {
-
-                    }
-                }
+                    DataSend();
+                     }
             }
 
         });
 
 
     }
+
+
 
     //Method to check if only one box is checked
        private void OneBoxOnly(int v){
@@ -189,11 +242,8 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
            FemaleBox.setChecked(true);
        }
    }
-
-   private FirebaseUser user;
     // set the fields to empty
     private void fillFields(){
-        FirebaseUser user = mFirebaseAuth.getCurrentUser();
         FirstName.setText(user.getDisplayName());
         LastName.setText(l_name);
         College.setText(colege);
@@ -210,6 +260,12 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
             FemaleBox.setChecked(false);
             MaleBox.setChecked(false);
         }
+        Glide
+                .with(getApplicationContext())
+                .load(user.getPhotoUrl()) // the uri you got from Firebase
+                .centerCrop()
+                .into(profileImg);
+
     }
 
     public String getEmailDomain() {
@@ -408,6 +464,7 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
         return  success;
     }
 
+
     @Override
     public void onBackPressed() {
         pr.dismiss();
@@ -437,6 +494,63 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
             case "phe": url=Const.urlPhe;break;
         }
         return  url;
+    }
+
+    private StorageReference mStorage;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data){
+
+        mStorage = FirebaseStorage.getInstance().getReference(); //make global
+        super.onActivityResult(requestCode, requestCode, data);
+
+        if(requestCode ==2 && resultCode == RESULT_OK){
+             pr=new ProgressDialog(this);
+            pr.setMessage("Uploading...");
+            pr.show();
+
+            Uri uri = data.getData();
+            //Keep all images for a specific chat grouped together
+            final String imageLocation = "Photos/profile_picture/" + user.getEmail();
+            final String imageLocationId = imageLocation + "/" + uri.getLastPathSegment();
+            final String uniqueId = UUID.randomUUID().toString();
+            final StorageReference filepath = mStorage.child(imageLocation).child(uniqueId + "/profile_pic");
+            final String downloadURl = filepath.getPath();
+            filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    //create a new message containing this image
+                    addImageToProfile(downloadURl);
+                    pr.dismiss();
+                }
+            });
+        }
+
+    }
+
+    public void addImageToProfile(final String imageLocation){
+        mCurrentUserDatabaseReference
+                .child("profilePicLocation").setValue(imageLocation).addOnCompleteListener(
+                new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        StorageReference storageRef = FirebaseStorage.getInstance()
+                                .getReference().child(imageLocation);
+                        Glide.with(mView)
+                                .using(new FirebaseImageLoader())
+                                .load(storageRef)
+                                .bitmapTransform(new CropCircleTransformation(mView))
+                                .into(profileImg);
+                    }
+                }
+        );
+
+    }
+
+    public void openImageSelector(){
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(intent, 2);
+
     }
 
 
