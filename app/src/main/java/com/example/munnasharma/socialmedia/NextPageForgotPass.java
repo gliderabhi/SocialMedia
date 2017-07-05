@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,8 +18,10 @@ import android.widget.Toast;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.Volley;
+import com.example.munnasharma.extras.Const;
+import com.example.munnasharma.extras.PasswordEncrypt;
+import com.example.munnasharma.request.ChangePassReq;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,7 +53,7 @@ public class NextPageForgotPass extends Activity {
                 if(!Pass1.matches("")){
                     if(!Pass2.matches("")){
                         if(!Pass2.matches(Pass1)){
-                            Pass2=PasswordEncrypt.CryptWithMD5(Pass1);
+                            Pass2= PasswordEncrypt.CryptWithMD5(Pass1);
                             ChangePass();
                         }else{
                             Toast.makeText(getApplicationContext(),"Passwords dont match, please check the passwords",Toast.LENGTH_SHORT).show();

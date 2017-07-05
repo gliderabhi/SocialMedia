@@ -8,10 +8,10 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -48,13 +48,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import com.example.munnasharma.extras.*;
 import com.example.munnasharma.classes.*;
 
+public class GroupChatActivityMssag extends AppCompatActivity {
 
-public class ChatMessagesActivity extends AppCompatActivity {
-
-    private String messageId;
+    private String chatRoomName;
     private TextView mMessageField;
     private ImageButton mSendButton;
     private String chatName;
@@ -88,52 +86,27 @@ public class ChatMessagesActivity extends AppCompatActivity {
     private String[] permissions = {"android.permission.RECORD_AUDIO", "android.permission.WRITE_EXTERNAL_STORAGE"};
 
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode){
-            case 200:
-                permissionToRecordAccepted  = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                permissionToWriteAccepted  = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                break;
-        }
-        if (!permissionToRecordAccepted ) ChatMessagesActivity.super.finish();
-        if (!permissionToWriteAccepted ) ChatMessagesActivity.super.finish();
-
-    }
 
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.messages_activity);
+        chatRoomName=getIntent().getStringExtra("room_name");
 
-/*
-        Intent intent = this.getIntent();
-        //MessageID is the location of the messages for this specific chat
-        messageId = intent.getStringExtra(Const.MESSAGE_ID);
-        chatName = intent.getStringExtra(Const.CHAT_NAME);
-
-        if(messageId == null){
-            finish(); // replace this.. nav user back to home
-            return;
-        }
-
-     */   //Check Permissions at runtime
         int requestCode = 200;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(permissions, requestCode);
         }
 
+        mToolBar.setTitle(chatRoomName);
+
 
         initializeScreen();
-        mToolBar.setTitle(chatName);
-       showMessages();
-         addListeners();
+        showMessages();
+        addListeners();
         openImageSelector();
         openVoiceRecorder();
-
     }
-
     //Add listener for on completion of image selection
     public void openImageSelector(){
         mphotoPickerButton = (ImageButton) findViewById(R.id.photoPickerButton);
@@ -162,7 +135,7 @@ public class ChatMessagesActivity extends AppCompatActivity {
 
             Uri uri = data.getData();
             //Keep all images for a specific chat grouped together
-            final String imageLocation = "Photos" + "/" + messageId;
+            final String imageLocation = "Photos" + "/" + "MID";
             final String imageLocationId = imageLocation + "/" + uri.getLastPathSegment();
             final String uniqueId = UUID.randomUUID().toString();
             final StorageReference filepath = mStorage.child(imageLocation).child(uniqueId + "/image_message");
@@ -244,7 +217,7 @@ public class ChatMessagesActivity extends AppCompatActivity {
 
         Uri uri = Uri.fromFile(new File(mFileName));
         //Keep all voice for a specific chat grouped together
-        final String voiceLocation = "Voice" + "/" + messageId;
+        final String voiceLocation = "Voice" + "/" + "MID";
         final String voiceLocationId = voiceLocation + "/" + uri.getLastPathSegment();
         final String uniqueId = UUID.randomUUID().toString();
         final StorageReference filepath = mStorage.child(voiceLocation).child(uniqueId + "/audio_message.3gp");
@@ -319,34 +292,6 @@ public class ChatMessagesActivity extends AppCompatActivity {
         Message message =
                 new Message(mFirebaseAuth.getCurrentUser().getEmail(),
                         "Message: Image Sent", "IMAGE", imageLocation, timestamp);
-        //Create HashMap for Pushing
-        HashMap<String, Object> messageItemMap = new HashMap<String, Object>();
-        HashMap<String,Object> messageObj = (HashMap<String, Object>) new ObjectMapper()
-                .convertValue(message, Map.class);
-        messageItemMap.put("/" + pushKey, messageObj);
-        mMessageDatabaseReference.updateChildren(messageItemMap)
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        mMessageField.setText("");
-                    }
-                });
-    }
-
-
-
-    public void sendMessage(View view){
-        //final DatabaseReference messageRef = mFirebaseDatabase.getReference(Constants.MESSAGE_LOCATION);
-        final DatabaseReference pushRef = mMessageDatabaseReference.push();
-        final String pushKey = pushRef.getKey();
-
-        String messageString = mMessageField.getText().toString();
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
-        Date date = new Date();
-        String timestamp = dateFormat.format(date);
-        //Create message object with text/voice etc
-        Message message = new Message(mFirebaseAuth.getCurrentUser().getEmail(), messageString, timestamp);
         //Create HashMap for Pushing
         HashMap<String, Object> messageItemMap = new HashMap<String, Object>();
         HashMap<String,Object> messageObj = (HashMap<String, Object>) new ObjectMapper()
@@ -568,13 +513,6 @@ public class ChatMessagesActivity extends AppCompatActivity {
         mMessageField = (TextView)findViewById(R.id.messageToSend);
         mSendButton = (ImageButton)findViewById(R.id.sendButton);
 
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        currentUserEmail = mFirebaseAuth.getCurrentUser().getEmail();
-        mUsersDatabaseReference = mFirebaseDatabase.getReference().child(Const.USERS_LOCATION);
-        mMessageDatabaseReference = mFirebaseDatabase.getReference().child(Const.MESSAGE_LOCATION
-                + "/" + messageId);
-
         mToolBar.setTitle(chatName);
         setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -587,5 +525,20 @@ public class ChatMessagesActivity extends AppCompatActivity {
         });
     }
 
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case 200:
+                permissionToRecordAccepted  = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                permissionToWriteAccepted  = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                break;
+        }
+        if (!permissionToRecordAccepted ) GroupChatActivityMssag.super.finish();
+        if (!permissionToWriteAccepted ) GroupChatActivityMssag.super.finish();
+
+    }
 
 }

@@ -47,9 +47,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.NoTitle" />
         <activity
-            android:name=".ProfilePage"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".NextPageForgotPass"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.NoTitle" />
@@ -68,12 +65,8 @@
         <activity
             android:name=".ChatActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:theme="@style/AppTheme.NoActionBar">
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".FriendsListActivity"
@@ -83,15 +76,20 @@
             android:name=".SignUpActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
-
+            <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
-        <activity android:name=".GroupChatList"
-        android:screenOrientation="portrait"
-        android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity android:name=".ThreadActivity"
-        android:screenOrientation="portrait"
-        android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".GroupChatList"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ThreadActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".GroupChatActivityMssag"></activity>
     </application>
 
 </manifest>

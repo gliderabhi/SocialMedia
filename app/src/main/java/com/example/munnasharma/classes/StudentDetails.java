@@ -1,4 +1,4 @@
-package com.example.munnasharma.socialmedia;
+package com.example.munnasharma.classes;
 
 /**
  * Created by MunnaSharma on 5/31/2017.

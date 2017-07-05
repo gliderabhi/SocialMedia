@@ -13,15 +13,19 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.Volley;
+import com.example.munnasharma.classes.StudentDetails;
+import com.example.munnasharma.extras.Const;
+import com.example.munnasharma.extras.PasswordEncrypt;
+import com.example.munnasharma.extras.SessionManager;
+import com.example.munnasharma.request.LoginRequest;
+import com.example.munnasharma.request.UserExistReq;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -359,7 +363,7 @@ public class MainActivity extends Activity {
                                 sessionManager.createLoginSession(FirstName, LastName, College, Branch, Year, Email, MobileNo, Sex);
 
                                 //open profile
-                             Intent intent = new Intent(MainActivity.this, ProfilePage.class);
+                             Intent intent = new Intent(MainActivity.this, SignUp1.class);
                             startActivity(intent);
 
 
@@ -423,7 +427,7 @@ public class MainActivity extends Activity {
 
             if(Checkusr(personEmail)){
 
-                i=new Intent(getApplicationContext(),ProfilePage.class);
+                i=new Intent(getApplicationContext(),SignUp1.class);
                 startActivity(i);
             }else{
             i=new Intent(getApplicationContext(),SignUp1.class);

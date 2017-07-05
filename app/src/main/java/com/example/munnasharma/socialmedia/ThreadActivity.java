@@ -25,6 +25,8 @@ public class ThreadActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 i=new Intent(getApplicationContext(),ChatActivity.class);
+
+                i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(i);
             }
         });
@@ -33,10 +35,18 @@ public class ThreadActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 i=new Intent(getApplicationContext(),GroupChatList.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(i);
             }
         });
         ThreadBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        fab=(FloatingActionButton)findViewById(R.id.FloatingButtonAddChat);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 

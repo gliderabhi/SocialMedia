@@ -3,7 +3,6 @@ package com.example.munnasharma.socialmedia;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.app.Activity;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AlertDialog;
@@ -15,17 +14,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.Volley;
+import com.example.munnasharma.classes.StudentDetails;
+import com.example.munnasharma.extras.Const;
+import com.example.munnasharma.request.CollegeSearchRequest;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -64,7 +63,7 @@ public class SearchFields extends AppCompatActivity implements  AdapterView.OnIt
         progressDialog.setCancelable(true);
 
         //Set the spinner
-        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,Const.years);
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item, Const.years);
         yr.setAdapter(adapter);
         yr.setOnItemSelectedListener(this);
         //Setup listener for the buttons

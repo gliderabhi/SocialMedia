@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,9 +21,12 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.example.munnasharma.extras.Const;
+import com.example.munnasharma.request.ForgotPassReq;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import com.example.munnasharma.request.*;
 
 public class ForgotPass extends Activity implements  AdapterView.OnItemSelectedListener{
 
@@ -47,7 +49,7 @@ public class ForgotPass extends Activity implements  AdapterView.OnItemSelectedL
         OldPass=(EditText)findViewById(R.id.OldPassword);
         Email=(EditText)findViewById(R.id.EmailAddress);
         //Setup the spinner or dropdown menu
-        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,Const.questions);
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item, Const.questions);
         securityq.setAdapter(adapter);
         securityq.setOnItemSelectedListener(this);
 

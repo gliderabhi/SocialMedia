@@ -22,6 +22,8 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.List;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import com.example.munnasharma.classes.*;
+import com.example.munnasharma.extras.*;
 
 public class FriendsListActivity extends AppCompatActivity {
 

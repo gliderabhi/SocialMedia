@@ -20,8 +20,10 @@ import android.widget.Toast;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.Volley;
+import com.example.munnasharma.extras.Const;
+import com.example.munnasharma.extras.PasswordEncrypt;
+import com.example.munnasharma.request.MasterRegisterReq;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,7 +49,7 @@ public class SignUpPage2 extends Activity  implements  AdapterView.OnItemSelecte
         securityQuestion=(Spinner)findViewById(R.id.SecurityQuestion);
 
         //Setup the spinner or dropdown menu
-        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,Const.questions);
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item, Const.questions);
         securityQuestion.setAdapter(adapter);
         securityQuestion.setOnItemSelectedListener(this);
         //get intent data
@@ -189,7 +191,7 @@ public class SignUpPage2 extends Activity  implements  AdapterView.OnItemSelecte
                     }
                 }
             };
-            Password=PasswordEncrypt.CryptWithMD5(pass1);
+            Password= PasswordEncrypt.CryptWithMD5(pass1);
             MasterRegisterReq masterRegisterReq = new MasterRegisterReq(email,Password,branch,securityQstn,securityAnswer,responseListener);
             RequestQueue queue = Volley.newRequestQueue(SignUpPage2.this);
             masterRegisterReq.setRetryPolicy(new DefaultRetryPolicy(
