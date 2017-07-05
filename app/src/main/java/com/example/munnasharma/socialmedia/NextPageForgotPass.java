@@ -153,13 +153,12 @@ public class NextPageForgotPass extends Activity {
 
             ChangePassReq forgotPass = new ChangePassReq(Pass2,email, responseListener);
             RequestQueue queue = Volley.newRequestQueue(NextPageForgotPass.this);
+            forgotPass.setRetryPolicy(new DefaultRetryPolicy(
+                    30000,2, (float) 2.0));
             queue.add(forgotPass);
 
 
-            int socketTimeout = 30000;//30 seconds set timeout
-            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-            forgotPass.setRetryPolicy(policy);
-            queue.add(forgotPass);
+
         }
 
     }

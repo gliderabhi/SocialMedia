@@ -192,13 +192,11 @@ public class SignUpPage2 extends Activity  implements  AdapterView.OnItemSelecte
             Password=PasswordEncrypt.CryptWithMD5(pass1);
             MasterRegisterReq masterRegisterReq = new MasterRegisterReq(email,Password,branch,securityQstn,securityAnswer,responseListener);
             RequestQueue queue = Volley.newRequestQueue(SignUpPage2.this);
+            masterRegisterReq.setRetryPolicy(new DefaultRetryPolicy(
+                    30000,2, (float) 2.0));
             queue.add(masterRegisterReq);
 
 
-            int socketTimeout = 30000;//30 seconds timeout defined
-            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-            masterRegisterReq.setRetryPolicy(policy);
-            queue.add(masterRegisterReq);
         }
         return  success;
     }

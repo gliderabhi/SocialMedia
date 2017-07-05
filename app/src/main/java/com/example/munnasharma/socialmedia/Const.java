@@ -85,6 +85,13 @@ public class Const {
     public static final String sa="SecurityAnswer";
     public static final String GettingSearchResults="Getting Search results please wait ";
     public static final String Check_College_REQUEST_URL="http://cazimegliderabhi.000webhostapp.com/CollegeSearchAll.php";
+    public static final String USERS_LOCATION = "users";
+    public static final String FRIENDS_LOCATION = "friends";
+    public static final String CHAT_LOCATION = "chats";
+    public static final String MESSAGE_LOCATION = "messages";
+    public static final String User="users";
+    public static final String MESSAGE_ID = "MID";
+    public static final String CHAT_NAME = "CNAME";
 
 
 }

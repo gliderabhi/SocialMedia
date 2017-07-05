@@ -29,7 +29,11 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GithubAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
@@ -37,6 +41,8 @@ import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit2.http.Url;
 
@@ -50,10 +56,14 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private TwitterLoginButton mLoginButton;
     private Intent i;
+    private DatabaseReference root = FirebaseDatabase.getInstance().getReference().getRoot();
+    private DatabaseReference userDetails, root2,root3;
+    private StudentDetails studentDetails;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up);  //Initialize Firebase components
+        setContentView(R.layout.activity_sign_up);
+        //Initialize Firebase components
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
 
@@ -67,21 +77,20 @@ public class SignUpActivity extends AppCompatActivity {
 
                 } else {
                     // User is signed out
-                    //onSignedOutCleanup();
                     startActivityForResult(
                             AuthUI.getInstance()
                                     .createSignInIntentBuilder()
                                     .setIsSmartLockEnabled(false)
                                     .setProviders(
                                             AuthUI.EMAIL_PROVIDER,
-                                            AuthUI.GOOGLE_PROVIDER,AuthUI.TWITTER_PROVIDER,AuthUI.FACEBOOK_PROVIDER)
+                                            AuthUI.GOOGLE_PROVIDER,/*AuthUI.TWITTER_PROVIDER,*/AuthUI.FACEBOOK_PROVIDER)
                                     .build(),
                             RC_SIGN_IN);
                 }
             }
         };
 
-        mLoginButton = (TwitterLoginButton) findViewById(R.id.button_twitter_login);
+       /* mLoginButton = (TwitterLoginButton) findViewById(R.id.button_twitter_login);
         mLoginButton.setCallback(new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
@@ -94,13 +103,13 @@ public class SignUpActivity extends AppCompatActivity {
                 Log.w(TAG, "twitterLogin:failure", exception);
             }
         });
-
+*/
       // githubAuthentication();
 
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = (LoginButton) findViewById(R.id.button_facebook_login);
-        loginButton.setReadPermissions("public_profile", "email", "user_friends", "user_education_history", "user_hometown", "user_likes", "user_work_history");
+        loginButton.setReadPermissions("public_profile", "email", "user_friends");
         loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -111,12 +120,15 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onCancel() {
                 Log.d(TAG, "facebook:onCancel");
+
+                Toast.makeText(getApplicationContext(),"Login Cancelled",Toast.LENGTH_SHORT).show();
                 // ...
             }
 
             @Override
             public void onError(FacebookException error) {
                 Log.d(TAG, "facebook:onError", error);
+                Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
                 // ...
             }
         });
@@ -133,7 +145,7 @@ public class SignUpActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+                       try{ Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
                         String name=task.getResult().getUser().getDisplayName();
                         String email=task.getResult().getUser().getEmail();
                         User user=new User(name,email);
@@ -149,6 +161,9 @@ public class SignUpActivity extends AppCompatActivity {
                         }
 
                         // ...
+                    }catch (Exception e){
+                           Log.i("Error",e.toString());
+                       }
                     }
                 });
     }
@@ -162,29 +177,36 @@ public class SignUpActivity extends AppCompatActivity {
         //for twitter
         mLoginButton.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RC_SIGN_IN) {
-            if (resultCode == RESULT_OK) {
-                FirebaseUser user=mFirebaseAuth.getCurrentUser();
-                Log.i("USer ",data.toString());
+        try {
+            if (requestCode == RC_SIGN_IN) {
+                if (resultCode == RESULT_OK) {
+                    FirebaseUser user = mFirebaseAuth.getCurrentUser();
 
-                String name=user.getDisplayName();
-                String email=user.getEmail();
-                User usr=new User(name,email);
+                    String name = user.getDisplayName();
+                    String email = user.getEmail();
 
-                i=new Intent(getApplicationContext(), SignUp1.class);
-                startActivity(i);
+                    createUser(user);
 
+                    i = new Intent(getApplicationContext(), SignUp1.class);
+                    startActivity(i);
+
+                    Toast.makeText(getApplicationContext(), "Logged In", Toast.LENGTH_SHORT).show();
+
+                } else if (resultCode == RESULT_CANCELED) {
+                    Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
+
+                }
             } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
-                finish();
+
             }
-        } else if (resultCode == RESULT_CANCELED) {
-            Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
-            finish();
+
+        } catch (Exception e) {
+
+            Log.i("Error",e.toString());
         }
     }
     private void handleFacebookAccessToken(AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
 
@@ -192,38 +214,42 @@ public class SignUpActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mFirebaseAuth.getCurrentUser();
-                            String name=user.getDisplayName();
-                            String email=user.getEmail();
-
-                            User usr=new User(name,email);
-                            i=new Intent(getApplicationContext(), SignUp1.class);
-                            startActivity(i);
-                        } if(!task.isSuccessful()) {
-                            try {
-                                throw task.getException();
-                            } catch(FirebaseAuthWeakPasswordException e) {
-                                Toast.makeText(getApplicationContext(),"weak pass",Toast.LENGTH_SHORT).show();
-
-                            } catch(FirebaseAuthInvalidCredentialsException e) {
-                                Toast.makeText(getApplicationContext(),"Invalid",Toast.LENGTH_SHORT).show();
-
-                            } catch(FirebaseAuthUserCollisionException e) {
-                                Toast.makeText(getApplicationContext(),"User Exists",Toast.LENGTH_SHORT).show();
-
-                            } catch(Exception e) {
-                                Log.e(TAG, e.getMessage());
+                        try {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                FirebaseUser user = mFirebaseAuth.getCurrentUser();
+                                String name = user.getDisplayName();
+                                String email = user.getEmail();
+                                createUser(user);
+                                i = new Intent(getApplicationContext(), SignUp1.class);
+                                startActivity(i);
                             }
+                            if (!task.isSuccessful()) {
+                                try {
+                                    throw task.getException();
+                                } catch (FirebaseAuthWeakPasswordException e) {
+                                    Toast.makeText(getApplicationContext(), "weak pass", Toast.LENGTH_SHORT).show();
+
+                                } catch (FirebaseAuthInvalidCredentialsException e) {
+                                    Toast.makeText(getApplicationContext(), "Invalid", Toast.LENGTH_SHORT).show();
+
+                                } catch (FirebaseAuthUserCollisionException e) {
+                                    Toast.makeText(getApplicationContext(), "User Exists", Toast.LENGTH_SHORT).show();
+
+                                } catch (Exception e) {
+                                    Toast.makeText(getApplicationContext(), e.getMessage().toString(), Toast.LENGTH_SHORT).show();
+
+                                }
+                            }
+                            // ...
+                        } catch (Exception e) {
+
+                            Log.i("Error",e.toString());
                         }
-                        // ...
                     }
                 });
     }
     private void handleTwitterSession(TwitterSession session) {
-        Log.d(TAG, "handleTwitterSession:" + session);
 
         AuthCredential credential = TwitterAuthProvider.getCredential(
                 session.getAuthToken().token,
@@ -233,26 +259,43 @@ public class SignUpActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mFirebaseAuth.getCurrentUser();
-                            String name=user.getDisplayName();
-                            String email=user.getEmail();
-                            User usr=new User(name,email);
+                      try{if (task.isSuccessful()) {
+                          // Sign in success, update UI with the signed-in user's information
+                          FirebaseUser user = mFirebaseAuth.getCurrentUser();
+                          String name=user.getDisplayName();
+                          String email=user.getEmail();
+                          createUser(user);
+                          i=new Intent(getApplicationContext(),SignUp1.class);
+                          startActivity(i);
+                      } else {
+                          // If sign in fails, display a message to the user.
+                          Log.w(TAG, "signInWithCredential:failure", task.getException());
+                          Toast.makeText(SignUpActivity.this, "Authentication failed.",
+                                  Toast.LENGTH_SHORT).show();
+                      }
 
-                            i=new Intent(getApplicationContext(),SignUp1.class);
-                            startActivity(i);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(SignUpActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
 
-                        // ...
+                    }catch (Exception e) {
+                          Log.i("Error",e.toString());
+                      } // ...
                     }
                 });
+    }
+
+
+
+
+    private void createUser(FirebaseUser user) {
+      try{  userDetails = root.child("userDetails");
+        Map<String, Object> map3 = new HashMap<String, Object>();
+        studentDetails =new StudentDetails(user.getDisplayName(),user.getEmail(),user.getProviderId());
+        map3.put(user.getEmail(),studentDetails);
+        userDetails.updateChildren(map3);
+
+        Toast.makeText(getApplicationContext(), "Added Successfully", Toast.LENGTH_SHORT).show();
+      }catch (Exception e){
+          Toast.makeText(getApplicationContext(),"Failed",Toast.LENGTH_SHORT).show();
+      }
     }
 
     @Override

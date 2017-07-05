@@ -6,10 +6,15 @@ package com.example.munnasharma.socialmedia;
 
 public class StudentDetails {
 
- private String FirstName,LastName,College,Branch,Email,MobileNo,Year,sex;
+ private String FirstName,LastName,College,Branch,Email,MobileNo,Year,sex,ProviderId,profilePicLocation;
 
-  public StudentDetails(){
+    public StudentDetails(){
 
+    }
+  public StudentDetails(String name,String email,String providerId){
+          this.FirstName=name;
+      this.Email=email;
+      this.ProviderId=providerId;
     }
     public StudentDetails(String firstName,String LastName,String College,String Branch,String year,String email,String MobileNo,String sex){
        //Save the data sent of students in objetcs created
@@ -24,6 +29,29 @@ public class StudentDetails {
 
     }
 
+    public String getProfilePicLocation() {
+        return profilePicLocation;
+    }
+
+    public void setProfilePicLocation(String profilePicLocation) {
+        this.profilePicLocation = profilePicLocation;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public String getProviderId() {
+        return ProviderId;
+    }
+
+    public void setProviderId(String providerId) {
+        ProviderId = providerId;
+    }
 
     public String getBranch() {
         return Branch;

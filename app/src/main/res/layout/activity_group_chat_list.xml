@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.munnasharma.socialmedia.ChatActivity">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:background="#05f"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/SearchLogolay"
+            android:layout_marginTop="0dp">
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/icon_search"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="10dp"
+                android:id="@+id/SearchLogo"
+                />
+            <EditText
+                android:layout_width="250dp"
+                android:id="@+id/SearchBox"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/SearchLogo"
+                android:layout_marginTop="5dp"/>
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="15dp"
+                android:id="@+id/SettingsButton"
+                android:src="@drawable/menu"
+                />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/SearchLogolay"
+            android:orientation="horizontal"
+            android:layout_marginTop="0dp"
+            android:id="@+id/ChatRoomsLay"
+            android:background="#05f"
+            >
+            <ImageView
+                android:layout_width="40dp"
+                android:src="@drawable/camera"
+                android:layout_height="40dp"
+                android:id="@+id/CameraButton"
+                />
+            <Button
+                android:layout_width="110dp"
+                android:layout_height="40dp"
+                android:background="#05f"
+                android:textColor="#fff"
+                android:id="@+id/ChatButtonFragment"
+                android:layout_toRightOf="@+id/CameraButton"
+                android:layout_below="@+id/SearchLogo"
+                android:text="Chat "/>
+            <Button
+                android:layout_width="110dp"
+                android:layout_height="40dp"
+                android:background="#05f"
+                android:textColor="#fff"
+                android:id="@+id/ThreadButtonFragment"
+                android:layout_toRightOf="@+id/ChatButtonFragment"
+                android:layout_below="@+id/SearchLogo"
+                android:text="Thread "/>
+            <Button
+                android:layout_width="110dp"
+                android:layout_height="40dp"
+                android:background="#04f"
+                android:textColor="#fff"
+                android:id="@+id/GrouChatFragment"
+                android:layout_toRightOf="@+id/ThreadButtonFragment"
+                android:layout_below="@+id/SearchLogo"
+                android:text="Group Chat "/>
+        </LinearLayout>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/GroupChatList"
+        android:layout_below="@+id/ChatRoomsLay"
+        tools:listitem="@layout/chat_row"/>
+
+    </RelativeLayout>
+<android.support.design.widget.FloatingActionButton
+android:layout_width="50dp"
+android:layout_height="50dp"
+android:id="@+id/FloatingButtonAddChat"
+android:layout_gravity="bottom|end"
+android:layout_margin="@dimen/fab_margin"
+android:src="@android:drawable/ic_input_add"
+    />
+
+
+    </android.support.design.widget.CoordinatorLayout>

@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.munnasharma.socialmedia.ChatActivity">
+<RelativeLayout
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    >
 
   <LinearLayout
       android:layout_width="match_parent"
       android:background="#05f"
       android:layout_height="wrap_content"
       android:orientation="horizontal"
-      android:id="@+id/SearchLogolay"
+      android:id="@+id/SearchLogolayChat"
       android:layout_marginTop="0dp">
     <ImageView
         android:layout_width="30dp"
@@ -40,7 +44,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/SearchLogolay"
+        android:layout_below="@+id/SearchLogolayChat"
         android:orientation="horizontal"
         android:layout_marginTop="0dp"
         android:id="@+id/ChatRoomsLay"
@@ -55,7 +59,7 @@
    <Button
        android:layout_width="110dp"
        android:layout_height="40dp"
-       android:background="#05f"
+       android:background="#04f"
        android:textColor="#fff"
        android:id="@+id/ChatButtonFragment"
        android:layout_toRightOf="@+id/CameraButton"
@@ -80,9 +84,23 @@
         android:layout_below="@+id/SearchLogo"
         android:text="Group Chat "/>
     </LinearLayout>
-    <FrameLayout
+
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/ChatList"
+        tools:listitem="@layout/chat_row"
         android:layout_below="@+id/ChatRoomsLay"
-        android:id="@+id/FragmentLayoutContainer"></FrameLayout>
+        />
 </RelativeLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/FloatingButtonAddChat"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@android:drawable/ic_input_add"
+        />
+
+
+</android.support.design.widget.CoordinatorLayout>

@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
@@ -178,7 +179,10 @@ public class ForgotPass extends Activity implements  AdapterView.OnItemSelectedL
             };
             ForgotPassReq forgotPass = new ForgotPassReq(email,SecurityQ,SecurityA,oldPAss, responseListener);
             RequestQueue queue = Volley.newRequestQueue(ForgotPass.this);
+            forgotPass.setRetryPolicy(new DefaultRetryPolicy(
+                    30000,2, (float) 2.0));
             queue.add(forgotPass);
+
 
         }
 

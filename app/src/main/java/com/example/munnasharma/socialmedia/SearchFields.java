@@ -30,15 +30,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
-public class SearchFields extends Activity implements  AdapterView.OnItemSelectedListener{
+public class SearchFields extends AppCompatActivity implements  AdapterView.OnItemSelectedListener{
 
     private EditText coll,name;
     private Spinner yr;
     private Button colBtn,YrBtn,NameBtn;
     private String nm,college,year;
     private Intent i;
-    private  ArrayList<String> F_name,L_Name,College;
+    private boolean success;
+    private  ArrayList<String> F_name,L_Name,College,Email;
     private ArrayList<StudentDetails> student;
     private ProgressDialog progressDialog;
     @Override
@@ -118,13 +120,12 @@ public class SearchFields extends Activity implements  AdapterView.OnItemSelecte
         return haveConnectedWifi || haveConnectedMobile;
     }
     AlertDialog.Builder builder;
+
     private void SearchCollege(){
         builder= new AlertDialog.Builder(SearchFields.this);
         boolean network = haveNetworkConnection();
         if (!network) {
-            builder.setMessage(Const.checkInternet)
-                    .create()
-                    .show();
+         Toast.makeText(getApplicationContext(),Const.checkInternet,Toast.LENGTH_SHORT).show();
         }
         if (network) {
             progressDialog=ProgressDialog.show(SearchFields.this,"Searching",Const.GettingSearchResults,true);
@@ -133,42 +134,57 @@ public class SearchFields extends Activity implements  AdapterView.OnItemSelecte
                 @Override
                 public void onResponse(String response) {
 
+                    Log.d("Response",response.toString());
                     response = response.replaceFirst("<font>.*?</font>", "");
                     int jsonStart = response.indexOf("{");
                     int jsonEnd = response.lastIndexOf("}");
 
                     if (jsonStart >= 0 && jsonEnd >= 0 && jsonEnd > jsonStart) {
                         response = response.substring(jsonStart, jsonEnd + 1);
+                    } else {
+
                     }
-                    Log.i("Result",response);
-                    try {
-                        student=new ArrayList<StudentDetails>();
-                        F_name=new ArrayList<String>();
-                        L_Name  = new ArrayList<String>();
-                        College=new ArrayList<String>();
-                        JSONObject obj= new JSONObject(response);
+                    try{
+                        student = new ArrayList<StudentDetails>();
+                        F_name = new ArrayList<String>();
+                        L_Name = new ArrayList<String>();
+                        College = new ArrayList<String>();
+                        Email = new ArrayList<String>();
 
-                        for (int i = 0; i < obj.length(); i++) {
-                            F_name.add(obj.getString(Const.FirstName));
-                            L_Name.add(obj.getString(Const.LastName));
-                            College.add(obj.getString(Const.College));
+                        String jsonString="";//your json string here
+                        JSONObject jObject= new JSONObject(jsonString).getJSONObject("categories");
+                        Iterator<String> keys = jObject.keys();
+                        success=jObject.getBoolean(Const.Success);
+
+                        if(success){
+                            progressDialog.dismiss();
+                        while( keys.hasNext() )
+                        {
+                            String key = keys.next();
+                            Log.v("**********", "**********");
+                            Log.v("category key", key);
+                            JSONObject obj = jObject.getJSONObject(key);
+                                success=obj.getBoolean(Const.Success);
+                                F_name.add(obj.getString(Const.FirstName));
+                                L_Name.add(obj.getString(Const.LastName));
+                                College.add(obj.getString(Const.College));
+                                Email.add(obj.getString(Const.Email));
                             }
+                            Log.d("ChangedText", F_name.toString());
+                            if (F_name.size() == 0) {
+                                builder.setMessage("Sorry No user with this college available... Please Try again with change of selection ")
+                                        .setNegativeButton("Retry", null)
+                                        .create()
+                                        .show();
 
-                        if(F_name.size()==0){
-                            progressDialog.dismiss();
-                            builder.setMessage("Sorry No user with this college available... Please Try again with change of selection ")
-                                    .setNegativeButton("Retry", null)
-                                    .create()
-                                    .show();
+                            } else {
+                                int i = 0;
+                                String[] firstName = F_name.toArray(new String[F_name.size()]);
+                                String[] lastName = L_Name.toArray(new String[L_Name.size()]);
+                                String[] colege = College.toArray(new String[College.size()]);
+                                String[] email = Email.toArray(new String[Email.size()]);
 
-                        }else {
-                            progressDialog.dismiss();
-                                int i=0;
-                            String [] firstName=new String[0];
-                            String [] lastName = new String[0];
-                            String [] colege=new String[0];
-
-                                for(i=0;i<F_name.size();++i){
+                               /* for(i=0;i<F_name.size();++i){
                                     firstName[i]=F_name.get(i).toString();
                                 }
                                 for(i=0;i<L_Name.size();++i){
@@ -176,14 +192,18 @@ public class SearchFields extends Activity implements  AdapterView.OnItemSelecte
                                 }
                                 for(i=0;i<College.size();++i){
                                     colege[i]=College.get(i).toString();
-                                }
+                                }*/
 
-                           // Toast.makeText(getApplicationContext(),F_name.get(1), Toast.LENGTH_SHORT).show();
-                         Intent i1=new Intent(getApplicationContext(),ListOfResults.class);
-                            i1.putExtra(Const.FirstName,firstName);
-                            i1.putExtra(Const.LastName,lastName);
-                            i1.putExtra(Const.College,colege);
-                            startActivity(i1);
+                                Intent i1 = new Intent(getApplicationContext(), ListOfResults.class);
+                                i1.putExtra(Const.FirstName, firstName);
+                                i1.putExtra(Const.LastName, lastName);
+                                i1.putExtra(Const.College, colege);
+                                i1.putExtra(Const.Email, email);
+                                 startActivity(i1);
+                            }
+                        }else{
+                            progressDialog.dismiss();
+                            Toast.makeText(SearchFields.this, Const.checkInternet, Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -192,12 +212,11 @@ public class SearchFields extends Activity implements  AdapterView.OnItemSelecte
             };
             CollegeSearchRequest collegeSearchRequest = new CollegeSearchRequest(college,responseListener);
             RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+            collegeSearchRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    30000,2, (float) 2.0));
             queue.add(collegeSearchRequest);
 
-            collegeSearchRequest.setRetryPolicy(new DefaultRetryPolicy(
-                    30000,
-                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         }
     }
 

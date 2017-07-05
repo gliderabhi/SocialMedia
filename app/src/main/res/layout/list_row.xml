@@ -46,7 +46,7 @@
         <!-- Artist Name -->
         <TextView
             android:id="@+id/CollegeName"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/NameUser"
             android:textColor="#343434"
@@ -56,19 +56,29 @@
             android:layout_toRightOf="@+id/thumbnail"
             android:text="Just gona stand there and ..." />
 
-        <!-- Rightend Duration -->
-        <TextView
-            android:id="@+id/duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignTop="@id/CollegeName"
-            android:gravity="right"
-            android:text="5:45"
-            android:layout_marginRight="5dip"
-            android:textSize="10dip"
-            android:textColor="#10bcc9"
-            android:textStyle="bold"/>
+       <ImageView
+           android:layout_width="40dp"
+           android:layout_height="40dp"
+           android:layout_marginLeft="20dp"
+           android:id="@+id/PositiveBtn"
+           android:src="@mipmap/ic_plus_blue"
+           android:layout_toRightOf="@+id/CollegeName"
+           />
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/NegativeBtn"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/PositiveBtn"
+        android:src="@mipmap/ic_minus_red"
+        />
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:id="@+id/FrndsAlready"
+        android:src="@drawable/frnd"
+        android:layout_toRightOf="@+id/NegativeBtn"
+        android:layout_marginLeft="20dp"/>
 
 
     </RelativeLayout>

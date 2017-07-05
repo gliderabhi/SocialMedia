@@ -49,6 +49,8 @@ import com.google.firebase.storage.UploadTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
@@ -219,7 +221,8 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
 
                //if all fields set then only send data
                 if (yes) {
-                    DataSend();
+                   /// createUser(user);
+                   DataSend();
                      }
             }
 
@@ -453,13 +456,10 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
             String LoginUrlDetails=getLoginUrl();
             RegisterRequest registerRequest = new RegisterRequest(firstname,lastName,college,branch,year,email,mobileNo,sex,LoginUrlDetails,responseListener);
             RequestQueue queue = Volley.newRequestQueue(SignUp1.this);
+            registerRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    30000,2, (float) 2.0));
             queue.add(registerRequest);
 
-
-            int socketTimeout = 30000;//30 seconds - change to what you want
-            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-            registerRequest.setRetryPolicy(policy);
-            queue.add(registerRequest);
         }
         return  success;
     }
@@ -553,5 +553,17 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
 
     }
 
+    private DatabaseReference root = FirebaseDatabase.getInstance().getReference().getRoot();
+    private DatabaseReference usrr, root2,root3,userDetails;
+
+    private void createUser(FirebaseUser user) {
+        userDetails = root.child("userDetails");
+        Map<String, Object> map3 = new HashMap<String, Object>();
+        studentDetails =new StudentDetails(firstname,lastName,college,branch,year,email,mobileNo,sex);
+        map3.put(user.getEmail(),studentDetails);
+        userDetails.updateChildren(map3);
+
+        Toast.makeText(getApplicationContext(), "Added Successfully", Toast.LENGTH_SHORT).show();
+    }
 
 }
