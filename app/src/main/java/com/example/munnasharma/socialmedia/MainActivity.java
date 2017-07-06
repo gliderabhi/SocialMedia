@@ -20,6 +20,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.example.munnasharma.ChatActivities.ChatActivity;
 import com.example.munnasharma.classes.StudentDetails;
 import com.example.munnasharma.extras.Const;
 import com.example.munnasharma.extras.PasswordEncrypt;
@@ -70,6 +71,8 @@ public class MainActivity extends Activity {
     private ProfileTracker profTrack;
     private FacebookCallback<LoginResult> mFacebookCallback;
     private SessionManager sessionManager;
+    private boolean stmt;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,10 +80,7 @@ public class MainActivity extends Activity {
  //Set up sesion manager to know if the user is already logged in
 
         sessionManager=new SessionManager(getApplicationContext());
-        if(sessionManager.isLoggedIn()){
-            //Show Logged in , later open the profile straight away
-//            Toast.makeText(getApplicationContext(),"Already Logged In ",Toast.LENGTH_SHORT).show();
-        }
+
         //Initialise the variables
         LoginBtn=(Button)findViewById(R.id.LoginBtn);
         CreateAccount=(TextView)findViewById(R.id.CreateAccount);
@@ -154,8 +154,8 @@ public class MainActivity extends Activity {
         callbackManager = CallbackManager.Factory.create();
 
         //set permission for facebook profile data
-        fbImg.setReadPermissions("email");
-        fbImg.setReadPermissions(Arrays.asList("user_status"));
+      //  fbImg.setReadPermissions("email");
+        //fbImg.setReadPermissions(Arrays.asList("user_status"));
 
         accessTokenTracker = new AccessTokenTracker() {
             @Override
@@ -192,8 +192,8 @@ public class MainActivity extends Activity {
                                             Profile.getCurrentProfile().getId();
                                             Profile.getCurrentProfile().getFirstName();
                                             Profile.getCurrentProfile().getLastName();
-                                           f_name=Profile.getCurrentProfile().getFirstName().toString();
-                                           l_name=Profile.getCurrentProfile().getLastName().toString();
+                                           f_name=Profile.getCurrentProfile().getFirstName();
+                                           l_name=Profile.getCurrentProfile().getLastName();
                                             email=Profile.getCurrentProfile().getLinkUri().toString();
                                             Log.d("FbResult",f_name);
                                             if(Checkusr(email)){
@@ -274,8 +274,6 @@ public class MainActivity extends Activity {
 
     }
 
-
-
     //Check for network connection
     private boolean haveNetworkConnection() {
         boolean haveConnectedWifi = false;
@@ -341,8 +339,6 @@ public class MainActivity extends Activity {
 
                         if (jsonStart >= 0 && jsonEnd >= 0 && jsonEnd > jsonStart) {
                             response = response.substring(jsonStart, jsonEnd + 1);
-                        } else {
-
                         }
 
                         try {
@@ -412,6 +408,7 @@ public class MainActivity extends Activity {
 
 
     }
+
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d("Login result", "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
@@ -460,11 +457,10 @@ public class MainActivity extends Activity {
         }
     }
 
-
-
     @Override
     public void onBackPressed() {
         pr.dismiss();}
+
 /*
         //if linkedin api running
        APIHelper apiHelper = APIHelper.getInstance(getApplicationContext());
@@ -499,7 +495,6 @@ public void onResume() {
         profTrack.stopTracking();
     }
 
-    private boolean stmt;
     //check if user exists on db
     private boolean Checkusr(String mail){
 
@@ -530,8 +525,6 @@ public void onResume() {
 
                     if (jsonStart >= 0 && jsonEnd >= 0 && jsonEnd > jsonStart) {
                         response = response.substring(jsonStart, jsonEnd + 1);
-                    } else {
-
                     }
 
                     try {

@@ -17,6 +17,7 @@
 
     <application
         android:allowBackup="true"
+        android:fullBackupContent="true"
         android:icon="@drawable/student"
         android:label="Cazime"
         android:supportsRtl="true"
@@ -58,12 +59,12 @@
             android:name=".ListOfResults"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ChatMessagesActivity"
+            android:name="com.example.munnasharma.ChatActivities.ChatMessagesActivity"
             android:label="label of user message"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ChatActivity"
+            android:name="com.example.munnasharma.ChatActivities.ChatActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
 
@@ -82,14 +83,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".GroupChatList"
+            android:name="com.example.munnasharma.ChatActivities.GroupChatList"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ThreadActivity"
+            android:name="com.example.munnasharma.ChatActivities.ThreadActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".GroupChatActivityMssag"></activity>
+        <activity android:name="com.example.munnasharma.ChatActivities.GroupChatActivityMssag"></activity>
     </application>
 
 </manifest>

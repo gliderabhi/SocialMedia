@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.munnasharma.ChatActivities.GroupChatList;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -34,13 +35,14 @@ import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import java.util.HashMap;
 import java.util.Map;
 import com.example.munnasharma.classes.*;
+import com.example.munnasharma.extras.*;
 
 public class SignUpActivity extends AppCompatActivity {
 
+    public static final int RC_SIGN_IN = 1;
+    private static final String TAG="Firebase Auth Log";
     private CallbackManager mCallbackManager;
     private FirebaseAuth mFirebaseAuth;
-    private static final String TAG="Firebase Auth Log";
-    public static final int RC_SIGN_IN = 1;
     private FirebaseDatabase mFirebaseDatabase;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private TwitterLoginButton mLoginButton;
@@ -61,7 +63,7 @@ public class SignUpActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                   i=new Intent(getApplicationContext(),SignUp1.class);
+                   i=new Intent(getApplicationContext(),GroupChatList.class);
                     startActivity(i);
 
                 } else {
@@ -171,16 +173,20 @@ public class SignUpActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     FirebaseUser user = mFirebaseAuth.getCurrentUser();
 
-                    String name = user.getDisplayName();
-                    String email = user.getEmail();
+                    if(user!=null) {
+                        String name = user.getDisplayName();
+                        String email = user.getEmail();
 
-                    createUser(user);
+                        createUser(user);
 
-                    i = new Intent(getApplicationContext(), SignUp1.class);
-                    startActivity(i);
+                        i = new Intent(getApplicationContext(), SignUp1.class);
+                        startActivity(i);
 
-                    Toast.makeText(getApplicationContext(), "Logged In", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Logged In", Toast.LENGTH_SHORT).show();
 
+                    }else{
+                        Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_SHORT).show();
+                    }
                 } else if (resultCode == RESULT_CANCELED) {
                     Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
 
@@ -207,11 +213,15 @@ public class SignUpActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 // Sign in success, update UI with the signed-in user's information
                                 FirebaseUser user = mFirebaseAuth.getCurrentUser();
-                                String name = user.getDisplayName();
-                                String email = user.getEmail();
-                                createUser(user);
-                                i = new Intent(getApplicationContext(), SignUp1.class);
-                                startActivity(i);
+                                if (user != null) {
+                                    String name = user.getDisplayName();
+                                    String email = user.getEmail();
+                                    createUser(user);
+                                    i = new Intent(getApplicationContext(), GroupChatList.class);
+                                    startActivity(i);
+                                }else{
+                                    Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_SHORT).show();
+                                }
                             }
                             if (!task.isSuccessful()) {
                                 try {
@@ -226,7 +236,7 @@ public class SignUpActivity extends AppCompatActivity {
                                     Toast.makeText(getApplicationContext(), "User Exists", Toast.LENGTH_SHORT).show();
 
                                 } catch (Exception e) {
-                                    Toast.makeText(getApplicationContext(), e.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
 
                                 }
                             }
@@ -248,15 +258,20 @@ public class SignUpActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                      try{if (task.isSuccessful()) {
-                          // Sign in success, update UI with the signed-in user's information
-                          FirebaseUser user = mFirebaseAuth.getCurrentUser();
-                          String name=user.getDisplayName();
-                          String email=user.getEmail();
-                          createUser(user);
-                          i=new Intent(getApplicationContext(),SignUp1.class);
-                          startActivity(i);
-                      } else {
+                      try{
+                          if (task.isSuccessful()) {
+                              // Sign in success, update UI with the signed-in user's information
+                              FirebaseUser user = mFirebaseAuth.getCurrentUser();
+                              if (user != null) {
+                                  String name = user.getDisplayName();
+                                  String email = user.getEmail();
+                                  createUser(user);
+                                  i = new Intent(getApplicationContext(), SignUp1.class);
+                                  startActivity(i);
+                              }else{
+                                  Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_SHORT).show();
+                              }
+                          }else {
                           // If sign in fails, display a message to the user.
                           Log.w(TAG, "signInWithCredential:failure", task.getException());
                           Toast.makeText(SignUpActivity.this, "Authentication failed.",
@@ -275,8 +290,8 @@ public class SignUpActivity extends AppCompatActivity {
 
 
     private void createUser(FirebaseUser user) {
-      try{  userDetails = root.child("userDetails");
-        Map<String, Object> map3 = new HashMap<String, Object>();
+      try{  userDetails = root.child(Const.UserDetails);
+        Map<String, Object> map3 = new HashMap<>();
         studentDetails =new StudentDetails(user.getDisplayName(),user.getEmail(),user.getProviderId());
         map3.put(user.getEmail(),studentDetails);
         userDetails.updateChildren(map3);

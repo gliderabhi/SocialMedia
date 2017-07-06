@@ -1,4 +1,4 @@
-package com.example.munnasharma.socialmedia;
+package com.example.munnasharma.ChatActivities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -26,6 +26,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.munnasharma.socialmedia.R;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
@@ -54,6 +55,8 @@ import com.example.munnasharma.classes.*;
 
 public class ChatMessagesActivity extends AppCompatActivity {
 
+    private static final int GALLERY_INTENT=2;
+    private static final String LOG_TAG = "Record_log";
     private String messageId;
     private TextView mMessageField;
     private ImageButton mSendButton;
@@ -61,25 +64,18 @@ public class ChatMessagesActivity extends AppCompatActivity {
     private ListView mMessageList;
     private Toolbar mToolBar;
     private String currentUserEmail;
-
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mMessageDatabaseReference;
     private DatabaseReference mUsersDatabaseReference;
     private FirebaseListAdapter<Message> mMessageListAdapter;
     private FirebaseAuth mFirebaseAuth;
-
     private ImageButton mphotoPickerButton;
-    private static final int GALLERY_INTENT=2;
     private StorageReference mStorage;
     private ProgressDialog mProgress;
-
     private ImageButton mrecordVoiceButton;
     private TextView mRecordLable;
-
     private MediaRecorder mRecorder;
     private String mFileName = null;
-
-    private static final String LOG_TAG = "Record_log";
     private ValueEventListener mValueEventListener;
 
     //Audio Runtime Permissions
@@ -283,59 +279,65 @@ public class ChatMessagesActivity extends AppCompatActivity {
     }
 
     //If voice message add them to Firebase.Storage
-    public void addVoiceToMessages(String voiceLocation){
+    public void addVoiceToMessages(String voiceLocation) {
         final DatabaseReference pushRef = mMessageDatabaseReference.push();
         final String pushKey = pushRef.getKey();
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
         Date date = new Date();
         String timestamp = dateFormat.format(date);
         //Create message object with text/voice etc
-        Message message =
-                new Message(mFirebaseAuth.getCurrentUser().getEmail(),
-                        "Message: Voice Sent", "VOICE", voiceLocation, timestamp);
-        //Create HashMap for Pushing
-        HashMap<String, Object> messageItemMap = new HashMap<String, Object>();
-        HashMap<String,Object> messageObj = (HashMap<String, Object>) new ObjectMapper()
-                .convertValue(message, Map.class);
-        messageItemMap.put("/" + pushKey, messageObj);
-        mMessageDatabaseReference.updateChildren(messageItemMap)
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        mMessageField.setText("");
-                    }
-                });
+        String currentUserEmail = mFirebaseAuth.getCurrentUser().getEmail();
+        if (currentUserEmail != null) {
+            Message message =
+                    new Message(currentUserEmail,
+                            "Message: Voice Sent", "VOICE", voiceLocation, timestamp);
+            //Create HashMap for Pushing
+            HashMap<String, Object> messageItemMap = new HashMap<>();
+            HashMap<String, Object> messageObj = (HashMap<String, Object>) new ObjectMapper()
+                    .convertValue(message, Map.class);
+            messageItemMap.put("/" + pushKey, messageObj);
+            mMessageDatabaseReference.updateChildren(messageItemMap)
+                    .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            mMessageField.setText("");
+                        }
+                    });
+        }
     }
 
 
     //Send image messages from here
-    public void addImageToMessages(String imageLocation){
+    public void addImageToMessages(String imageLocation) {
         final DatabaseReference pushRef = mMessageDatabaseReference.push();
         final String pushKey = pushRef.getKey();
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
         Date date = new Date();
         String timestamp = dateFormat.format(date);
         //Create message object with text/voice etc
-        Message message =
-                new Message(mFirebaseAuth.getCurrentUser().getEmail(),
-                        "Message: Image Sent", "IMAGE", imageLocation, timestamp);
-        //Create HashMap for Pushing
-        HashMap<String, Object> messageItemMap = new HashMap<String, Object>();
-        HashMap<String,Object> messageObj = (HashMap<String, Object>) new ObjectMapper()
-                .convertValue(message, Map.class);
-        messageItemMap.put("/" + pushKey, messageObj);
-        mMessageDatabaseReference.updateChildren(messageItemMap)
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        mMessageField.setText("");
-                    }
-                });
+        String currentUserEmail = mFirebaseAuth.getCurrentUser().getEmail();
+        if (currentUserEmail != null) {
+            Message message =
+                    new Message(currentUserEmail,
+                            "Message: Image Sent", "IMAGE", imageLocation, timestamp);
+            //Create HashMap for Pushing
+            HashMap<String, Object> messageItemMap = new HashMap<>();
+            HashMap<String, Object> messageObj = (HashMap<String, Object>) new ObjectMapper()
+                    .convertValue(message, Map.class);
+            messageItemMap.put("/" + pushKey, messageObj);
+            mMessageDatabaseReference.updateChildren(messageItemMap)
+                    .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            mMessageField.setText("");
+                        }
+                    });
+        }
     }
 
 
 
-    public void sendMessage(View view){
+    public void sendMessage(View view) {
         //final DatabaseReference messageRef = mFirebaseDatabase.getReference(Constants.MESSAGE_LOCATION);
         final DatabaseReference pushRef = mMessageDatabaseReference.push();
         final String pushKey = pushRef.getKey();
@@ -346,19 +348,22 @@ public class ChatMessagesActivity extends AppCompatActivity {
         Date date = new Date();
         String timestamp = dateFormat.format(date);
         //Create message object with text/voice etc
-        Message message = new Message(mFirebaseAuth.getCurrentUser().getEmail(), messageString, timestamp);
-        //Create HashMap for Pushing
-        HashMap<String, Object> messageItemMap = new HashMap<String, Object>();
-        HashMap<String,Object> messageObj = (HashMap<String, Object>) new ObjectMapper()
-                .convertValue(message, Map.class);
-        messageItemMap.put("/" + pushKey, messageObj);
-        mMessageDatabaseReference.updateChildren(messageItemMap)
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        mMessageField.setText("");
-                    }
-                });
+        String currentUserEmail = mFirebaseAuth.getCurrentUser().getEmail();
+        if (currentUserEmail != null) {
+            Message message = new Message(currentUserEmail, messageString, timestamp);
+            //Create HashMap for Pushing
+            HashMap<String, Object> messageItemMap = new HashMap<>();
+            HashMap<String, Object> messageObj = (HashMap<String, Object>) new ObjectMapper()
+                    .convertValue(message, Map.class);
+            messageItemMap.put("/" + pushKey, messageObj);
+            mMessageDatabaseReference.updateChildren(messageItemMap)
+                    .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            mMessageField.setText("");
+                        }
+                    });
+        }
     }
 
     private void showMessages() {
@@ -404,7 +409,7 @@ public class ChatMessagesActivity extends AppCompatActivity {
                 if(mSender.equals(currentUserEmail)){
                     //messgaeText.setGravity(Gravity.RIGHT);
                     //senderText.setGravity(Gravity.RIGHT);
-                    messageLine.setGravity(Gravity.RIGHT);
+                    messageLine.setGravity(Gravity.END);
                     leftImage.setVisibility(View.GONE);
                     rightImage.setVisibility(View.VISIBLE);
 
@@ -445,7 +450,7 @@ public class ChatMessagesActivity extends AppCompatActivity {
                 }else{
                     //messgaeText.setGravity(Gravity.LEFT);
                     //senderText.setGravity(Gravity.LEFT);
-                    messageLine.setGravity(Gravity.LEFT);
+                    messageLine.setGravity(Gravity.START);
                     leftImage.setVisibility(View.VISIBLE);
                     rightImage.setVisibility(View.GONE);
                     individMessageLayout.setBackgroundResource(R.drawable.roundedmessages);
@@ -542,6 +547,7 @@ public class ChatMessagesActivity extends AppCompatActivity {
             mediaPlayer.setDataSource(uri.toString());
         }catch(Exception e){
 
+            Log.i("Error",e.toString());
         }
         mediaPlayer.prepareAsync();
         //You can show progress dialog here untill it prepared to play
@@ -577,7 +583,9 @@ public class ChatMessagesActivity extends AppCompatActivity {
 
         mToolBar.setTitle(chatName);
         setSupportActionBar(mToolBar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if(getSupportActionBar()!=null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         mToolBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

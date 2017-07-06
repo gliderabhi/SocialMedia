@@ -32,6 +32,8 @@ public class NextPageForgotPass extends Activity {
     private EditText pass1,pass2;
     private  String Pass1,Pass2,email;
     private Button changePass;
+    private ProgressDialog pr;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +72,6 @@ public class NextPageForgotPass extends Activity {
         });
 
     }
-    private ProgressDialog pr;
 
     //Check Network Connection
     private boolean haveNetworkConnection() {
@@ -121,8 +122,6 @@ public class NextPageForgotPass extends Activity {
 
                     if (jsonStart >= 0 && jsonEnd >= 0 && jsonEnd > jsonStart) {
                         response = response.substring(jsonStart, jsonEnd + 1);
-                    } else {
-
                     }
 
                     try {
@@ -132,7 +131,7 @@ public class NextPageForgotPass extends Activity {
 
                         if (success) {
                             pr.dismiss();
-                            Intent i = new Intent(getApplicationContext(), ProfilePage.class);
+                            Intent i = new Intent(getApplicationContext(), SignUp1.class);
                             startActivity(i);
                             //Check if data is receievd andsame as provided at time of signup
                             //Toast.makeText(getApplicationContext(), "recieved ", Toast.LENGTH_SHORT).show();

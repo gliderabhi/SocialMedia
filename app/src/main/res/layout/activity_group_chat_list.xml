@@ -5,97 +5,98 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.munnasharma.socialmedia.ChatActivity">
+    tools:context="com.example.munnasharma.ChatActivities.ChatActivity">
     <RelativeLayout
+        android:id="@+id/GroupRel"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
-            android:layout_width="match_parent"
-            android:background="#05f"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:id="@+id/SearchLogolay"
-            android:layout_marginTop="0dp">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:background="#05f"
+            android:orientation="horizontal">
             <ImageView
+                android:id="@+id/SearchLogo"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/icon_search"
-                android:layout_marginLeft="30dp"
+                android:layout_marginStart="30dp"
                 android:layout_marginTop="10dp"
-                android:id="@+id/SearchLogo"
+                android:src="@drawable/icon_search"
                 />
             <EditText
-                android:layout_width="250dp"
                 android:id="@+id/SearchBox"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/SearchLogo"
-                android:layout_marginTop="5dp"/>
+                android:layout_marginTop="5dp"
+                android:inputType="text"/>
             <ImageView
+                android:id="@+id/SettingsButton"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:layout_marginStart="15dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginLeft="15dp"
-                android:id="@+id/SettingsButton"
                 android:src="@drawable/menu"
                 />
 
         </LinearLayout>
+        <ListView
+            android:id="@+id/MenuList"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/SearchLogolay"/>
         <LinearLayout
+            android:id="@+id/ChatRoomsLay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/SearchLogolay"
-            android:orientation="horizontal"
             android:layout_marginTop="0dp"
-            android:id="@+id/ChatRoomsLay"
             android:background="#05f"
+            android:orientation="horizontal"
             >
             <ImageView
-                android:layout_width="40dp"
-                android:src="@drawable/camera"
-                android:layout_height="40dp"
                 android:id="@+id/CameraButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/camera"
                 />
             <Button
-                android:layout_width="110dp"
-                android:layout_height="40dp"
-                android:background="#05f"
-                android:textColor="#fff"
                 android:id="@+id/ChatButtonFragment"
-                android:layout_toRightOf="@+id/CameraButton"
-                android:layout_below="@+id/SearchLogo"
-                android:text="Chat "/>
-            <Button
                 android:layout_width="110dp"
                 android:layout_height="40dp"
                 android:background="#05f"
-                android:textColor="#fff"
-                android:id="@+id/ThreadButtonFragment"
-                android:layout_toRightOf="@+id/ChatButtonFragment"
-                android:layout_below="@+id/SearchLogo"
-                android:text="Thread "/>
+                android:text="Chat "
+                android:textColor="#fff"/>
             <Button
+                android:id="@+id/ThreadButtonFragment"
+                android:layout_width="110dp"
+                android:layout_height="40dp"
+                android:background="#05f"
+                android:text="Thread "
+                android:textColor="#fff"/>
+            <Button
+                android:id="@+id/GrouChatFragment"
                 android:layout_width="110dp"
                 android:layout_height="40dp"
                 android:background="#04f"
-                android:textColor="#fff"
-                android:id="@+id/GrouChatFragment"
-                android:layout_toRightOf="@+id/ThreadButtonFragment"
-                android:layout_below="@+id/SearchLogo"
-                android:text="Group Chat "/>
+                android:text="Group Chat "
+                android:textColor="#fff"/>
         </LinearLayout>
 
     <ListView
+        android:id="@+id/GroupChatList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/GroupChatList"
         android:layout_below="@+id/ChatRoomsLay"
-        tools:listitem="@layout/chat_row"/>
+        tools:listitem="@layout/chat_item"/>
 
     </RelativeLayout>
 <android.support.design.widget.FloatingActionButton
+android:id="@+id/FloatingButtonAddChat"
 android:layout_width="50dp"
 android:layout_height="50dp"
-android:id="@+id/FloatingButtonAddChat"
 android:layout_gravity="bottom|end"
 android:layout_margin="@dimen/fab_margin"
 android:src="@android:drawable/ic_input_add"
