@@ -49,29 +49,24 @@
             android:background="#05f"
             android:orientation="horizontal"
             >
-            <ImageView
-                android:id="@+id/CameraButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/camera"
-                />
+
             <Button
                 android:id="@+id/ChatButtonFragment"
-                android:layout_width="110dp"
+                android:layout_width="130dp"
                 android:layout_height="40dp"
                 android:background="#05f"
                 android:text="Chat "
                 android:textColor="#fff"/>
             <Button
                 android:id="@+id/ThreadButtonFragment"
-                android:layout_width="110dp"
+                android:layout_width="130dp"
                 android:layout_height="40dp"
                 android:background="#04f"
                 android:text="Thread "
                 android:textColor="#fff"/>
             <Button
                 android:id="@+id/GrouChatFragment"
-                android:layout_width="110dp"
+                android:layout_width="130dp"
                 android:layout_height="40dp"
                 android:background="#05f"
                 android:text="Group Chat "
@@ -82,7 +77,8 @@
             android:id="@+id/GroupChatList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/ChatRoomsLay"/>
+            android:layout_below="@+id/ChatRoomsLay"
+            tools:listitem="@layout/chat_item"/>
 
     </RelativeLayout>
     <android.support.design.widget.FloatingActionButton

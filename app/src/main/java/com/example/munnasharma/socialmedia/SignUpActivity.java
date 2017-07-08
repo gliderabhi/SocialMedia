@@ -50,6 +50,11 @@ public class SignUpActivity extends AppCompatActivity {
     private DatabaseReference root = FirebaseDatabase.getInstance().getReference().getRoot();
     private DatabaseReference userDetails, root2,root3;
     private StudentDetails studentDetails;
+
+    private static String encodeEmail(String userEmail) {
+        return userEmail.replace(".", ",");
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +68,7 @@ public class SignUpActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
+                    createUser(user);
                    i=new Intent(getApplicationContext(),GroupChatList.class);
                     startActivity(i);
 
@@ -139,7 +145,8 @@ public class SignUpActivity extends AppCompatActivity {
                        try{ Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
                         String name=task.getResult().getUser().getDisplayName();
                         String email=task.getResult().getUser().getEmail();
-                        User user=new User(name,email);
+                           String profilePic=task.getResult().getUser().getPhotoUrl().toString();
+                        User user=new User(name,email,profilePic);
                         i=new Intent(getApplicationContext(), SignUp1.class);
                         startActivity(i);
                         // If sign in fails, display a message to the user. If sign in succeeds
@@ -174,8 +181,6 @@ public class SignUpActivity extends AppCompatActivity {
                     FirebaseUser user = mFirebaseAuth.getCurrentUser();
 
                     if(user!=null) {
-                        String name = user.getDisplayName();
-                        String email = user.getEmail();
 
                         createUser(user);
 
@@ -201,6 +206,7 @@ public class SignUpActivity extends AppCompatActivity {
             Log.i("Error",e.toString());
         }
     }
+
     private void handleFacebookAccessToken(AccessToken token) {
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
@@ -214,8 +220,6 @@ public class SignUpActivity extends AppCompatActivity {
                                 // Sign in success, update UI with the signed-in user's information
                                 FirebaseUser user = mFirebaseAuth.getCurrentUser();
                                 if (user != null) {
-                                    String name = user.getDisplayName();
-                                    String email = user.getEmail();
                                     createUser(user);
                                     i = new Intent(getApplicationContext(), GroupChatList.class);
                                     startActivity(i);
@@ -248,6 +252,7 @@ public class SignUpActivity extends AppCompatActivity {
                     }
                 });
     }
+
     private void handleTwitterSession(TwitterSession session) {
 
         AuthCredential credential = TwitterAuthProvider.getCredential(
@@ -263,8 +268,6 @@ public class SignUpActivity extends AppCompatActivity {
                               // Sign in success, update UI with the signed-in user's information
                               FirebaseUser user = mFirebaseAuth.getCurrentUser();
                               if (user != null) {
-                                  String name = user.getDisplayName();
-                                  String email = user.getEmail();
                                   createUser(user);
                                   i = new Intent(getApplicationContext(), SignUp1.class);
                                   startActivity(i);
@@ -286,19 +289,18 @@ public class SignUpActivity extends AppCompatActivity {
                 });
     }
 
-
-
-
     private void createUser(FirebaseUser user) {
-      try{  userDetails = root.child(Const.UserDetails);
+       //final String newFriendEncodedEmail = encodeEmail(newFriendEmail);
+        try{     final DatabaseReference userRef = mFirebaseDatabase.getReference(Const.UserDetails);
         Map<String, Object> map3 = new HashMap<>();
-        studentDetails =new StudentDetails(user.getDisplayName(),user.getEmail(),user.getProviderId());
-        map3.put(user.getEmail(),studentDetails);
-        userDetails.updateChildren(map3);
+        User  usr =new User(user.getDisplayName(),user.getEmail(),user.getPhotoUrl().toString());
+        map3.put(encodeEmail(user.getEmail()),usr);
+        userRef.updateChildren(map3);
 
         Toast.makeText(getApplicationContext(), "Added Successfully", Toast.LENGTH_SHORT).show();
       }catch (Exception e){
           Toast.makeText(getApplicationContext(),"Failed",Toast.LENGTH_SHORT).show();
+          Log.i("Error",e.toString());
       }
     }
 

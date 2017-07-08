@@ -33,6 +33,7 @@ import java.util.Iterator;
 
 public class SearchFields extends AppCompatActivity implements  AdapterView.OnItemSelectedListener{
 
+    AlertDialog.Builder builder;
     private EditText coll,name;
     private Spinner yr;
     private Button colBtn,YrBtn,NameBtn;
@@ -42,6 +43,7 @@ public class SearchFields extends AppCompatActivity implements  AdapterView.OnIt
     private  ArrayList<String> F_name,L_Name,College,Email;
     private ArrayList<StudentDetails> student;
     private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,6 +104,7 @@ public class SearchFields extends AppCompatActivity implements  AdapterView.OnIt
     public void onNothingSelected(AdapterView<?> parent) {
         Toast.makeText(getApplicationContext(),Const.fill_year,Toast.LENGTH_SHORT).show();
     }
+
     private boolean haveNetworkConnection() {
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;
@@ -118,7 +121,6 @@ public class SearchFields extends AppCompatActivity implements  AdapterView.OnIt
         }
         return haveConnectedWifi || haveConnectedMobile;
     }
-    AlertDialog.Builder builder;
 
     private void SearchCollege(){
         builder= new AlertDialog.Builder(SearchFields.this);
@@ -143,32 +145,18 @@ public class SearchFields extends AppCompatActivity implements  AdapterView.OnIt
                     } else {
 
                     }
-                    try{
+                    try {
                         student = new ArrayList<StudentDetails>();
                         F_name = new ArrayList<String>();
                         L_Name = new ArrayList<String>();
                         College = new ArrayList<String>();
                         Email = new ArrayList<String>();
 
-                        String jsonString="";//your json string here
-                        JSONObject jObject= new JSONObject(jsonString).getJSONObject("categories");
-                        Iterator<String> keys = jObject.keys();
-                        success=jObject.getBoolean(Const.Success);
+                        JSONObject jObject = new JSONObject(response);
+                        success = jObject.getBoolean(Const.Success);
+                        if (success) {
 
-                        if(success){
-                            progressDialog.dismiss();
-                        while( keys.hasNext() )
-                        {
-                            String key = keys.next();
-                            Log.v("**********", "**********");
-                            Log.v("category key", key);
-                            JSONObject obj = jObject.getJSONObject(key);
-                                success=obj.getBoolean(Const.Success);
-                                F_name.add(obj.getString(Const.FirstName));
-                                L_Name.add(obj.getString(Const.LastName));
-                                College.add(obj.getString(Const.College));
-                                Email.add(obj.getString(Const.Email));
-                            }
+
                             Log.d("ChangedText", F_name.toString());
                             if (F_name.size() == 0) {
                                 builder.setMessage("Sorry No user with this college available... Please Try again with change of selection ")
@@ -198,11 +186,8 @@ public class SearchFields extends AppCompatActivity implements  AdapterView.OnIt
                                 i1.putExtra(Const.LastName, lastName);
                                 i1.putExtra(Const.College, colege);
                                 i1.putExtra(Const.Email, email);
-                                 startActivity(i1);
+                                startActivity(i1);
                             }
-                        }else{
-                            progressDialog.dismiss();
-                            Toast.makeText(SearchFields.this, Const.checkInternet, Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();

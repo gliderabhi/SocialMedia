@@ -103,7 +103,7 @@ public class ChatMessagesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.messages_activity);
 
-/*
+
         Intent intent = this.getIntent();
         //MessageID is the location of the messages for this specific chat
         messageId = intent.getStringExtra(Const.MESSAGE_ID);
@@ -114,7 +114,7 @@ public class ChatMessagesActivity extends AppCompatActivity {
             return;
         }
 
-     */   //Check Permissions at runtime
+        //Check Permissions at runtime
         int requestCode = 200;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(permissions, requestCode);

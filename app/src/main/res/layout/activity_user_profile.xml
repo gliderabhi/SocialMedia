@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_sign_up1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.munnasharma.socialmedia.SignUp1">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/CreateAccountText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:text="Profile Details "
+                android:textColor="#05f"
+                android:textSize="20dp"/>
+            <ImageView
+                android:id="@+id/ProfileImgUser"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_below="@+id/CreateAccountText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/student"
+                />
+            <Button
+                android:id="@+id/AddFrndBtn"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ProfileImgUser"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="25dp"
+                android:background="#fff"
+                android:text="Add Friend"/>
+            <Button
+                android:id="@+id/RemoveFrndButton"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ProfileImgUser"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="25dp"
+                android:layout_toEndOf="@+id/AddFrndBtn"
+                android:background="#fff"
+                android:text="Remove Friend"/>
+            <TextView
+                android:id="@+id/UserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/AddFrndBtn"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="20dp"
+                android:text="Name"
+                android:textSize="17dp"/>
+            <TextView
+                android:id="@+id/UserSex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/AddFrndBtn"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="20dp"
+                android:layout_toRightOf="@+id/UserName"
+                android:text="Sex"
+                android:textSize="17dp"
+                />
+            <TextView
+                android:id="@+id/CollegeNameText"
+                android:layout_width="300dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/UserName"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:text="College"
+                android:textSize="17dp"/>
+            <TextView
+                android:id="@+id/Branch"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_below="@+id/CollegeNameText"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="20dp"
+                android:text="Branch"
+                android:textSize="17dp"/>
+            <TextView
+                android:id="@+id/Year"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_below="@+id/CollegeNameText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="20dp"
+                android:layout_toEndOf="@+id/Branch"
+                android:text="Year"
+                android:textSize="17dp"
+                />
+            <TextView
+                android:id="@+id/EmailText"
+                android:layout_width="300dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/Year"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:text="Email"/>
+            <TextView
+                android:id="@+id/MobileNo"
+                android:layout_width="300dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/EmailText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:text="MobileNo"
+                android:textSize="17dp"
+                />
+
+
+
+
+        </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>

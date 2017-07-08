@@ -67,6 +67,9 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
     private FirebaseUser user;
     private DatabaseReference mCurrentUserDatabaseReference;
     private Context mView;
+    private StorageReference mStorage;
+    private DatabaseReference root = FirebaseDatabase.getInstance().getReference().getRoot();
+    private DatabaseReference usrr, root2,root3,userDetails;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -227,8 +230,6 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
 
     }
 
-
-
     //Method to check if only one box is checked
        private void OneBoxOnly(int v){
        if(v==R.id.MaleCheckBox){
@@ -241,6 +242,7 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
            FemaleBox.setChecked(true);
        }
    }
+
     // set the fields to empty
     private void fillFields(){
         FirstName.setText(user.getDisplayName());
@@ -460,7 +462,6 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
         return  success;
     }
 
-
     @Override
     public void onBackPressed() {
         pr.dismiss();
@@ -492,7 +493,6 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
         return  url;
     }
 
-    private StorageReference mStorage;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data){
 
@@ -549,12 +549,9 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
 
     }
 
-    private DatabaseReference root = FirebaseDatabase.getInstance().getReference().getRoot();
-    private DatabaseReference usrr, root2,root3,userDetails;
-
     private void createUser(FirebaseUser user) {
         userDetails = root.child("userDetails");
-        Map<String, Object> map3 = new HashMap<String, Object>();
+        Map<String, Object> map3 = new HashMap<>();
         studentDetails =new StudentDetails(firstname,lastName,college,branch,year,email,mobileNo,sex);
         map3.put(user.getEmail(),studentDetails);
         userDetails.updateChildren(map3);

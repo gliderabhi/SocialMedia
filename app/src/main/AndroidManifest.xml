@@ -57,7 +57,13 @@
             android:theme="@style/Theme.AppCompat" />
         <activity
             android:name=".ListOfResults"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name="com.example.munnasharma.ChatActivities.ChatMessagesActivity"
             android:label="label of user message"
@@ -66,22 +72,15 @@
         <activity
             android:name="com.example.munnasharma.ChatActivities.ChatActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".FriendsListActivity"
             android:label="Find Friends"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".SignUpActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
-            <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/AppTheme"></activity>
         <activity
             android:name="com.example.munnasharma.ChatActivities.GroupChatList"
             android:screenOrientation="portrait"
@@ -90,7 +89,8 @@
             android:name="com.example.munnasharma.ChatActivities.ThreadActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name="com.example.munnasharma.ChatActivities.GroupChatActivityMssag"></activity>
+        <activity android:name="com.example.munnasharma.ChatActivities.GroupChatActivityMssag" />
+        <activity android:name=".UserProfile"></activity>
     </application>
 
 </manifest>

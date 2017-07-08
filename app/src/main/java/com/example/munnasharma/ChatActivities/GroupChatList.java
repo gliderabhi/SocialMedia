@@ -51,7 +51,7 @@ public class GroupChatList extends AppCompatActivity {
     private ArrayList<String> list_of_rooms = new ArrayList<>();
     private String name;
     private ListView GroupList;
-    private String temp_key;
+    private String temp_key,roomName;
 
     private ImageView settings;
     private ListView menuList;
@@ -174,7 +174,8 @@ public class GroupChatList extends AppCompatActivity {
                     String messageKey = mAdaptor.getRef(position).getKey();
                     intent.putExtra(Const.MESSAGE_ID, messageKey);
                     Chat chatItem = (Chat)mAdaptor.getItem(position);
-                    intent.putExtra(Const.CHAT_NAME, chatItem.getChatName());
+                    roomName=chatItem.getChatName();
+                    intent.putExtra(Const.CHAT_NAME,roomName );
                     startActivity(intent);
                 }
 
@@ -252,15 +253,7 @@ public class GroupChatList extends AppCompatActivity {
         }
     });*/
 
-        GroupList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-            Intent intent = new Intent(getApplicationContext(),GroupChatActivityMssag.class);
-            intent.putExtra("room_name",((TextView)view).getText().toString() );
-            startActivity(intent);
-        }
-    });
 
 }
 

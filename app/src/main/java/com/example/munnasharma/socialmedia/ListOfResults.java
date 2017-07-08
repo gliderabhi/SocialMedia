@@ -1,15 +1,29 @@
 package com.example.munnasharma.socialmedia;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.munnasharma.classes.User;
 import com.example.munnasharma.extras.Const;
 import com.example.munnasharma.extras.CustomAdaptor;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 public class ListOfResults extends Activity {
 
@@ -19,10 +33,13 @@ public class ListOfResults extends Activity {
     private String [] lastName;
     private String [] email;
     private TextView noUser;
+    private String mCurrentUserEmail;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_of_results);
+
+        //setup references to view
         searchList = (ListView) findViewById(R.id.SearchList);
         noUser=(TextView)findViewById(R.id.NoUser);
         firstName = getIntent().getStringArrayExtra(Const.FirstName);
@@ -38,7 +55,12 @@ public class ListOfResults extends Activity {
             searchList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Toast.makeText(getApplicationContext(), firstName[position], Toast.LENGTH_SHORT).show();
+
+                    Intent i=new Intent(getApplicationContext(),UserProfile.class);
+                    i.putExtra(Const.Email,email[position]);
+                    i.putExtra(Const.FirstName,firstName[position]);
+                    i.putExtra(Const.College,college[position]);
+                    startActivity(i);
                 }
             });
 
@@ -46,4 +68,6 @@ public class ListOfResults extends Activity {
             noUser.setText("Sorry No user found");
         }
     }
+
+
 }
