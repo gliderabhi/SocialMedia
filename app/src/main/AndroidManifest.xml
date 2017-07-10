@@ -54,15 +54,13 @@
         <activity
             android:name=".SearchFields"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat" />
+            android:theme="@style/Theme.AppCompat" >
+
+            </activity>
         <activity
             android:name=".ListOfResults"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="com.example.munnasharma.ChatActivities.ChatMessagesActivity"
@@ -72,15 +70,21 @@
         <activity
             android:name="com.example.munnasharma.ChatActivities.ChatActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".FriendsListActivity"
             android:label="Find Friends"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".SignUpActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name="com.example.munnasharma.ChatActivities.GroupChatList"
             android:screenOrientation="portrait"
@@ -90,7 +94,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name="com.example.munnasharma.ChatActivities.GroupChatActivityMssag" />
-        <activity android:name=".UserProfile"></activity>
+
+        <activity android:name=".UserProfile"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" >
+
+        </activity>
     </application>
 
 </manifest>

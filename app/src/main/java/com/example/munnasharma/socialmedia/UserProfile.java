@@ -6,14 +6,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,8 +30,11 @@ import com.example.munnasharma.extras.Const;
 import com.example.munnasharma.request.ProfileRequest;
 import com.example.munnasharma.request.RegisterRequest;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,11 +43,12 @@ import org.w3c.dom.Text;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UserProfile extends AppCompatActivity {
+public class UserProfile extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG ="Error" ;
-    private TextView Name,Email,College,Branch,Year,Sex,MobileNo;
-    private Button addFrn,removeFrnd;
+    private TextView Name,Email,College,Branch,Year,Sex,MobileNo,frndText;
+    private Button removeFrnd;
+    private Spinner addFrn;
     private String email,name,college,branch,year,sex,mobileno,lastName,url,mCurrentUserEmail;
     private ImageView profileImg;
     private User user;
@@ -49,6 +57,7 @@ public class UserProfile extends AppCompatActivity {
     private DatabaseReference mUserDatabaseReference;
     private DatabaseReference mCurrentUsersFriends;
     private FirebaseAuth mFirebaseAuth;
+    private boolean yes=false;
 
     //TODO: Used in multiple places, should probably move to its own class
     public static String encodeEmail(String userEmail) {
@@ -62,13 +71,13 @@ public class UserProfile extends AppCompatActivity {
 
         initialize();
 
-        email=getIntent().getStringExtra(Const.Email);
-        name=getIntent().getStringExtra(Const.FirstName);
-        college=getIntent().getStringExtra(Const.College);
+        email = getIntent().getStringExtra(Const.Email);
+        name = getIntent().getStringExtra(Const.FirstName);
+        college = getIntent().getStringExtra(Const.College);
 
         //get data from dtabase to showuser details
         getData();
-        addFrn.setOnClickListener(new View.OnClickListener() {
+       /* addFrn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -82,6 +91,7 @@ public class UserProfile extends AppCompatActivity {
                 removeFriend(email);
             }
         });
+    }*/
     }
 
     //Check Network Connection
@@ -118,6 +128,17 @@ public class UserProfile extends AppCompatActivity {
         if (network) {
             pr= ProgressDialog.show(UserProfile.this,"Profile Details ","Getting details please wait",true);
 
+
+            Runnable progressRunnable = new Runnable() {
+
+                @Override
+                public void run() {
+                    pr.cancel();
+                }
+            };
+
+            Handler pdCanceller = new Handler();
+            pdCanceller.postDelayed(progressRunnable, 60000);
             Response.Listener<String> responseListener = new Response.Listener<String>() {
 
                 @Override
@@ -139,9 +160,8 @@ public class UserProfile extends AppCompatActivity {
                         boolean success = jsonResponse.getBoolean(Const.Success);
 
 
+                        Log.i("Resposne",response);
                         if (success) {
-                            success=true;
-
                             email=jsonResponse.getString(Const.Email);
                             name=jsonResponse.getString(Const.FirstName);
                             college=jsonResponse.getString(Const.College);
@@ -154,6 +174,7 @@ public class UserProfile extends AppCompatActivity {
                             DisplayResults();
                             // Toast.makeText(getApplicationContext(),"Created ",Toast.LENGTH_SHORT).show();
 
+                            user=new User();
                             user.setEmail(email);
                             user.setUsername(name+" "+lastName);
                             user.setProfilePicLocation("");
@@ -184,6 +205,93 @@ public class UserProfile extends AppCompatActivity {
 
     }
 
+    private boolean checkUserFrnd(){
+
+        final DatabaseReference friendRef =
+                mFirebaseDatabase.getReference(Const.FRIENDS_LOCATION
+                        + "/" + mCurrentUserEmail );
+        if(friendRef!=null) {
+            friendRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.hasChild(encodeEmail(email))) {
+                        yes = true;
+                        frndText.setText("Friends");
+                    } else {
+                        yes = false;
+                        frndText.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        }else{
+            yes=false;
+        }
+        return  yes;
+    }
+    private boolean checkMentor(){
+
+        final DatabaseReference mentorRef =
+                mFirebaseDatabase.getReference(Const.MENTOR_LOCATION
+                        + "/" + mCurrentUserEmail );
+        if(mentorRef!=null) {
+            mentorRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.hasChild(encodeEmail(email))) {
+                        yes = true;
+                        frndText.setText("Mentor");
+                    } else {
+                        yes = false;
+                        frndText.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        }else{
+            yes=false;
+        }
+        return  yes;
+    }
+    private boolean BatchMates(){
+
+        final DatabaseReference batchRef =
+                mFirebaseDatabase.getReference(Const.MENTOR_LOCATION
+                        + "/" + mCurrentUserEmail );
+        if(batchRef!=null) {
+            batchRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.hasChild(encodeEmail(email))) {
+                        yes = true;
+                        frndText.setText("Batch Mates");
+                    } else {
+                        yes = false;
+                        frndText.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        }else{
+            yes=false;
+        }
+        return  yes;
+    }
     private void initialize(){
         Name=(TextView)findViewById(R.id.UserName);
         Email=(TextView)findViewById(R.id.EmailText);
@@ -192,10 +300,15 @@ public class UserProfile extends AppCompatActivity {
         MobileNo=(TextView)findViewById(R.id.MobileNo);
         Branch=(TextView)findViewById(R.id.Branch);
         Year=(TextView)findViewById(R.id.Year);
+        frndText=(TextView)findViewById(R.id.CategoryFrnd);
 
         profileImg=(ImageView)findViewById(R.id.ProfileImgUser);
-        addFrn=(Button)findViewById(R.id.addFriend);
-        removeFrnd=(Button)findViewById(R.id.removeFriend);
+        addFrn=(Spinner)findViewById(R.id.AddFrndBtn);
+        removeFrnd=(Button)findViewById(R.id.RemoveFrndButton);
+
+        removeFrnd.setVisibility(View.GONE );
+
+
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
         mCurrentUserEmail = encodeEmail(mFirebaseAuth.getCurrentUser().getEmail());
@@ -207,6 +320,41 @@ public class UserProfile extends AppCompatActivity {
 
         }else{
             Log.i("Error","No user authenticated");
+        }
+
+        if(checkUserFrnd()){
+            frndText.setText("Friends");
+            removeFrnd.setVisibility(View.VISIBLE);
+            addFrn.setVisibility(View.GONE);
+        }
+        else{
+            if(checkMentor()){
+                frndText.setText("Mentor");
+                removeFrnd.setText("Remove mentor");
+                removeFrnd.setVisibility(View.VISIBLE);
+                addFrn.setVisibility(View.GONE);
+            }
+            else{
+                if(BatchMates()){
+                    frndText.setText("Batch Mate");
+                    removeFrnd.setText("Remove batch match");
+                    removeFrnd.setVisibility(View.VISIBLE);
+                    addFrn.setVisibility(View.GONE);
+                }else{
+
+                    addFrn.setVisibility(View.VISIBLE);
+                    removeFrnd.setVisibility(View.GONE);
+                }
+                addFrn.setVisibility(View.VISIBLE);
+                removeFrnd.setVisibility(View.GONE);
+            }
+            addFrn.setVisibility(View.VISIBLE);
+            removeFrnd.setVisibility(View.GONE);
+        }
+        if(addFrn.getVisibility()==View.VISIBLE){
+            ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item, Const.frndCategory);
+            addFrn.setAdapter(adapter);
+            addFrn.setOnItemSelectedListener(this);
         }
     }
 
@@ -235,6 +383,7 @@ public class UserProfile extends AppCompatActivity {
     private void addNewFriend(User user) {
         //Get current user logged in by email
         try {
+            pr=ProgressDialog.show(getApplicationContext(),"Adding","",true);
             final String userLoggedIn = mFirebaseAuth.getCurrentUser().getEmail();
             Log.e(TAG, "User logged in is: " + userLoggedIn);
             //final String newFriendEncodedEmail = encodeEmail(newFriendEmail);
@@ -245,6 +394,76 @@ public class UserProfile extends AppCompatActivity {
             user = new User(user.getUsername(), user.getEmail(), user.getProfilePicLocation());
             map3.put(encodeEmail(user.getEmail()), user);
             friendsRef.updateChildren(map3);
+            if(friendsRef!=null) {
+                friendsRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.hasChild(encodeEmail(email))) {
+
+                            removeFrnd.setText("Remove friend");
+                            removeFrnd.setVisibility(View.VISIBLE);
+                            addFrn.setVisibility(View.GONE);
+                            pr.dismiss();
+                        } else {
+                            pr.dismiss();
+                            addFrn.setVisibility(View.VISIBLE);
+                            removeFrnd.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+        } catch (Exception e) {
+
+            Log.i("Error",e.toString());
+            Toast.makeText(getApplicationContext(),"Failed",Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void addMentor(User user) {
+        //Get current user logged in by email
+        try {
+            final String userLoggedIn = mFirebaseAuth.getCurrentUser().getEmail();
+            Log.e(TAG, "User logged in is: " + userLoggedIn);
+            //final String newFriendEncodedEmail = encodeEmail(newFriendEmail);
+            final DatabaseReference friendsRef = mFirebaseDatabase.getReference(Const.MENTOR_LOCATION
+                    + "/" + encodeEmail(userLoggedIn));
+            //Add friends to current users friends list
+            Map<String, Object> map3 = new HashMap<>();
+            user = new User(user.getUsername(), user.getEmail(), user.getProfilePicLocation());
+            map3.put(encodeEmail(user.getEmail()), user);
+            friendsRef.updateChildren(map3);
+            if(friendsRef!=null) {
+                friendsRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.hasChild(encodeEmail(email))) {
+
+                            removeFrnd.setText("Remove friend");
+                            removeFrnd.setVisibility(View.VISIBLE);
+                            addFrn.setVisibility(View.GONE);
+                            pr.dismiss();
+                        } else {
+                            pr.dismiss();
+                            addFrn.setVisibility(View.VISIBLE);
+                            removeFrnd.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+
         } catch (Exception e) {
 
             Log.i("Error",e.toString());
@@ -252,6 +471,72 @@ public class UserProfile extends AppCompatActivity {
         }
     }
 
+    private void addBatchMate(User user) {
+        //Get current user logged in by email
+        try {
+            final String userLoggedIn = mFirebaseAuth.getCurrentUser().getEmail();
+            Log.e(TAG, "User logged in is: " + userLoggedIn);
+            //final String newFriendEncodedEmail = encodeEmail(newFriendEmail);
+            final DatabaseReference friendsRef = mFirebaseDatabase.getReference(Const.BATCH_MATE_LOCATION
+                    + "/" + encodeEmail(userLoggedIn));
+            //Add friends to current users friends list
+            Map<String, Object> map3 = new HashMap<>();
+            user = new User(user.getUsername(), user.getEmail(), user.getProfilePicLocation());
+            map3.put(encodeEmail(user.getEmail()), user);
+            friendsRef.updateChildren(map3);
+            if(friendsRef!=null) {
+                friendsRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.hasChild(encodeEmail(email))) {
 
+                            removeFrnd.setText("Remove friend");
+                            removeFrnd.setVisibility(View.VISIBLE);
+                            addFrn.setVisibility(View.GONE);
+                            pr.dismiss();
+                        } else {
+                            pr.dismiss();
+                            addFrn.setVisibility(View.VISIBLE);
+                            removeFrnd.setVisibility(View.GONE);
+                        }
+                    }
 
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+
+        } catch (Exception e) {
+
+            Log.i("Error",e.toString());
+            Toast.makeText(getApplicationContext(),"Failed",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(pr!=null){
+            pr.dismiss();
+        }else{
+            Intent i =new Intent (getApplicationContext(),SearchFields.class);
+            startActivity(i);
+        }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        switch (position){
+            case 0: addNewFriend(user);break;
+            case 1: addMentor(user);break;
+            case 2: addBatchMate(user);break;
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        Log.i("OOps","None slected");
+    }
 }

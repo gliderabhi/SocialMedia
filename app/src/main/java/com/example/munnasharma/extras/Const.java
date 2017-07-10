@@ -5,6 +5,10 @@ package com.example.munnasharma.extras;
  */
 
 public class Const {
+    public static final String [] user={"user0","user1","user2","user3","user4","user5","user6","user7","user8","user9","user10",
+            "user11","user12","user13","user14","user15","user16","user17","user18","user19","user20",
+            "user21","user22","user23","user24","user25","user26","user27","user28","user29","user30",
+            "user31","user32","user33","user34","user35","user36","user37","user38","user39","user40","user41"};
     public static final String [] questions={
             "q1",
             "q2",
@@ -32,6 +36,7 @@ public class Const {
             "Bio_Chemical(bce)",
             "Bio Medical(bme)",
             "Material Science And Technology(mst)"};
+    public static final  String[] frndCategory={"Add friend","Add mentor","Add batch mate"};
     public static  final String[]  years={"First Year","Second Year","Third Year","Fourth Year","M.Tech","P.H.D"};
     public static final String Email="Email";
     public static final String FirstName="FirstName";
@@ -98,6 +103,8 @@ public class Const {
     public static final String Group="Groups";
     public static final String UserDetails="userDetails";
     public static final String GroupChatName="GroupChatName";
+    public static final String MENTOR_LOCATION="mentor";
+    public static final String BATCH_MATE_LOCATION="batch";
     public static final String Profile_REQUEST_URL="http://cazimegliderabhi.000webhostapp.com/ProfileSearch.php";
 
 }

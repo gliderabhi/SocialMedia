@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.munnasharma.socialmedia.FriendsListActivity;
 import com.example.munnasharma.socialmedia.R;
+import com.example.munnasharma.socialmedia.SearchFields;
 import com.example.munnasharma.socialmedia.SignUp1;
 import com.example.munnasharma.socialmedia.SignUpActivity;
 import com.firebase.ui.auth.AuthUI;
@@ -249,6 +250,10 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+    public void SearchPage(View v){
+        i=new Intent(getApplicationContext(), SearchFields.class);
+        startActivity(i);
+    }
     public void signout(){
         mFirebaseAuth.signOut();
     }

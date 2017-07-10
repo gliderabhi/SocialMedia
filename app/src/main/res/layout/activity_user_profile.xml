@@ -30,96 +30,202 @@
                 android:layout_marginTop="20dp"
                 android:src="@drawable/student"
                 />
-            <Button
-                android:id="@+id/AddFrndBtn"
-                android:layout_width="130dp"
+            <TextView
+                android:id="@+id/CategoryFrnd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ButtonFuntions"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:text=""
+                android:textSize="20dp"
+                />
+            <LinearLayout
+                android:id="@+id/ButtonFuntions"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/ProfileImgUser"
-                android:layout_marginLeft="40dp"
-                android:layout_marginTop="25dp"
-                android:background="#fff"
-                android:text="Add Friend"/>
-            <Button
-                android:id="@+id/RemoveFrndButton"
-                android:layout_width="130dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/ProfileImgUser"
-                android:layout_marginLeft="40dp"
-                android:layout_marginTop="25dp"
-                android:layout_toEndOf="@+id/AddFrndBtn"
-                android:background="#fff"
-                android:text="Remove Friend"/>
-            <TextView
-                android:id="@+id/UserName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/AddFrndBtn"
-                android:layout_marginLeft="40dp"
                 android:layout_marginTop="20dp"
-                android:text="Name"
-                android:textSize="17dp"/>
-            <TextView
-                android:id="@+id/UserSex"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/AddFrndBtn"
-                android:layout_marginLeft="40dp"
-                android:layout_marginTop="20dp"
-                android:layout_toRightOf="@+id/UserName"
-                android:text="Sex"
-                android:textSize="17dp"
-                />
-            <TextView
-                android:id="@+id/CollegeNameText"
-                android:layout_width="300dp"
-                android:layout_height="30dp"
-                android:layout_below="@+id/UserName"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:text="College"
-                android:textSize="17dp"/>
-            <TextView
-                android:id="@+id/Branch"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_below="@+id/CollegeNameText"
-                android:layout_marginLeft="50dp"
-                android:layout_marginTop="20dp"
-                android:text="Branch"
-                android:textSize="17dp"/>
-            <TextView
-                android:id="@+id/Year"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_below="@+id/CollegeNameText"
-                android:layout_centerHorizontal="true"
-                android:layout_marginLeft="40dp"
-                android:layout_marginTop="20dp"
-                android:layout_toEndOf="@+id/Branch"
-                android:text="Year"
-                android:textSize="17dp"
-                />
-            <TextView
-                android:id="@+id/EmailText"
-                android:layout_width="300dp"
-                android:layout_height="30dp"
-                android:layout_below="@+id/Year"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:text="Email"/>
-            <TextView
-                android:id="@+id/MobileNo"
-                android:layout_width="300dp"
-                android:layout_height="30dp"
-                android:layout_below="@+id/EmailText"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:text="MobileNo"
-                android:textSize="17dp"
-                />
+                android:orientation="horizontal">
+                <Spinner
+                    android:id="@+id/AddFrndBtn"
+                    android:layout_width="130dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="40dp"
+                    android:background="#fff"
+                    android:text="Add Friend"/>
+                <Button
+                    android:id="@+id/RemoveFrndButton"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="40dp"
+                    android:background="#fff"
+                    android:text="Remove Friend"/>
+            </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/NameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/CategoryFrnd"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Name :"
+                    android:textSize="20dp"
+                    />
+                <TextView
+                    android:id="@+id/UserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Name"
+                    android:textSize="17dp"/>
+            </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/CollegeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/NameLayout"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="College :"
+                    android:textSize="20dp"
+                    />
+                <TextView
+                    android:id="@+id/CollegeNameText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="College"
+                    android:textSize="17dp"/>
+            </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/SexLlayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/CollegeLayout"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Sex :"
+                    android:textSize="20dp"
+                    />
+                <TextView
+                    android:id="@+id/UserSex"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Sex"
+                    android:textSize="17dp"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/BranchLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/SexLlayout"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Branch :"
+                    android:textSize="20dp"
+                    />
+                <TextView
+                    android:id="@+id/Branch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Branch"
+                    android:textSize="17dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/YearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/BranchLayout"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Year :"
+                    android:textSize="20dp"
+                    />
+                <TextView
+                    android:id="@+id/Year"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Year"
+                    android:textSize="17dp"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/EmailLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/YearLayout"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Email :"
+                    android:textSize="20dp"
+                    />
+                <TextView
+                    android:id="@+id/EmailText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Email"
+                    android:textSize="17dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/MobileLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/EmailLayout"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Mobile No :"
+                    android:textSize="20dp"
+                    />
+                <TextView
+                    android:id="@+id/MobileNo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="MobileNo"
+                    android:textSize="17dp"
+                    />
+            </LinearLayout>
 
         </RelativeLayout>
     </ScrollView>

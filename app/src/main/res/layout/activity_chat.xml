@@ -32,7 +32,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:hint="Enter a search statement"
-        android:inputType="text"/>
+        android:inputType="text"
+        android:onClick="SearchPage"/>
       <ImageView
           android:id="@+id/SettingsButton"
           android:layout_width="30dp"

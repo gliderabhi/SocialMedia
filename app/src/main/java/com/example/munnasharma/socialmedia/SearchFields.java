@@ -22,14 +22,21 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
 import com.example.munnasharma.classes.StudentDetails;
+import com.example.munnasharma.classes.searchResult;
 import com.example.munnasharma.extras.Const;
 import com.example.munnasharma.request.CollegeSearchRequest;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class SearchFields extends AppCompatActivity implements  AdapterView.OnItemSelectedListener{
 
@@ -43,6 +50,7 @@ public class SearchFields extends AppCompatActivity implements  AdapterView.OnIt
     private  ArrayList<String> F_name,L_Name,College,Email;
     private ArrayList<StudentDetails> student;
     private ProgressDialog progressDialog;
+    private searchResult searchResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,7 +143,7 @@ public class SearchFields extends AppCompatActivity implements  AdapterView.OnIt
                 @Override
                 public void onResponse(String response) {
 
-                    Log.d("Response",response.toString());
+                    Log.d("Response", response.toString());
                     response = response.replaceFirst("<font>.*?</font>", "");
                     int jsonStart = response.indexOf("{");
                     int jsonEnd = response.lastIndexOf("}");
@@ -152,20 +160,37 @@ public class SearchFields extends AppCompatActivity implements  AdapterView.OnIt
                         College = new ArrayList<String>();
                         Email = new ArrayList<String>();
 
+                        int i=0;
                         JSONObject jObject = new JSONObject(response);
                         success = jObject.getBoolean(Const.Success);
+                        JSONObject JResult;
                         if (success) {
 
+                           String  ur="user";
 
+                            while(jObject.has(ur+ String.valueOf(i)))
+                           /* while(jObject.has(Const.user[i]))*/ {
+                                JResult = jObject.getJSONObject(Const.user[i]);
+
+                                    F_name.add(JResult.getString(Const.FirstName));
+                                    L_Name.add(JResult.getString(Const.LastName));
+                                    College.add(JResult.getString(Const.College));
+                                    Email.add(JResult.getString(Const.Email));
+
+                                    Log.i("Data",F_name.get(i)+L_Name.get(i)+College.get(i)+Email.get(i));
+                                    i++;
+
+                            }
                             Log.d("ChangedText", F_name.toString());
                             if (F_name.size() == 0) {
+                                progressDialog.dismiss();
                                 builder.setMessage("Sorry No user with this college available... Please Try again with change of selection ")
                                         .setNegativeButton("Retry", null)
                                         .create()
                                         .show();
 
                             } else {
-                                int i = 0;
+                                 i = 0;
                                 String[] firstName = F_name.toArray(new String[F_name.size()]);
                                 String[] lastName = L_Name.toArray(new String[L_Name.size()]);
                                 String[] colege = College.toArray(new String[College.size()]);
@@ -181,6 +206,7 @@ public class SearchFields extends AppCompatActivity implements  AdapterView.OnIt
                                     colege[i]=College.get(i).toString();
                                 }*/
 
+                               progressDialog.dismiss();
                                 Intent i1 = new Intent(getApplicationContext(), ListOfResults.class);
                                 i1.putExtra(Const.FirstName, firstName);
                                 i1.putExtra(Const.LastName, lastName);
@@ -188,12 +214,15 @@ public class SearchFields extends AppCompatActivity implements  AdapterView.OnIt
                                 i1.putExtra(Const.Email, email);
                                 startActivity(i1);
                             }
+                        }else{
+                            Toast.makeText(getApplicationContext(),"Failed to retrieve data ",Toast.LENGTH_SHORT).show();
                         }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
-            };
+                };
             CollegeSearchRequest collegeSearchRequest = new CollegeSearchRequest(college,responseListener);
             RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
             collegeSearchRequest.setRetryPolicy(new DefaultRetryPolicy(

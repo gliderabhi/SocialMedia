@@ -1,12 +1,19 @@
 package com.example.munnasharma.socialmedia;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.munnasharma.ChatActivities.GroupChatList;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -15,7 +22,9 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -29,27 +38,35 @@ import com.google.firebase.auth.GithubAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+
 import com.example.munnasharma.classes.*;
 import com.example.munnasharma.extras.*;
+
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class SignUpActivity extends AppCompatActivity {
 
     public static final int RC_SIGN_IN = 1;
     private static final String TAG="Firebase Auth Log";
+    ProgressDialog pr;
     private CallbackManager mCallbackManager;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mFirebaseDatabase;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private TwitterLoginButton mLoginButton;
     private Intent i;
-    private DatabaseReference root = FirebaseDatabase.getInstance().getReference().getRoot();
-    private DatabaseReference userDetails, root2,root3;
-    private StudentDetails studentDetails;
+    private StorageReference mStorage;
 
     private static String encodeEmail(String userEmail) {
         return userEmail.replace(".", ",");
@@ -59,6 +76,21 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+       /* try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.facebook.samples.loginhowto",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }*/
         //Initialize Firebase components
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -296,12 +328,34 @@ public class SignUpActivity extends AppCompatActivity {
         User  usr =new User(user.getDisplayName(),user.getEmail(),user.getPhotoUrl().toString());
         map3.put(encodeEmail(user.getEmail()),usr);
         userRef.updateChildren(map3);
-
+         UploadImageToProfile(user);
         Toast.makeText(getApplicationContext(), "Added Successfully", Toast.LENGTH_SHORT).show();
       }catch (Exception e){
           Toast.makeText(getApplicationContext(),"Failed",Toast.LENGTH_SHORT).show();
           Log.i("Error",e.toString());
       }
+    }
+
+    private void UploadImageToProfile(FirebaseUser user){
+        pr=new ProgressDialog(this);
+        pr.setMessage("Uploading...");
+        pr.show();
+        Uri uri=user.getPhotoUrl();
+        mStorage = FirebaseStorage.getInstance().getReference();
+        //Keep all images for a specific chat grouped together
+        final String imageLocation = "Photos/profile_picture/" + user.getEmail();
+        final String imageLocationId = imageLocation + "/" + user.getPhotoUrl();
+        final String uniqueId = UUID.randomUUID().toString();
+        final StorageReference filepath = mStorage.child(imageLocation).child(uniqueId + "/profile_pic");
+        final String downloadURl = filepath.getPath();
+        filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                //create a new message containing this image
+                pr.dismiss();
+            }
+        });
+
     }
 
     @Override
