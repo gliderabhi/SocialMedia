@@ -2,6 +2,7 @@ package com.example.munnasharma.socialmedia;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -66,6 +67,16 @@ public class FriendsListActivity extends AppCompatActivity {
     private void showUserList() {
         pr=ProgressDialog.show(FriendsListActivity.this,"Friends","Populating list please wait",true);
 
+        Runnable progressRunnable = new Runnable() {
+
+            @Override
+            public void run() {
+                pr.cancel();
+            }
+        };
+
+        Handler pdCanceller = new Handler();
+        pdCanceller.postDelayed(progressRunnable, 60000);
         mFriendListAdapter = new FirebaseListAdapter<User>(this, User.class, R.layout.friend_item, mCurrentUsersFriends) {
             @Override
             protected void populateView(final View view, User user, final int position) {

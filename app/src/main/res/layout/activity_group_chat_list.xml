@@ -41,12 +41,6 @@
                 />
 
         </LinearLayout>
-        <ListView
-            android:id="@+id/MenuList"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@+id/SearchLogolay"/>
         <LinearLayout
             android:id="@+id/ChatRoomsLay"
             android:layout_width="match_parent"

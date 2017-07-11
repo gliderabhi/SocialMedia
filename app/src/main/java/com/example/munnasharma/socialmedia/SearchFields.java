@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -72,6 +73,16 @@ public class SearchFields extends AppCompatActivity implements  AdapterView.OnIt
         progressDialog.setIndeterminate(false);
         progressDialog.setCancelable(true);
 
+        Runnable progressRunnable = new Runnable() {
+
+            @Override
+            public void run() {
+                progressDialog.cancel();
+            }
+        };
+
+        Handler pdCanceller = new Handler();
+        pdCanceller.postDelayed(progressRunnable, 60000);
         //Set the spinner
         ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item, Const.years);
         yr.setAdapter(adapter);
@@ -139,6 +150,16 @@ public class SearchFields extends AppCompatActivity implements  AdapterView.OnIt
         if (network) {
             progressDialog=ProgressDialog.show(SearchFields.this,"Searching",Const.GettingSearchResults,true);
 
+            Runnable progressRunnable = new Runnable() {
+
+                @Override
+                public void run() {
+                    progressDialog.cancel();
+                }
+            };
+
+            Handler pdCanceller = new Handler();
+            pdCanceller.postDelayed(progressRunnable, 60000);
             final Response.Listener<String> responseListener = new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {

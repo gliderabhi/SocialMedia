@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -110,6 +111,16 @@ public class NextPageForgotPass extends Activity {
             pr = ProgressDialog.show(NextPageForgotPass.this, "Checking credentials ", "Checking your security request on server please wait....", true);
             //Set up the variables
 
+            Runnable progressRunnable = new Runnable() {
+
+                @Override
+                public void run() {
+                    pr.cancel();
+                }
+            };
+
+            Handler pdCanceller = new Handler();
+            pdCanceller.postDelayed(progressRunnable, 60000);
             Response.Listener<String> responseListener = new Response.Listener<String>() {
 
                 @Override

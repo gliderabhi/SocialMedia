@@ -9,6 +9,7 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -132,6 +133,16 @@ public class GroupChatActivityMssag extends AppCompatActivity {
             mProgress.setMessage("Sending the image...");
             mProgress.show();
 
+            Runnable progressRunnable = new Runnable() {
+
+                @Override
+                public void run() {
+                    mProgress.cancel();
+                }
+            };
+
+            Handler pdCanceller = new Handler();
+            pdCanceller.postDelayed(progressRunnable, 60000);
             Uri uri = data.getData();
             //Keep all images for a specific chat grouped together
             final String imageLocation = "Photos" + "/" + "MID";
@@ -214,6 +225,16 @@ public class GroupChatActivityMssag extends AppCompatActivity {
         mProgress.setMessage("Sending the Audio...");
         mProgress.show();
 
+        Runnable progressRunnable = new Runnable() {
+
+            @Override
+            public void run() {
+                mProgress.cancel();
+            }
+        };
+
+        Handler pdCanceller = new Handler();
+        pdCanceller.postDelayed(progressRunnable, 60000);
         Uri uri = Uri.fromFile(new File(mFileName));
         //Keep all voice for a specific chat grouped together
         final String voiceLocation = "Voice" + "/" + "MID";

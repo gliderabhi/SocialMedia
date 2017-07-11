@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -25,6 +26,7 @@ import com.example.munnasharma.socialmedia.R;
 import com.example.munnasharma.socialmedia.SearchFields;
 import com.example.munnasharma.socialmedia.SignUp1;
 import com.example.munnasharma.socialmedia.SignUpActivity;
+import com.example.munnasharma.socialmedia.UserProfile;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
@@ -57,7 +59,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private ListView mChatListView;
     private FirebaseListAdapter mChatAdapter;
-    private String mUsername;
+    private String userEmail;
     private ValueEventListener mValueEventListener;
     private DatabaseReference mUserDatabaseReference;
 
@@ -77,83 +79,13 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
-        //setup firebase details
         initializeScreen();
-        //set buttons for the diff options
-        chatBtn = (Button) findViewById(R.id.ChatButtonFragment);
-        GroupBtn = (Button) findViewById(R.id.GrouChatFragment);
-        ThreadBtn = (Button) findViewById(R.id.ThreadButtonFragment);
-        settings = (ImageView) findViewById(R.id.SettingsButton);
-        menuList = (ListView) findViewById(R.id.MenuList);
-        chatRel = (RelativeLayout) findViewById(R.id.ChatRel);
+        populateList();
+        activityChanger();
+        createMenu();
+    }
 
-        // remove the option menu if clicked any where else
-        chatRel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                menuList.setVisibility(View.GONE);
-            }
-        });
-        ArrayAdapter adaptor = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, Const.options);
-        menuList.setAdapter(adaptor);
-
-        menuList.setVisibility(View.GONE);
-        settings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                menuList.setVisibility(View.VISIBLE);
-            }
-        });
-        menuList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                menuList.setVisibility(View.GONE);
-                switch (position) {
-                    case 0:
-                        i = new Intent(getApplicationContext(), SignUp1.class);
-                        startActivity(i);
-                        break;
-                    case 1:
-                        i = new Intent(getApplicationContext(), FriendsListActivity.class);
-                        startActivity(i);
-                        break;
-                    case 2:
-                        signout();
-                        break;
-                }
-            }
-        });
-        chatBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
-
-        GroupBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                i = new Intent(getApplicationContext(), GroupChatList.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(i);
-            }
-        });
-        ThreadBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                i = new Intent(getApplicationContext(), ThreadActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(i);
-            }
-        });
-
-        fab = (FloatingActionButton) findViewById(R.id.FloatingButtonAddChat);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+    private void populateList(){
         //Initialize screen variables
         mChatListView = (ListView) findViewById(R.id.ChatList);
 
@@ -233,12 +165,50 @@ public class ChatActivity extends AppCompatActivity {
             Log.i("Error",e.toString());
         }
     }
+    private void activityChanger(){
+        chatBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
 
+        GroupBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                i = new Intent(getApplicationContext(), GroupChatList.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(i);
+            }
+        });
+        ThreadBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                i = new Intent(getApplicationContext(), ThreadActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(i);
+            }
+        });
+
+        fab = (FloatingActionButton) findViewById(R.id.FloatingButtonAddChat);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
     private void initializeScreen() {
+        //set buttons for the diff options
+        chatBtn = (Button) findViewById(R.id.ChatButtonFragment);
+        GroupBtn = (Button) findViewById(R.id.GrouChatFragment);
+        ThreadBtn = (Button) findViewById(R.id.ThreadButtonFragment);
+        settings = (ImageView) findViewById(R.id.SettingsButton);
+        chatRel = (RelativeLayout) findViewById(R.id.ChatRel);
+
         //Initialize Firebase components
         FirebaseDatabase = FirebaseDatabase.getInstance();
         FirebaseAuth = FirebaseAuth.getInstance();
-        String userEmail = FirebaseAuth.getCurrentUser().getEmail();
+         userEmail = FirebaseAuth.getCurrentUser().getEmail();
         if (userEmail != null) {
             mChatReference = FirebaseDatabase.getReference().child(Const.UserDetails + "/"
                     + encodeEmail(userEmail) + "/"
@@ -250,6 +220,44 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+    private void createMenu(){
+        settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Creating the instance of PopupMenu
+                PopupMenu popup = new PopupMenu(ChatActivity.this, settings);
+                //Inflating the Popup using xml file
+                popup.getMenuInflater()
+                        .inflate(R.menu.profile_menu, popup.getMenu());
+
+                //registering popup with OnMenuItemClickListener
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        String title= (String) item.getTitle();
+                        switch (title){
+                            case "My Profile": i=new Intent(getApplicationContext(), UserProfile.class);
+                                i.putExtra(Const.Email,userEmail);
+                                i.putExtra(Const.College,"");
+                                i.putExtra(Const.FirstName,"");
+                                startActivity(i);break;
+                            case "Sign Out":   signout();break;
+                            case "Friends": i=new Intent(getApplicationContext(),FriendsListActivity.class);
+                                startActivity(i);break;
+                            case "Mentors": i=new Intent(getApplicationContext(),FriendsListActivity.class);
+                                             startActivity(i);break;
+                            case "Batch mates": i=new Intent(getApplicationContext(),FriendsListActivity.class);
+                                startActivity(i);break;
+                        }
+                        return true;
+                    }
+                });
+
+                popup.show(); //showing popup menu
+            }
+
+        });
+
+    }
     public void SearchPage(View v){
         i=new Intent(getApplicationContext(), SearchFields.class);
         startActivity(i);

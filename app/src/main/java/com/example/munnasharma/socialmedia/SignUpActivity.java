@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -59,7 +60,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     public static final int RC_SIGN_IN = 1;
     private static final String TAG="Firebase Auth Log";
-    ProgressDialog pr;
+    private ProgressDialog pr;
     private CallbackManager mCallbackManager;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseDatabase mFirebaseDatabase;
@@ -329,7 +330,6 @@ public class SignUpActivity extends AppCompatActivity {
         map3.put(encodeEmail(user.getEmail()),usr);
         userRef.updateChildren(map3);
          UploadImageToProfile(user);
-        Toast.makeText(getApplicationContext(), "Added Successfully", Toast.LENGTH_SHORT).show();
       }catch (Exception e){
           Toast.makeText(getApplicationContext(),"Failed",Toast.LENGTH_SHORT).show();
           Log.i("Error",e.toString());
@@ -340,6 +340,17 @@ public class SignUpActivity extends AppCompatActivity {
         pr=new ProgressDialog(this);
         pr.setMessage("Uploading...");
         pr.show();
+
+        Runnable progressRunnable = new Runnable() {
+
+            @Override
+            public void run() {
+                pr.cancel();
+            }
+        };
+
+        Handler pdCanceller = new Handler();
+        pdCanceller.postDelayed(progressRunnable, 60000);
         Uri uri=user.getPhotoUrl();
         mStorage = FirebaseStorage.getInstance().getReference();
         //Keep all images for a specific chat grouped together

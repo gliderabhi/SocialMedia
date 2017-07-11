@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
@@ -401,6 +402,16 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
             pr= ProgressDialog.show(SignUp1.this,"Create Account ","Registering on server please wait....",true);
 
 
+            Runnable progressRunnable = new Runnable() {
+
+                @Override
+                public void run() {
+                    pr.cancel();
+                }
+            };
+
+            Handler pdCanceller = new Handler();
+            pdCanceller.postDelayed(progressRunnable, 60000);
 
 
 
@@ -504,6 +515,16 @@ public class SignUp1 extends Activity  implements  AdapterView.OnItemSelectedLis
             pr.setMessage("Uploading...");
             pr.show();
 
+            Runnable progressRunnable = new Runnable() {
+
+                @Override
+                public void run() {
+                    pr.cancel();
+                }
+            };
+
+            Handler pdCanceller = new Handler();
+            pdCanceller.postDelayed(progressRunnable, 60000);
             Uri uri = data.getData();
             //Keep all images for a specific chat grouped together
             final String imageLocation = "Photos/profile_picture/" + user.getEmail();

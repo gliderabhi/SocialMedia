@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -100,7 +101,16 @@ public class MainActivity extends Activity {
         pr.setIndeterminate(false);
         pr.setCancelable(true);
 
+        Runnable progressRunnable = new Runnable() {
 
+            @Override
+            public void run() {
+                pr.cancel();
+            }
+        };
+
+        Handler pdCanceller = new Handler();
+        pdCanceller.postDelayed(progressRunnable, 60000);
         //Login Button Listener
         LoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -326,6 +336,16 @@ public class MainActivity extends Activity {
             } else {
                 pr = ProgressDialog.show(MainActivity.this, "Log in ", "Logging you in please wait.... ", true);
 
+                Runnable progressRunnable = new Runnable() {
+
+                    @Override
+                    public void run() {
+                        pr.cancel();
+                    }
+                };
+
+                Handler pdCanceller = new Handler();
+                pdCanceller.postDelayed(progressRunnable, 60000);
 
                 Response.Listener<String> responseListener = new Response.Listener<String>() {
 

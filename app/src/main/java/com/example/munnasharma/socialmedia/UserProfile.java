@@ -74,24 +74,8 @@ public class UserProfile extends AppCompatActivity implements AdapterView.OnItem
         email = getIntent().getStringExtra(Const.Email);
         name = getIntent().getStringExtra(Const.FirstName);
         college = getIntent().getStringExtra(Const.College);
-
-        //get data from dtabase to showuser details
         getData();
-       /* addFrn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                addNewFriend(user);
-            }
-        });
-
-        removeFrnd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeFriend(email);
-            }
-        });
-    }*/
     }
 
     //Check Network Connection
@@ -384,6 +368,18 @@ public class UserProfile extends AppCompatActivity implements AdapterView.OnItem
         //Get current user logged in by email
         try {
             pr=ProgressDialog.show(getApplicationContext(),"Adding","",true);
+
+            Runnable progressRunnable = new Runnable() {
+
+                @Override
+                public void run() {
+                    pr.cancel();
+                }
+            };
+
+            Handler pdCanceller = new Handler();
+            pdCanceller.postDelayed(progressRunnable, 60000);
+
             final String userLoggedIn = mFirebaseAuth.getCurrentUser().getEmail();
             Log.e(TAG, "User logged in is: " + userLoggedIn);
             //final String newFriendEncodedEmail = encodeEmail(newFriendEmail);
@@ -520,10 +516,10 @@ public class UserProfile extends AppCompatActivity implements AdapterView.OnItem
     public void onBackPressed() {
         if(pr!=null){
             pr.dismiss();
-        }else{
+        }
             Intent i =new Intent (getApplicationContext(),SearchFields.class);
             startActivity(i);
-        }
+
     }
 
     @Override

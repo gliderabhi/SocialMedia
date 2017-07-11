@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.PopupMenu;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -19,6 +21,7 @@ import com.bumptech.glide.Glide;
 import com.example.munnasharma.socialmedia.FriendsListActivity;
 import com.example.munnasharma.socialmedia.R;
 import com.example.munnasharma.socialmedia.SignUp1;
+import com.example.munnasharma.socialmedia.UserProfile;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
@@ -47,9 +50,6 @@ public class GroupChatList extends AppCompatActivity {
     private Button chatBtn,GroupBtn,ThreadBtn;
     private FloatingActionButton fab;
     private Intent i;
-    private ArrayAdapter<String> arrayAdapter;
-    private ArrayList<String> list_of_rooms = new ArrayList<>();
-    private String name;
     private ListView GroupList;
     private String temp_key,roomName;
 
@@ -62,7 +62,7 @@ public class GroupChatList extends AppCompatActivity {
     private ChildEventListener childEventListener;
     private FirebaseListAdapter mAdaptor;
     private ValueEventListener valueEventListener;
-
+    private String userEmail;
     public static String encodeEmail(String userEmail) {
         return userEmail.replace(".", ",");
     }
@@ -76,7 +76,7 @@ public class GroupChatList extends AppCompatActivity {
 //Initialize Firebase components
         FirebaseDatabase = FirebaseDatabase.getInstance();
         FirebaseAuth = FirebaseAuth.getInstance();
-        String userEmail=FirebaseAuth.getCurrentUser().getEmail();
+        userEmail=FirebaseAuth.getCurrentUser().getEmail();
         if(userEmail!=null) {
             mGroupChatReference = FirebaseDatabase.getReference().child(Const.UserDetails + "/"
                     + encodeEmail(userEmail) + "/"
@@ -93,7 +93,6 @@ public class GroupChatList extends AppCompatActivity {
         ThreadBtn=(Button)findViewById(R.id.ThreadButtonFragment);
         GroupList=(ListView)findViewById(R.id.GroupChatList);
         settings=(ImageView)findViewById(R.id.SettingsButton);
-        menuList=(ListView)findViewById(R.id.MenuList);
         chatRel=(RelativeLayout)findViewById(R.id.GroupRel);
 
         //Setup firebse adaptor
@@ -161,6 +160,38 @@ public class GroupChatList extends AppCompatActivity {
             }
         };
 
+        //setup for settings menu inflator
+        settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Creating the instance of PopupMenu
+                PopupMenu popup = new PopupMenu(GroupChatList.this, settings);
+                //Inflating the Popup using xml file
+                popup.getMenuInflater()
+                        .inflate(R.menu.profile_menu, popup.getMenu());
+
+                //registering popup with OnMenuItemClickListener
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                       String title= (String) item.getTitle();
+                        switch (title){
+                            case "My Profile": i=new Intent(getApplicationContext(), UserProfile.class);
+                                               i.putExtra(Const.Email,userEmail);
+                                               i.putExtra(Const.College,"");
+                                               i.putExtra(Const.FirstName,"");
+                                               startActivity(i);break;
+                            case "Sign Out":   signout();break;
+                            case "Friends": i=new Intent(getApplicationContext(),FriendsListActivity.class);
+                                             startActivity(i);
+                        }
+                        return true;
+                    }
+                });
+
+                popup.show(); //showing popup menu
+            }
+
+        });
 
         GroupList.setAdapter(mAdaptor);
         GroupList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -185,30 +216,6 @@ public class GroupChatList extends AppCompatActivity {
         });
 
 
-        //array adaptor for menu option
-        ArrayAdapter adaptor=new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1,Const.options);
-        menuList.setAdapter(adaptor);
-
-        menuList.setVisibility(View.GONE);
-        settings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                menuList.setVisibility(View.VISIBLE);
-            }
-        });
-        menuList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                menuList.setVisibility(View.GONE);
-                switch (position){
-                    case 0: i=new Intent(getApplicationContext(), SignUp1.class);
-                        startActivity(i);break;
-                    case 1: i=new Intent(getApplicationContext(), FriendsListActivity.class);
-                        startActivity(i);break;
-                    case 2: signout();break;
-                }
-            }
-        });
 
        ChangeActivityListener();
 
@@ -221,37 +228,6 @@ public class GroupChatList extends AppCompatActivity {
             }
         });
 
-
-
-        /*root.addValueEventListener(new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-
-            try {
-                Set<String> set = new HashSet<String>();
-                Iterator i = dataSnapshot.getChildren().iterator();
-
-                while (i.hasNext()) {
-
-                    set.add(((DataSnapshot) i.next()).getKey());
-
-
-                }
-                set.remove(String.valueOf("Groups"));
-                list_of_rooms.clear();
-                list_of_rooms.addAll(set);
-
-                arrayAdapter.notifyDataSetChanged();
-            }catch (Exception e){
-                Toast.makeText(getApplicationContext(),e.toString(),Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-
-        }
-    });*/
 
 
 
@@ -285,35 +261,6 @@ public class GroupChatList extends AppCompatActivity {
 
     }
 
-   /* private void AddChatRoom(){
-        try{
-            root=root.child(Const.Group);
-            Map<String, Object> map = new HashMap<String, Object>();
-            String roomName = "Hello ";
-            if (!roomName.matches("")) {
-                map.put(roomName, "");
-                root.updateChildren(map);
-
-
-                root2 = root.child("Permissions");
-                Map<String, Object> map2 = new HashMap<String, Object>();
-                map2.put(roomName, "");
-                root2.updateChildren(map2);
-
-
-                root3 = root2.child(roomName);
-                Map<String, Object> map3 = new HashMap<String, Object>();
-                temp_key = root3.push().getKey();
-                map3.put(temp_key, name);
-                root3.updateChildren(map3);
-
-
-            } else {
-                Toast.makeText(getApplicationContext(),"please provide a name for group ",Toast.LENGTH_SHORT).show();
-            }}catch (Exception e){
-
-        }
-    }*/
 
     public void signout(){
         FirebaseAuth mauth = FirebaseAuth.getInstance();

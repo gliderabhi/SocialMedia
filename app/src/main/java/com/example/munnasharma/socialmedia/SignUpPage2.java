@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -36,6 +37,8 @@ public class SignUpPage2 extends Activity  implements  AdapterView.OnItemSelecte
     private Spinner securityQuestion;
 
     private String email,securityAnswer,securityQstn,branch;
+    private ProgressDialog pr;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,8 +109,6 @@ public class SignUpPage2 extends Activity  implements  AdapterView.OnItemSelecte
     Toast.makeText(getApplicationContext(),"Please select a question",Toast.LENGTH_SHORT).show();
     }
 
-    private ProgressDialog pr;
-
     //Check Network Connection
     private boolean haveNetworkConnection() {
         boolean haveConnectedWifi = false;
@@ -142,6 +143,16 @@ public class SignUpPage2 extends Activity  implements  AdapterView.OnItemSelecte
         if (network) {
             pr= ProgressDialog.show(SignUpPage2.this,"Create Account ","Registering on server please wait....",true);
 
+            Runnable progressRunnable = new Runnable() {
+
+                @Override
+                public void run() {
+                    pr.cancel();
+                }
+            };
+
+            Handler pdCanceller = new Handler();
+            pdCanceller.postDelayed(progressRunnable, 60000);
 
 
 

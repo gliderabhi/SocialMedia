@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -35,8 +36,7 @@ public class ForgotPass extends Activity implements  AdapterView.OnItemSelectedL
    private  String SecurityQ,SecurityA,oldPAss,email;
 
     private Button resetPass;
-
-
+    private ProgressDialog pr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +86,7 @@ public class ForgotPass extends Activity implements  AdapterView.OnItemSelectedL
         });
 
     }
+
 //Get Data of the drop down menu
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -97,8 +98,6 @@ public class ForgotPass extends Activity implements  AdapterView.OnItemSelectedL
     public void onNothingSelected(AdapterView<?> parent) {
         Toast.makeText(getApplicationContext(),Const.selectOption,Toast.LENGTH_SHORT).show();
     }
-
-    private ProgressDialog pr;
 
     //Check Network Connection
     private boolean haveNetworkConnection() {
@@ -136,6 +135,16 @@ public class ForgotPass extends Activity implements  AdapterView.OnItemSelectedL
             pr = ProgressDialog.show(ForgotPass.this, "Checking credentials ", "Checking your security request on server please wait....", true);
              //Set up the variables
 
+            Runnable progressRunnable = new Runnable() {
+
+                @Override
+                public void run() {
+                    pr.cancel();
+                }
+            };
+
+            Handler pdCanceller = new Handler();
+            pdCanceller.postDelayed(progressRunnable, 60000);
             Response.Listener<String> responseListener = new Response.Listener<String>() {
 
                 @Override
