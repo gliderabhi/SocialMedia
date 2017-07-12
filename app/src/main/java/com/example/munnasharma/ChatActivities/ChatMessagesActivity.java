@@ -1,5 +1,6 @@
 package com.example.munnasharma.ChatActivities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,6 +21,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -28,6 +30,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.munnasharma.socialmedia.R;
+import com.example.munnasharma.socialmedia.UserProfile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
@@ -58,7 +61,7 @@ public class ChatMessagesActivity extends AppCompatActivity {
 
     private static final int GALLERY_INTENT=2;
     private static final String LOG_TAG = "Record_log";
-    private String messageId;
+    private String messageId,email;
     private TextView mMessageField;
     private ImageButton mSendButton;
     private String chatName;
@@ -109,6 +112,7 @@ public class ChatMessagesActivity extends AppCompatActivity {
         //MessageID is the location of the messages for this specific chat
         messageId = intent.getStringExtra(Const.MESSAGE_ID);
         chatName = intent.getStringExtra(Const.CHAT_NAME);
+        email=intent.getStringExtra(Const.Email);
 
         if(messageId == null){
             finish(); // replace this.. nav user back to home
@@ -559,6 +563,19 @@ public class ChatMessagesActivity extends AppCompatActivity {
             }
         };
         mMessageList.setAdapter(mMessageListAdapter);
+
+        mMessageList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Message itemRef=mMessageListAdapter.getItem(position);
+                AlertDialog.Builder builder=new AlertDialog.Builder(ChatMessagesActivity.this);
+                builder.setTitle("")
+                        .setMessage(itemRef.getMessage())
+                        .create()
+                        .show();
+            }
+        });
     }
 
     private void playSound(Uri uri){
@@ -603,6 +620,15 @@ public class ChatMessagesActivity extends AppCompatActivity {
                 + "/" + messageId);
 
         mToolBar.setTitle(chatName);
+
+        mToolBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              Intent i=new Intent(getApplicationContext(), UserProfile.class);
+                i.putExtra(Const.Email,email);
+                startActivity(i);
+            }
+        });
         setSupportActionBar(mToolBar);
         if(getSupportActionBar()!=null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

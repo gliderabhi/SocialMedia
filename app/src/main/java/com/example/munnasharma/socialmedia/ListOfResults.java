@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.munnasharma.ChatActivities.ChatMessagesActivity;
 import com.example.munnasharma.classes.User;
 import com.example.munnasharma.extras.Const;
 import com.example.munnasharma.extras.CustomAdaptor;
@@ -56,10 +57,10 @@ public class ListOfResults extends Activity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                    Intent i=new Intent(getApplicationContext(),UserProfile.class);
+                    Intent i=new Intent(getApplicationContext(),ChatMessagesActivity.class);
+                    i.putExtra(Const.MESSAGE_ID,"");
+                    i.putExtra(Const.CHAT_NAME,firstName[position]+" "+lastName[position]);
                     i.putExtra(Const.Email,email[position]);
-                    i.putExtra(Const.FirstName,firstName[position]);
-                    i.putExtra(Const.College,college[position]);
                     startActivity(i);
                 }
             });

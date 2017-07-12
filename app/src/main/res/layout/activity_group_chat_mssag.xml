@@ -18,15 +18,6 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-        <TextView
-            android:text="Tap and Hold the Phone Button to Record"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/recordLable"
-            android:layout_weight="1"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
-            android:textAlignment="textStart" />
 
     </android.support.design.widget.AppBarLayout>
 
@@ -46,9 +37,9 @@
             android:id="@+id/messageListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:stackFromBottom="true"
             android:layout_above="@+id/linearLayout"
             android:divider="@android:color/transparent"
+            android:stackFromBottom="true"
             android:transcriptMode="alwaysScroll"
             tools:listitem="@layout/message_item" />
 
@@ -56,10 +47,10 @@
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:layout_marginTop="15dp"
             android:orientation="horizontal">
 
             <ImageButton
@@ -82,12 +73,12 @@
                 android:layout_weight="1" />
 
             <ImageButton
+                android:id="@+id/sendButton"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:onClick="sendMessage"
                 android:layout_gravity="bottom"
-                android:id="@+id/sendButton"
-                android:background="@android:drawable/ic_menu_send" />
+                android:background="@android:drawable/ic_menu_send"
+                android:onClick="sendMessage" />
 
 
         </LinearLayout>

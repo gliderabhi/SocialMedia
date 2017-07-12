@@ -72,8 +72,6 @@ public class UserProfile extends AppCompatActivity implements AdapterView.OnItem
         initialize();
 
         email = getIntent().getStringExtra(Const.Email);
-        name = getIntent().getStringExtra(Const.FirstName);
-        college = getIntent().getStringExtra(Const.College);
         getData();
 
     }
@@ -512,15 +510,6 @@ public class UserProfile extends AppCompatActivity implements AdapterView.OnItem
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        if(pr!=null){
-            pr.dismiss();
-        }
-            Intent i =new Intent (getApplicationContext(),SearchFields.class);
-            startActivity(i);
-
-    }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

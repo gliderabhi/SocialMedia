@@ -54,14 +54,10 @@
         <activity
             android:name=".SearchFields"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat" >
-
-            </activity>
+            android:theme="@style/Theme.AppCompat"></activity>
         <activity
             android:name=".ListOfResults"
-            android:screenOrientation="portrait">
-
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name="com.example.munnasharma.ChatActivities.ChatMessagesActivity"
             android:label="label of user message"
@@ -70,11 +66,11 @@
         <activity
             android:name="com.example.munnasharma.ChatActivities.ChatActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".FriendsListActivity"
             android:label="Find Friends"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SignUpActivity"
             android:screenOrientation="portrait"
@@ -94,12 +90,13 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name="com.example.munnasharma.ChatActivities.GroupChatActivityMssag" />
-
-        <activity android:name=".UserProfile"
+        <activity
+            android:name=".UserProfile"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" >
-
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name="com.example.munnasharma.ChatActivities.AddGroupChat"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

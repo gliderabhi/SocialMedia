@@ -25,10 +25,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.munnasharma.extras.Const;
 import com.example.munnasharma.socialmedia.R;
+import com.example.munnasharma.socialmedia.SearchFields;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
@@ -92,6 +94,7 @@ public class GroupChatActivityMssag extends AppCompatActivity {
 
         chatRoomName=getIntent().getStringExtra(Const.CHAT_NAME);
         messageId=getIntent().getStringExtra(Const.MESSAGE_ID);
+        Toast.makeText(getApplicationContext(),messageId,Toast.LENGTH_LONG).show();
 
         int requestCode = 200;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -102,7 +105,23 @@ public class GroupChatActivityMssag extends AppCompatActivity {
 
 
         initializeScreen();
-        showMessages();
+        mProgress=ProgressDialog.show(GroupChatActivityMssag.this,"Searching",Const.GettingSearchResults,true);
+        Runnable progressRunnable = new Runnable() {
+
+            @Override
+            public void run() {
+                mProgress.cancel();
+            }
+        };
+
+        Handler pdCanceller = new Handler();
+        pdCanceller.postDelayed(progressRunnable, 60000);
+        try {
+            showMessages();
+        }catch (Exception e){
+            Log.i("Error",e.toString());
+        }
+        mProgress.dismiss();
         addListeners();
         openImageSelector();
         openVoiceRecorder();

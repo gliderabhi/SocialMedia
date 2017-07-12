@@ -101,7 +101,6 @@ public class SignUpActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    createUser(user);
                    i=new Intent(getApplicationContext(),GroupChatList.class);
                     startActivity(i);
 
@@ -324,10 +323,10 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void createUser(FirebaseUser user) {
        //final String newFriendEncodedEmail = encodeEmail(newFriendEmail);
-        try{     final DatabaseReference userRef = mFirebaseDatabase.getReference(Const.UserDetails);
+        try{     final DatabaseReference userRef = mFirebaseDatabase.getReference(Const.UserDetails+"/"+encodeEmail(user.getEmail()));
         Map<String, Object> map3 = new HashMap<>();
         User  usr =new User(user.getDisplayName(),user.getEmail(),user.getPhotoUrl().toString());
-        map3.put(encodeEmail(user.getEmail()),usr);
+        map3.put("Data",usr);
         userRef.updateChildren(map3);
          UploadImageToProfile(user);
       }catch (Exception e){
