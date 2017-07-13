@@ -191,7 +191,7 @@ public class SearchFields extends AppCompatActivity implements  AdapterView.OnIt
 
                             while(jObject.has(ur+ String.valueOf(i)))
                            /* while(jObject.has(Const.user[i]))*/ {
-                                JResult = jObject.getJSONObject(Const.user[i]);
+                                JResult = jObject.getJSONObject(ur+ String.valueOf(i));
 
                                     F_name.add(JResult.getString(Const.FirstName));
                                     L_Name.add(JResult.getString(Const.LastName));

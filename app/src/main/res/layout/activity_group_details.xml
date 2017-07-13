@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.munnasharma.socialmedia.GroupDetails">
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/ChatNAme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:text=""/>
+        <ImageView
+            android:id="@+id/ImageGroup"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_below="@+id/ChatNAme"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            />
+        <TextView
+            android:id="@+id/JustText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ImageGroup"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:text="Add friend or mentor or batchmate to group "
+            android:textSize="18dp"
+            />
+        <LinearLayout
+            android:id="@+id/ButtonList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/JustText"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/btncustom"
+            android:orientation="horizontal"
+            >
+            <Button
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btncustom"
+                android:text="Friends"
+                android:textColor="#fff"
+                />
+            <Button
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btncustom"
+                android:text="Mentors"
+                android:textColor="#fff"
+                />
+            <Button
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btncustom"
+                android:text="Batch Mates"
+                android:textColor="#fff"
+                />
+        </LinearLayout>
+        <ListView
+            android:id="@+id/FrndList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/ButtonList"
+            tools:listitem="@layout/friend_item"
+            />
+    </RelativeLayout>
+</ScrollView>
+
+</RelativeLayout>

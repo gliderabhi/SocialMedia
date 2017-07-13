@@ -9,11 +9,11 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -29,6 +29,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.munnasharma.classes.Chat;
+import com.example.munnasharma.classes.Message;
+import com.example.munnasharma.extras.Const;
 import com.example.munnasharma.socialmedia.R;
 import com.example.munnasharma.socialmedia.UserProfile;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,6 +42,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -53,12 +57,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import com.example.munnasharma.extras.*;
-import com.example.munnasharma.classes.*;
 
+import static com.example.munnasharma.ChatActivities.GroupChatList.encodeEmail;
 
-public class ChatMessagesActivity extends AppCompatActivity {
-
+public class CreateChatAcivity extends AppCompatActivity {
     private static final int GALLERY_INTENT=2;
     private static final String LOG_TAG = "Record_log";
     private String messageId,email;
@@ -69,7 +71,7 @@ public class ChatMessagesActivity extends AppCompatActivity {
     private Toolbar mToolBar;
     private String currentUserEmail;
     private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mMessageDatabaseReference;
+    private DatabaseReference mMessageDatabaseReference,currentUserChatRef,otherUserChatRef;
     private DatabaseReference mUsersDatabaseReference;
     private FirebaseListAdapter<Message> mMessageListAdapter;
     private FirebaseAuth mFirebaseAuth;
@@ -80,6 +82,7 @@ public class ChatMessagesActivity extends AppCompatActivity {
     private TextView mRecordLable;
     private MediaRecorder mRecorder;
     private String mFileName = null;
+    private FirebaseUser mUsr;
     private ValueEventListener mValueEventListener;
 
     //Audio Runtime Permissions
@@ -97,24 +100,26 @@ public class ChatMessagesActivity extends AppCompatActivity {
                 permissionToWriteAccepted  = grantResults[1] == PackageManager.PERMISSION_GRANTED;
                 break;
         }
-        if (!permissionToRecordAccepted ) ChatMessagesActivity.super.finish();
-        if (!permissionToWriteAccepted ) ChatMessagesActivity.super.finish();
+        if (!permissionToRecordAccepted ) CreateChatAcivity.super.finish();
+        if (!permissionToWriteAccepted ) CreateChatAcivity.super.finish();
 
     }
 
+
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.messages_activity);
+        setContentView(R.layout.activity_create_chat_acivity);
+
+        messageId= getIntent().getStringExtra(Const.MESSAGE_ID);
+        email=getIntent().getStringExtra(Const.Email);
+        chatName=getIntent().getStringExtra(Const.CHAT_NAME);
 
 
-        Intent intent = this.getIntent();
-        //MessageID is the location of the messages for this specific chat
-        messageId = intent.getStringExtra(Const.MESSAGE_ID);
-        chatName = intent.getStringExtra(Const.CHAT_NAME);
-
+        Log.i("Data",chatName+email+messageId);
         if(messageId == null){
-            finish(); // replace this.. nav user back to home
+           messageId= mMessageDatabaseReference.push().getKey();
+            // replace this.. nav user back to home
             return;
         }
 
@@ -131,63 +136,9 @@ public class ChatMessagesActivity extends AppCompatActivity {
         addListeners();
         openImageSelector();
         openVoiceRecorder();
-
-    }
-
-    //Add listener for on completion of image selection
-    public void openImageSelector(){
-        mphotoPickerButton = (ImageButton) findViewById(R.id.photoPickerButton);
-        mProgress = new ProgressDialog(this);
-        mphotoPickerButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                startActivityForResult(intent, GALLERY_INTENT);
-            }
-        });
     }
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, final Intent data){
-
-        mStorage = FirebaseStorage.getInstance().getReference(); //make global
-        super.onActivityResult(requestCode, requestCode, data);
-
-        if(requestCode ==GALLERY_INTENT && resultCode == RESULT_OK){
-
-            mProgress.setMessage("Sending the image...");
-            mProgress.show();
-
-            Runnable progressRunnable = new Runnable() {
-
-                @Override
-                public void run() {
-                    mProgress.cancel();
-                }
-            };
-
-            Handler pdCanceller = new Handler();
-            pdCanceller.postDelayed(progressRunnable, 60000);
-            Uri uri = data.getData();
-            //Keep all images for a specific chat grouped together
-            final String imageLocation = "Photos" + "/" + messageId;
-            final String imageLocationId = imageLocation + "/" + uri.getLastPathSegment();
-            final String uniqueId = UUID.randomUUID().toString();
-            final StorageReference filepath = mStorage.child(imageLocation).child(uniqueId + "/image_message");
-            final String downloadURl = filepath.getPath();
-            filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    //create a new message containing this image
-                    addImageToMessages(downloadURl);
-                    mProgress.dismiss();
-                }
-            });
-        }
-
-    }
 
     public void openVoiceRecorder(){
         //Implement voice selection
@@ -281,27 +232,59 @@ public class ChatMessagesActivity extends AppCompatActivity {
         });
     }
 
-    public void addListeners(){
-        mMessageField.addTextChangedListener(new TextWatcher() {
+    //Add listener for on completion of image selection
+    public void openImageSelector(){
+        mphotoPickerButton = (ImageButton) findViewById(R.id.photoPickerButton);
+        mProgress = new ProgressDialog(this);
+        mphotoPickerButton.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.toString().trim().length() > 0) {
-                    mSendButton.setEnabled(true);
-                } else {
-                    mSendButton.setEnabled(false);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
+            public void onClick(View view){
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(intent, GALLERY_INTENT);
             }
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data){
+
+        mStorage = FirebaseStorage.getInstance().getReference(); //make global
+        super.onActivityResult(requestCode, requestCode, data);
+
+        if(requestCode ==GALLERY_INTENT && resultCode == RESULT_OK){
+
+            mProgress.setMessage("Sending the image...");
+            mProgress.show();
+
+            Runnable progressRunnable = new Runnable() {
+
+                @Override
+                public void run() {
+                    mProgress.cancel();
+                }
+            };
+
+            Handler pdCanceller = new Handler();
+            pdCanceller.postDelayed(progressRunnable, 60000);
+            Uri uri = data.getData();
+            //Keep all images for a specific chat grouped together
+            final String imageLocation = "Photos" + "/" + messageId;
+            final String imageLocationId = imageLocation + "/" + uri.getLastPathSegment();
+            final String uniqueId = UUID.randomUUID().toString();
+            final StorageReference filepath = mStorage.child(imageLocation).child(uniqueId + "/image_message");
+            final String downloadURl = filepath.getPath();
+            filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    //create a new message containing this image
+                    addImageToMessages(downloadURl);
+                    mProgress.dismiss();
+                }
+            });
+        }
+
+    }
     //If voice message add them to Firebase.Storage
     public void addVoiceToMessages(String voiceLocation) {
         final DatabaseReference pushRef = mMessageDatabaseReference.push();
@@ -374,20 +357,39 @@ public class ChatMessagesActivity extends AppCompatActivity {
         //Create message object with text/voice etc
         String currentUserEmail = mFirebaseAuth.getCurrentUser().getEmail();
         if (currentUserEmail != null) {
-            Message message = new Message(currentUserEmail, messageString, timestamp);
-            //Create HashMap for Pushing
-            HashMap<String, Object> messageItemMap = new HashMap<>();
-            HashMap<String, Object> messageObj = (HashMap<String, Object>) new ObjectMapper()
-                    .convertValue(message, Map.class);
-            messageItemMap.put("/" + pushKey, messageObj);
-            mMessageDatabaseReference.updateChildren(messageItemMap)
-                    .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            mMessageField.setText("");
-                        }
-                    });
+            try {
+                HashMap<String, Object> user1 = new HashMap<>();
+                Chat cht = new Chat();
+                cht.setChatName(chatName);
+                cht.setUid(messageId);
+                user1.put(chatName, cht);
+                currentUserChatRef.updateChildren(user1);
+
+
+                user1 = new HashMap<>();
+                cht = new Chat();
+                cht.setChatName(mUsr.getDisplayName());
+                cht.setUid(messageId);
+                user1.put(mUsr.getDisplayName(), cht);
+                otherUserChatRef.updateChildren(user1);
+
+                Message message = new Message(currentUserEmail, messageString, timestamp);
+                //Create HashMap for Pushing
+                HashMap<String, Object> messageItemMap = new HashMap<>();
+                messageItemMap.put(messageId, message);
+                mMessageDatabaseReference.updateChildren(messageItemMap)
+                        .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                mMessageField.setText("");
+                            }
+                        });
+            } catch (Exception e) {
+
+                Log.i("Error",e.toString());
+            }
         }
+
     }
 
     private void showMessages() {
@@ -400,23 +402,23 @@ public class ChatMessagesActivity extends AppCompatActivity {
                 //TextView timeTextView = (TextView) view.findViewById(R.id.timeTextView);
                 final ImageView leftImage = (ImageView) view.findViewById(R.id.leftMessagePic);
                 final ImageView rightImage = (ImageView) view.findViewById(R.id.rightMessagePic);
-                LinearLayout individMessageLayout = (LinearLayout)view.findViewById(R.id.individMessageLayout);
+                LinearLayout individMessageLayout = (LinearLayout) view.findViewById(R.id.individMessageLayout);
 
 
-                //set message and sender text
-                messgaeText.setText(message.getMessage());
-                senderText.setText(message.getSender());
-                //If you sent this message, right align
-                String mSender = message.getSender();
+                try { //set message and sender text
+                    messgaeText.setText(message.getMessage());
+                    senderText.setText(message.getSender());
+                    //If you sent this message, right align
+                    String mSender = message.getSender();
 
-                if(mSender.equals(currentUserEmail)){
-                    //messgaeText.setGravity(Gravity.RIGHT);
-                    //senderText.setGravity(Gravity.RIGHT);
-                    messageLine.setGravity(Gravity.END);
-                    leftImage.setVisibility(View.GONE);
-                    rightImage.setVisibility(View.VISIBLE);
+                    if (mSender.equals(currentUserEmail)) {
+                        //messgaeText.setGravity(Gravity.RIGHT);
+                        //senderText.setGravity(Gravity.RIGHT);
+                        messageLine.setGravity(Gravity.END);
+                        leftImage.setVisibility(View.GONE);
+                        rightImage.setVisibility(View.VISIBLE);
 
-                    //profile image back to here
+                        //profile image back to here
                    /* mUsersDatabaseReference.child(mSender).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -440,25 +442,25 @@ public class ChatMessagesActivity extends AppCompatActivity {
                         }
                     });
 */
-                    individMessageLayout.setBackgroundResource(R.drawable.roundedmessagescolored);
-                    //messgaeText.setBackgroundColor(ResourcesCompat.getColor(getResources(),
-                    //       R.color.colorAccent, null));
-                }else if(mSender.equals("System")){
-                    messageLine.setGravity(Gravity.CENTER_HORIZONTAL);
-                    leftImage.setVisibility(View.GONE);
-                    rightImage.setVisibility(View.GONE);
-                }else{
-                    //messgaeText.setGravity(Gravity.LEFT);
-                    //senderText.setGravity(Gravity.LEFT);
-                    messageLine.setGravity(Gravity.START);
-                    leftImage.setVisibility(View.VISIBLE);
-                    rightImage.setVisibility(View.GONE);
-                    individMessageLayout.setBackgroundResource(R.drawable.roundedmessages);
-                    //messgaeText.setBackgroundColor(ResourcesCompat.getColor(getResources(),
-                    //       R.color.colorPrimary, null));
+                        individMessageLayout.setBackgroundResource(R.drawable.roundedmessagescolored);
+                        //messgaeText.setBackgroundColor(ResourcesCompat.getColor(getResources(),
+                        //       R.color.colorAccent, null));
+                    } else if (mSender.equals("System")) {
+                        messageLine.setGravity(Gravity.CENTER_HORIZONTAL);
+                        leftImage.setVisibility(View.GONE);
+                        rightImage.setVisibility(View.GONE);
+                    } else {
+                        //messgaeText.setGravity(Gravity.LEFT);
+                        //senderText.setGravity(Gravity.LEFT);
+                        messageLine.setGravity(Gravity.START);
+                        leftImage.setVisibility(View.VISIBLE);
+                        rightImage.setVisibility(View.GONE);
+                        individMessageLayout.setBackgroundResource(R.drawable.roundedmessages);
+                        //messgaeText.setBackgroundColor(ResourcesCompat.getColor(getResources(),
+                        //       R.color.colorPrimary, null));
 
 
-                    //profile image back to here
+                        //profile image back to here
                 /* mUsersDatabaseReference.child(mSender).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -481,57 +483,61 @@ public class ChatMessagesActivity extends AppCompatActivity {
                         public void onCancelled(DatabaseError databaseError) {
                         }
                     });*/
-                }
+                    }
 
-                //If this is multimedia display it
-                final ImageView imageView = (ImageView) view.findViewById(R.id.imageMessage);
-                final ImageButton activateVoiceMsg = (ImageButton) view.findViewById(R.id.voiceMessageButton);
-                if(message.getMultimedia()){
-                    if(message.getContentType().equals("IMAGE")) {
-                        StorageReference storageRef = FirebaseStorage.getInstance()
-                                .getReference().child(message.getContentLocation());
-                        imageView.setVisibility(View.VISIBLE);
+                    //If this is multimedia display it
+                    final ImageView imageView = (ImageView) view.findViewById(R.id.imageMessage);
+                    final ImageButton activateVoiceMsg = (ImageButton) view.findViewById(R.id.voiceMessageButton);
+                    if (message.getMultimedia()) {
+                        if (message.getContentType().equals("IMAGE")) {
+                            StorageReference storageRef = FirebaseStorage.getInstance()
+                                    .getReference().child(message.getContentLocation());
+                            imageView.setVisibility(View.VISIBLE);
+                            activateVoiceMsg.setVisibility(View.GONE);
+                            activateVoiceMsg.setImageDrawable(null);
+                            //storageRef.getDownloadUrl().addOnCompleteListener(new O)
+                            Glide.with(view.getContext())
+                                    .using(new FirebaseImageLoader())
+                                    .load(storageRef)
+                                    .into(imageView);
+                        }
+                        if (message.getContentType().equals("VOICE")) {
+                            //show play button
+                            activateVoiceMsg.setVisibility(View.VISIBLE);
+                            //hide imageview
+                            imageView.setVisibility(View.GONE);
+                            imageView.setImageDrawable(null);
+                            //line below will reduce padding further on play audio image if necessary
+                            //individMessageLayout.setPadding(10,0,0,10);
+                            activateVoiceMsg.setOnClickListener(new View.OnClickListener() {
+
+                                @Override
+                                public void onClick(View v) {
+                                    StorageReference storageRef = FirebaseStorage.getInstance().getReference().child(message.getContentLocation());
+                                    storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            playSound(uri);
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception exception) {
+                                            // Handle any errors
+                                        }
+                                    });
+
+                                }
+                            });
+                        }
+                    } else {
                         activateVoiceMsg.setVisibility(View.GONE);
                         activateVoiceMsg.setImageDrawable(null);
-                        //storageRef.getDownloadUrl().addOnCompleteListener(new O)
-                        Glide.with(view.getContext())
-                                .using(new FirebaseImageLoader())
-                                .load(storageRef)
-                                .into(imageView);
-                    }
-                    if(message.getContentType().equals("VOICE")) {
-                        //show play button
-                        activateVoiceMsg.setVisibility(View.VISIBLE);
-                        //hide imageview
                         imageView.setVisibility(View.GONE);
                         imageView.setImageDrawable(null);
-                        //line below will reduce padding further on play audio image if necessary
-                        //individMessageLayout.setPadding(10,0,0,10);
-                        activateVoiceMsg.setOnClickListener(new View.OnClickListener() {
-
-                            @Override
-                            public void onClick(View v) {
-                                StorageReference storageRef = FirebaseStorage.getInstance().getReference().child(message.getContentLocation());
-                                storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                    @Override
-                                    public void onSuccess(Uri uri) {
-                                        playSound(uri);
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception exception) {
-                                        // Handle any errors
-                                    }
-                                });
-
-                            }
-                        });
                     }
-                }else{
-                    activateVoiceMsg.setVisibility(View.GONE);
-                    activateVoiceMsg.setImageDrawable(null);
-                    imageView.setVisibility(View.GONE);
-                    imageView.setImageDrawable(null);
+                } catch (Exception e) {
+
+                    Log.i("Error",e.toString());
                 }
             }
         };
@@ -542,7 +548,7 @@ public class ChatMessagesActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Message itemRef=mMessageListAdapter.getItem(position);
-                AlertDialog.Builder builder=new AlertDialog.Builder(ChatMessagesActivity.this);
+                AlertDialog.Builder builder=new AlertDialog.Builder(CreateChatAcivity.this);
                 builder.setTitle("")
                         .setMessage(itemRef.getMessage())
                         .create()
@@ -578,19 +584,46 @@ public class ChatMessagesActivity extends AppCompatActivity {
             }
         });
     }
+    public void addListeners(){
+        mMessageField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
 
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.toString().trim().length() > 0) {
+                    mSendButton.setEnabled(true);
+                } else {
+                    mSendButton.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+    }
     private void initializeScreen() {
         mMessageList = (ListView) findViewById(R.id.messageListView);
-        mToolBar = (Toolbar) findViewById(R.id.toolbar);
+        mToolBar = (Toolbar) findViewById(R.id.toolbarChat);
         mMessageField = (TextView)findViewById(R.id.messageToSend);
         mSendButton = (ImageButton)findViewById(R.id.sendButton);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
         currentUserEmail = mFirebaseAuth.getCurrentUser().getEmail();
+         mUsr=mFirebaseAuth.getCurrentUser();
+        currentUserChatRef=mFirebaseDatabase.getReference().child(Const.UserDetails+"/"+encodeEmail(currentUserEmail)+"/"+"chats");
+        otherUserChatRef=mFirebaseDatabase.getReference().child(Const.UserDetails+"/"+encodeEmail(email)+"/"+"chats");
+
+        String temp=currentUserChatRef.push().getKey();
+        currentUserChatRef=mFirebaseDatabase.getReference().child(Const.UserDetails+"/"+encodeEmail(currentUserEmail)+"/"+"chats"+"/"+temp);
+         temp=otherUserChatRef.push().getKey();
+        otherUserChatRef=mFirebaseDatabase.getReference().child(Const.UserDetails+"/"+encodeEmail(email)+"/"+"chats"+"/"+temp);
+
         mUsersDatabaseReference = mFirebaseDatabase.getReference().child(Const.USERS_LOCATION);
-        mMessageDatabaseReference = mFirebaseDatabase.getReference().child(Const.MESSAGE_LOCATION
-                + "/" + messageId);
+        mMessageDatabaseReference = mFirebaseDatabase.getReference().child(Const.MESSAGE_LOCATION+"/"+messageId);
 
         mToolBar.setTitle(chatName);
 
@@ -614,6 +647,5 @@ public class ChatMessagesActivity extends AppCompatActivity {
             }
         });
     }
-
 
 }

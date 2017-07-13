@@ -77,13 +77,15 @@ public class GroupChatList extends AppCompatActivity {
        intialize();
         settings();
         //Setup firebse adaptor
-
-        pr=ProgressDialog.show(GroupChatList.this,"","",true);
         mAdaptor = new FirebaseListAdapter<Chat>(this, Chat.class, R.layout.chat_item, mGroupChatReference) {
             @Override
             protected void populateView(final View view, Chat chat, final int position) {
                 //Log.e("TAG", "");
                 //final Friend addFriend = new Friend(chat);
+
+
+                pr=ProgressDialog.show(GroupChatList.this,"","",true);
+
                 ((TextView) view.findViewById(R.id.messageTextView)).setText(chat.getChatName());
 
                 //Fetch last message from chat
@@ -93,12 +95,14 @@ public class GroupChatList extends AppCompatActivity {
 
                 final TextView latestMessage = (TextView)view.findViewById(R.id.nameTextView);
                 final ImageView senderPic = (ImageView)view.findViewById(R.id.photoImageView);
+                final TextView timeText=(TextView)findViewById(R.id.timeTextView);
 
                 messageRef.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
                         Message newMsg = dataSnapshot.getValue(Message.class);
                         latestMessage.setText(newMsg.getSender() + ": " + newMsg.getMessage());
+                        timeText.setText(newMsg.getTimestamp());
 
                         mUserDatabaseReference.child(newMsg.getSender())
                                 .addValueEventListener(new ValueEventListener() {
@@ -139,11 +143,12 @@ public class GroupChatList extends AppCompatActivity {
 
                 //Replace this with the most recent message from the chat
 
+                pr.dismiss();
             }
+
         };
 
         GroupList.setAdapter(mAdaptor);
-        pr.dismiss();
         GroupList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
