@@ -2,6 +2,8 @@ package com.example.munnasharma.ChatActivities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,6 +29,8 @@ import com.example.munnasharma.socialmedia.SignUp1;
 import com.example.munnasharma.socialmedia.UserProfile;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -65,6 +69,7 @@ public class GroupChatList extends AppCompatActivity {
     private ValueEventListener valueEventListener;
     private String userEmail;
     private ProgressDialog pr;
+    private Chat mChat;
     public static String encodeEmail(String userEmail) {
         return userEmail.replace(".", ",");
     }
@@ -83,7 +88,7 @@ public class GroupChatList extends AppCompatActivity {
                 //Log.e("TAG", "");
                 //final Friend addFriend = new Friend(chat);
 
-
+                mChat=chat;
                 pr=ProgressDialog.show(GroupChatList.this,"","",true);
 
                 ((TextView) view.findViewById(R.id.messageTextView)).setText(chat.getChatName());
@@ -97,6 +102,18 @@ public class GroupChatList extends AppCompatActivity {
                 final ImageView senderPic = (ImageView)view.findViewById(R.id.photoImageView);
                 final TextView timeText=(TextView)findViewById(R.id.timeTextView);
 
+                StorageReference storageRef = FirebaseStorage.getInstance()
+                        .getReference().child("Photos/MID/"+mChat.getChatName()+"/groupIcon");
+
+                                           Glide.with(view.getContext())
+                                                    .using(new FirebaseImageLoader())
+                                                    .load(storageRef)
+                                                    .bitmapTransform(new CropCircleTransformation(view.getContext()))
+                                                    .into(senderPic);
+                                            if(senderPic.getDrawable()!=null){
+                                                Log.i("Done","Done");
+                                            }
+
                 messageRef.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
@@ -109,15 +126,7 @@ public class GroupChatList extends AppCompatActivity {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         User msgSender = dataSnapshot.getValue(User.class);
-                                        if(msgSender != null && msgSender.getProfilePicLocation() != null){
-                                            StorageReference storageRef = FirebaseStorage.getInstance()
-                                                    .getReference().child(msgSender.getProfilePicLocation());
-                                            Glide.with(view.getContext())
-                                                    .using(new FirebaseImageLoader())
-                                                    .load(storageRef)
-                                                    .bitmapTransform(new CropCircleTransformation(view.getContext()))
-                                                    .into(senderPic);
-                                        }
+
                                     }
 
                                     @Override
@@ -266,6 +275,7 @@ public class GroupChatList extends AppCompatActivity {
         }else{
             Toast.makeText(getApplicationContext(),"Not autheticated",Toast.LENGTH_SHORT).show();
         }
+         mChat=new Chat();
         //set buttons for the diff options
         chatBtn=(Button)findViewById(R.id.ChatButtonFragment);
         GroupBtn=(Button)findViewById(R.id.GrouChatFragment);

@@ -26,6 +26,8 @@ import com.example.munnasharma.classes.StudentDetails;
 import com.example.munnasharma.classes.searchResult;
 import com.example.munnasharma.extras.Const;
 import com.example.munnasharma.request.CollegeSearchRequest;
+import com.example.munnasharma.request.SearchByName;
+import com.example.munnasharma.request.YearSearchRequest;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -84,7 +86,7 @@ public class SearchFields extends AppCompatActivity implements  AdapterView.OnIt
         Handler pdCanceller = new Handler();
         pdCanceller.postDelayed(progressRunnable, 60000);
         //Set the spinner
-        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item, Const.years);
+        ArrayAdapter<String> adapter=new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item, Const.years);
         yr.setAdapter(adapter);
         yr.setOnItemSelectedListener(this);
         //Setup listener for the buttons
@@ -101,7 +103,7 @@ public class SearchFields extends AppCompatActivity implements  AdapterView.OnIt
         YrBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                SearchByYear();
             }
         });
 
@@ -109,6 +111,7 @@ public class SearchFields extends AppCompatActivity implements  AdapterView.OnIt
             @Override
             public void onClick(View v) {
                 nm=name.getText().toString();
+                SearchName();
             }
         });
     }
@@ -171,15 +174,13 @@ public class SearchFields extends AppCompatActivity implements  AdapterView.OnIt
 
                     if (jsonStart >= 0 && jsonEnd >= 0 && jsonEnd > jsonStart) {
                         response = response.substring(jsonStart, jsonEnd + 1);
-                    } else {
-
                     }
                     try {
-                        student = new ArrayList<StudentDetails>();
-                        F_name = new ArrayList<String>();
-                        L_Name = new ArrayList<String>();
-                        College = new ArrayList<String>();
-                        Email = new ArrayList<String>();
+                        student = new ArrayList<>();
+                        F_name = new ArrayList<>();
+                        L_Name = new ArrayList<>();
+                        College = new ArrayList<>();
+                        Email = new ArrayList<>();
 
                         int i=0;
                         JSONObject jObject = new JSONObject(response);
@@ -211,7 +212,6 @@ public class SearchFields extends AppCompatActivity implements  AdapterView.OnIt
                                         .show();
 
                             } else {
-                                 i = 0;
                                 String[] firstName = F_name.toArray(new String[F_name.size()]);
                                 String[] lastName = L_Name.toArray(new String[L_Name.size()]);
                                 String[] colege = College.toArray(new String[College.size()]);
@@ -254,6 +254,225 @@ public class SearchFields extends AppCompatActivity implements  AdapterView.OnIt
         }
     }
 
+    private void SearchByYear(){
+        builder= new AlertDialog.Builder(SearchFields.this);
+        boolean network = haveNetworkConnection();
+        if (!network) {
+            Toast.makeText(getApplicationContext(),Const.checkInternet,Toast.LENGTH_SHORT).show();
+        }
+        if (network) {
+            progressDialog=ProgressDialog.show(SearchFields.this,"Searching",Const.GettingSearchResults,true);
+
+            Runnable progressRunnable = new Runnable() {
+
+                @Override
+                public void run() {
+                    progressDialog.cancel();
+                }
+            };
+
+            Handler pdCanceller = new Handler();
+            pdCanceller.postDelayed(progressRunnable, 60000);
+            final Response.Listener<String> responseListener = new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+
+                    Log.d("Response", response.toString());
+                    response = response.replaceFirst("<font>.*?</font>", "");
+                    int jsonStart = response.indexOf("{");
+                    int jsonEnd = response.lastIndexOf("}");
+
+                    if (jsonStart >= 0 && jsonEnd >= 0 && jsonEnd > jsonStart) {
+                        response = response.substring(jsonStart, jsonEnd + 1);
+                    }
+                    try {
+                        student = new ArrayList<>();
+                        F_name = new ArrayList<>();
+                        L_Name = new ArrayList<>();
+                        College = new ArrayList<>();
+                        Email = new ArrayList<>();
+
+                        int i=0;
+                        JSONObject jObject = new JSONObject(response);
+                        success = jObject.getBoolean(Const.Success);
+                        JSONObject JResult;
+                        if (success) {
+
+                            String  ur="user";
+
+                            while(jObject.has(ur+ String.valueOf(i)))
+                           /* while(jObject.has(Const.user[i]))*/ {
+                                JResult = jObject.getJSONObject(ur+ String.valueOf(i));
+
+                                F_name.add(JResult.getString(Const.FirstName));
+                                L_Name.add(JResult.getString(Const.LastName));
+                                College.add(JResult.getString(Const.College));
+                                Email.add(JResult.getString(Const.Email));
+
+                                Log.i("Data",F_name.get(i)+L_Name.get(i)+College.get(i)+Email.get(i));
+                                i++;
+
+                            }
+                            Log.d("ChangedText", F_name.toString());
+                            if (F_name.size() == 0) {
+                                progressDialog.dismiss();
+                                builder.setMessage("Sorry No user with this college available... Please Try again with change of selection ")
+                                        .setNegativeButton("Retry", null)
+                                        .create()
+                                        .show();
+
+                            } else {
+                                String[] firstName = F_name.toArray(new String[F_name.size()]);
+                                String[] lastName = L_Name.toArray(new String[L_Name.size()]);
+                                String[] colege = College.toArray(new String[College.size()]);
+                                String[] email = Email.toArray(new String[Email.size()]);
+
+                               /* for(i=0;i<F_name.size();++i){
+                                    firstName[i]=F_name.get(i).toString();
+                                }
+                                for(i=0;i<L_Name.size();++i){
+                                    lastName[i]=L_Name.get(i).toString();
+                                }
+                                for(i=0;i<College.size();++i){
+                                    colege[i]=College.get(i).toString();
+                                }*/
+
+                                progressDialog.dismiss();
+                                Intent i1 = new Intent(getApplicationContext(), ListOfResults.class);
+                                i1.putExtra(Const.FirstName, firstName);
+                                i1.putExtra(Const.LastName, lastName);
+                                i1.putExtra(Const.College, colege);
+                                i1.putExtra(Const.Email, email);
+                                startActivity(i1);
+                            }
+                        }else{
+                            Toast.makeText(getApplicationContext(),"Failed to retrieve data ",Toast.LENGTH_SHORT).show();
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            YearSearchRequest yearSearchRequest = new YearSearchRequest(year,responseListener);
+            RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+            yearSearchRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    30000,2, (float) 2.0));
+            queue.add(yearSearchRequest);
+
+
+        }
+    }
+
+    private void SearchName(){
+        builder= new AlertDialog.Builder(SearchFields.this);
+        boolean network = haveNetworkConnection();
+        if (!network) {
+            Toast.makeText(getApplicationContext(),Const.checkInternet,Toast.LENGTH_SHORT).show();
+        }
+        if (network) {
+            progressDialog=ProgressDialog.show(SearchFields.this,"Searching",Const.GettingSearchResults,true);
+
+            Runnable progressRunnable = new Runnable() {
+
+                @Override
+                public void run() {
+                    progressDialog.cancel();
+                }
+            };
+
+            Handler pdCanceller = new Handler();
+            pdCanceller.postDelayed(progressRunnable, 60000);
+            final Response.Listener<String> responseListener = new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+
+                    Log.d("Response", response.toString());
+                    response = response.replaceFirst("<font>.*?</font>", "");
+                    int jsonStart = response.indexOf("{");
+                    int jsonEnd = response.lastIndexOf("}");
+
+                    if (jsonStart >= 0 && jsonEnd >= 0 && jsonEnd > jsonStart) {
+                        response = response.substring(jsonStart, jsonEnd + 1);
+                    }
+                    try {
+                        student = new ArrayList<>();
+                        F_name = new ArrayList<>();
+                        L_Name = new ArrayList<>();
+                        College = new ArrayList<>();
+                        Email = new ArrayList<>();
+
+                        int i=0;
+                        JSONObject jObject = new JSONObject(response);
+                        success = jObject.getBoolean(Const.Success);
+                        JSONObject JResult;
+                        if (success) {
+
+                            String  ur="user";
+
+                            while(jObject.has(ur+ String.valueOf(i)))
+                           /* while(jObject.has(Const.user[i]))*/ {
+                                JResult = jObject.getJSONObject(ur+ String.valueOf(i));
+
+                                F_name.add(JResult.getString(Const.FirstName));
+                                L_Name.add(JResult.getString(Const.LastName));
+                                College.add(JResult.getString(Const.College));
+                                Email.add(JResult.getString(Const.Email));
+
+                                Log.i("Data",F_name.get(i)+L_Name.get(i)+College.get(i)+Email.get(i));
+                                i++;
+
+                            }
+                            Log.d("ChangedText", F_name.toString());
+                            if (F_name.size() == 0) {
+                                progressDialog.dismiss();
+                                builder.setMessage("Sorry No user with this college available... Please Try again with change of selection ")
+                                        .setNegativeButton("Retry", null)
+                                        .create()
+                                        .show();
+
+                            } else {
+                                String[] firstName = F_name.toArray(new String[F_name.size()]);
+                                String[] lastName = L_Name.toArray(new String[L_Name.size()]);
+                                String[] colege = College.toArray(new String[College.size()]);
+                                String[] email = Email.toArray(new String[Email.size()]);
+
+                               /* for(i=0;i<F_name.size();++i){
+                                    firstName[i]=F_name.get(i).toString();
+                                }
+                                for(i=0;i<L_Name.size();++i){
+                                    lastName[i]=L_Name.get(i).toString();
+                                }
+                                for(i=0;i<College.size();++i){
+                                    colege[i]=College.get(i).toString();
+                                }*/
+
+                                progressDialog.dismiss();
+                                Intent i1 = new Intent(getApplicationContext(), ListOfResults.class);
+                                i1.putExtra(Const.FirstName, firstName);
+                                i1.putExtra(Const.LastName, lastName);
+                                i1.putExtra(Const.College, colege);
+                                i1.putExtra(Const.Email, email);
+                                startActivity(i1);
+                            }
+                        }else{
+                            Toast.makeText(getApplicationContext(),"Failed to retrieve data ",Toast.LENGTH_SHORT).show();
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            SearchByName searchByName = new SearchByName(nm,responseListener);
+            RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+            searchByName.setRetryPolicy(new DefaultRetryPolicy(
+                    30000,2, (float) 2.0));
+            queue.add(searchByName);
+
+
+        }
+    }
     @Override
     public void onBackPressed() {
         progressDialog.dismiss();

@@ -151,7 +151,7 @@ public class AddGroupChat extends AppCompatActivity {
             HashMap<String, Object> map2 = new HashMap<>();
             map2.put(Const.Members, user);
             mGroupMembers.updateChildren(map2);
-            filepath = mStorage.child(imageLocation).child(chatName + "/" + uniqueId + "/groupIcon");
+            filepath = mStorage.child(imageLocation).child(chatName + "/groupIcon");
             final String downloadURl = filepath.getPath();
             filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
