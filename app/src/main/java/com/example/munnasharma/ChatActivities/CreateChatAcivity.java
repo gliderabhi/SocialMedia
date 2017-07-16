@@ -84,7 +84,7 @@ public class CreateChatAcivity extends AppCompatActivity {
     private String mFileName = null;
     private FirebaseUser mUsr;
     private ValueEventListener mValueEventListener;
-
+    private String timestamp;
     //Audio Runtime Permissions
     private boolean permissionToRecordAccepted = false;
     private boolean permissionToWriteAccepted = false;
@@ -351,9 +351,13 @@ public class CreateChatAcivity extends AppCompatActivity {
 
         String messageString = mMessageField.getText().toString();
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
-        Date date = new Date();
-        String timestamp = dateFormat.format(date);
+       try {
+           SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+           Date date = new Date();
+            timestamp = dateFormat.format(date);
+       }catch(Exception e){
+           Log.i("Error",e.toString());
+       }
         //Create message object with text/voice etc
         String currentUserEmail = mFirebaseAuth.getCurrentUser().getEmail();
         if (currentUserEmail != null) {
