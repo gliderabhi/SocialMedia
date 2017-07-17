@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.example.munnasharma.ChatActivities.GroupChatList;
@@ -20,6 +21,7 @@ public class SplashActivity extends AppCompatActivity {
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private Intent i;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,27 +29,46 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
         img = (ImageView) findViewById(R.id.ImageView8);
 
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mFirebaseAuth = FirebaseAuth.getInstance();
+       /* mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    GroupChatList();
 
+                } else {
+                    Log.i("Error", "Error");
+                    SignUpChatActivity();
+                }
+            }
+        };*/
+       user=mFirebaseAuth.getCurrentUser();
+        if(user==null){
+            SignUpChatActivity();
+        }else{
+            GroupChatList();
+        }
+
+    }
+    private void GroupChatList(){
         new Handler().postDelayed(new Runnable() {
             @Override
-            public void run() {  //Initialize Firebase components
-                mFirebaseDatabase = FirebaseDatabase.getInstance();
-                mFirebaseAuth = FirebaseAuth.getInstance();
+            public void run() {
 
-                mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-                    @Override
-                    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                        FirebaseUser user = firebaseAuth.getCurrentUser();
-                        if (user != null) {
-                            i = new Intent(getApplicationContext(), GroupChatList.class);
-                            startActivity(i);
+             i=new Intent(getApplicationContext(),GroupChatList.class);
+                startActivity(i);
+            }
+        }, SPLASH_DISPLAY_LENGTH);
+    }
+    private void SignUpChatActivity(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
 
-                        } else {
-                            i = new Intent(getApplicationContext(), SignUpActivity.class);
-                            startActivity(i);
-                        }
-                    }
-                };
+                i=new Intent(getApplicationContext(),SignUpActivity.class);
+                startActivity(i);
             }
         }, SPLASH_DISPLAY_LENGTH);
     }

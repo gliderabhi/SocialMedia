@@ -2,9 +2,12 @@ package com.example.munnasharma.ChatActivities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.PopupMenu;
@@ -22,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.example.munnasharma.socialmedia.FriendsListActivity;
 import com.example.munnasharma.socialmedia.R;
 import com.example.munnasharma.socialmedia.SearchFields;
@@ -103,12 +107,11 @@ public class GroupChatList extends AppCompatActivity {
                 final TextView timeText=(TextView)findViewById(R.id.timeTextView);
 
                 StorageReference storageRef = FirebaseStorage.getInstance()
-                        .getReference().child("Photos/MID/"+mChat.getChatName()+"/groupIcon");
+                        .getReference().child("Photos/MID/"+mChat.getChatName()+"/groupIcon.jpg");
 
                                            Glide.with(view.getContext())
                                                     .using(new FirebaseImageLoader())
                                                     .load(storageRef)
-                                                    .bitmapTransform(new CropCircleTransformation(view.getContext()))
                                                     .into(senderPic);
                                             if(senderPic.getDrawable()!=null){
                                                 Log.i("Done","Done");
@@ -158,6 +161,8 @@ public class GroupChatList extends AppCompatActivity {
         };
 
         GroupList.setAdapter(mAdaptor);
+
+        Log.i("Error","Populated list done ");
         GroupList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
